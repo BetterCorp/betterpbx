@@ -10,5 +10,6 @@ secure/*.sqlite
 *.php~
 
 app/yealink/resources/firmware/*
-nodejstools/recordings/config.json
-nodejstools/recordings/recording_config.json
+_nodejstools/recordings/config.json
+_nodejstools/recordings/recording_config.json
+_nodejstools/*/node_modules
