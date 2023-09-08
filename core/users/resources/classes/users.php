@@ -83,7 +83,7 @@ if (!class_exists('users')) {
 							$x = 0;
 							foreach ($records as $record) {
 								//add to the array
-									if ($record['checked'] == 'true' && is_uuid($record['uuid'])) {
+									if (!empty($record['checked']) && $record['checked'] == 'true' && is_uuid($record['uuid'])) {
 										//get the user_uuid
 											$user_uuid = $record['uuid'];
 
@@ -174,7 +174,7 @@ if (!class_exists('users')) {
 					if (is_array($records) && @sizeof($records) != 0) {
 						//get current toggle state
 							foreach($records as $record) {
-								if ($record['checked'] == 'true' && is_uuid($record['uuid'])) {
+								if (!empty($record['checked']) && $record['checked'] == 'true' && is_uuid($record['uuid'])) {
 									$uuids[] = "'".$record['uuid']."'";
 								}
 							}
@@ -182,7 +182,7 @@ if (!class_exists('users')) {
 								$sql = "select ".$this->name."_uuid as uuid, ".$this->toggle_field." as toggle from v_".$this->table." ";
 								$sql .= "where ".$this->name."_uuid in (".implode(', ', $uuids).") ";
 								$database = new database;
-								$rows = $database->select($sql, $parameters, 'all');
+								$rows = $database->select($sql, $parameters ?? null, 'all');
 								if (is_array($rows) && @sizeof($rows) != 0) {
 									foreach ($rows as $row) {
 										$states[$row['uuid']] = $row['toggle'];
@@ -238,21 +238,21 @@ if (!class_exists('users')) {
 					}
 
 				//copy the checked records
-					if (is_array($records) && @sizeof($records) != 0) {
+					if (!empty($records) && is_array($records) && @sizeof($records) != 0) {
 
 						//get checked records
 							foreach($records as $record) {
-								if ($record['checked'] == 'true' && is_uuid($record['uuid'])) {
+								if (!empty($record['checked']) && $record['checked'] == 'true' && is_uuid($record['uuid'])) {
 									$uuids[] = "'".$record['uuid']."'";
 								}
 							}
 
 						//create the array from existing data
-							if (is_array($uuids) && @sizeof($uuids) != 0) {
+							if (!empty($uuids) && is_array($uuids) && @sizeof($uuids) != 0) {
 								$sql = "select * from v_".$this->table." ";
 								$sql .= "where ".$this->name."_uuid in (".implode(', ', $uuids).") ";
 								$database = new database;
-								$rows = $database->select($sql, $parameters, 'all');
+								$rows = $database->select($sql, $parameters ?? null, 'all');
 								if (is_array($rows) && @sizeof($rows) != 0) {
 									$x = 0;
 									foreach ($rows as $row) {
@@ -271,7 +271,7 @@ if (!class_exists('users')) {
 							}
 
 						//save the changes and set the message
-							if (is_array($array) && @sizeof($array) != 0) {
+							if (!empty($array) && is_array($array) && @sizeof($array) != 0) {
 								//save the array
 									$database = new database;
 									$database->app_name = $this->app_name;

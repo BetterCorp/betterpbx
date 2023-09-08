@@ -122,11 +122,12 @@ if (!function_exists('transcribe')) {
 				$transcribe_language = $_SESSION['voicemail']['transcribe_language']['text'];
 				$transcribe_alternate_language = $_SESSION['voicemail']['transcribe_alternate_language']['text'];
 
-				if (!isset($transcribe_language) && strlen($transcribe_language) == 0) {
-					$transcribe_language = 'en-Us';
+
+				if (!isset($transcribe_language) && empty($transcribe_language)) {
+					$transcribe_language = 'en-US';
 				}
-				if (!isset($transcribe_alternate_language) && strlen($transcribe_alternate_language) == 0) {
-					$transcribe_alternate_language = 'es-Us';
+				if (!isset($transcribe_alternate_language) && empty($transcribe_alternate_language)) {
+					$transcribe_alternate_language = 'es-US';
 				}
 				if ($file_extension == "mp3") {
 					$content_type = 'audio/mp3';
@@ -139,11 +140,21 @@ if (!function_exists('transcribe')) {
 					//$command = "curl -X POST -silent -u \"apikey:".$api_key."\" --header \"Content-type: ".$content_type."\" --data-binary @".$file_path."/".$file_name." \"".$api_url."\"";
 					//echo "command: ".$command."\n";
 
-					$command = "sox ".$file_path."/".$file_name." ".$file_path."/".$file_name.".flac trim 0 00:59 ";
-					$command .= "&& echo \"{ 'config': { 'languageCode': '".$transcribe_language."', 'enableWordTimeOffsets': false , 'enableAutomaticPunctuation': true , 'alternativeLanguageCodes': '".$transcribe_alternate_language."' }, 'audio': { 'content': '`base64 -w 0 ".$file_path."/".$file_name.".flac`' } }\" ";
-					$command .= "| curl -X POST -H \"Content-Type: application/json\" -d @- ".$api_url.":recognize?key=".$api_key." ";
-					$command .= "&& rm -f ".$file_path."/".$file_name.".flac";
-					echo $command."\n";
+					//version 1
+					if (substr($api_url, 0, 32) == 'https://speech.googleapis.com/v1') {
+						$command = "sox ".$file_path."/".$file_name." ".$file_path."/".$file_name.".flac trim 0 00:59 ";
+						$command .= "&& echo \"{ 'config': { 'languageCode': '".$transcribe_language."', 'enableWordTimeOffsets': false , 'enableAutomaticPunctuation': true , 'alternativeLanguageCodes': '".$transcribe_alternate_language."' }, 'audio': { 'content': '`base64 -w 0 ".$file_path."/".$file_name.".flac`' } }\" ";
+						$command .= "| curl -X POST -H \"Content-Type: application/json\" -d @- ".$api_url.":recognize?key=".$api_key." ";
+						$command .= "&& rm -f ".$file_path."/".$file_name.".flac";
+						echo $command."\n";
+					}
+
+					//version 2
+					if (substr($api_url, 0, 32) == 'https://speech.googleapis.com/v2') {
+						$command = "echo \"{ 'config': { 'auto_decoding_config': {}, 'language_codes': ['".$transcribe_language."'], 'model': 'long' }, 'content': '`base64 -w 0 ".$file_path."/".$file_name."`' } \" ";
+						$command .= "| curl -X POST -H \"Content-Type: application/json\" -H \"Authorization: Bearer \$(gcloud auth application-default print-access-token)\" -d @- ".$api_url;
+						echo $command."\n";
+					}
 
 					//ob_start();
 					//$result = passthru($command);
@@ -183,7 +194,7 @@ if (!function_exists('transcribe')) {
 				$api_key = $_SESSION['voicemail']['azure_key']['text'];
 				$api_url = $_SESSION['voicemail']['azure_server_region']['text'];
 
-				if (strlen($transcribe_language) == 0) {
+				if (empty($transcribe_language)) {
 					$transcribe_language = 'en-US';
 				}
 
@@ -197,7 +208,7 @@ if (!function_exists('transcribe')) {
 				if (isset($api_key) && $api_key != '') {
 					$command = "curl -X POST \"https://".$api_url.".api.cognitive.microsoft.com/sts/v1.0/issueToken\" -H \"Content-type: application/x-www-form-urlencoded\" -H \"Content-Length: 0\" -H \"Ocp-Apim-Subscription-Key: ".$api_key."\"";
 					$access_token_result = shell_exec($command);
-					if (strlen($access_token_result) == 0) {
+					if (empty($access_token_result)) {
 						return false;
 					}
 					else {
@@ -229,7 +240,7 @@ if (!function_exists('transcribe')) {
 				$api_key = $_SESSION['voicemail']['api_key']['text'];
 				$api_url = $_SESSION['voicemail']['transcription_server']['text'];
 
-				if (strlen($transcribe_language) == 0) {
+				if (empty($transcribe_language)) {
 					$transcribe_language = 'en-US';
 				}
 

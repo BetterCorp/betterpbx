@@ -14,9 +14,9 @@
 		$apps[$x]['description']['de-at'] = "Grundlegende Einstellungen die für alle Domänen gültig sind.";
 		$apps[$x]['description']['de-ch'] = "Standardeinstellungen, die für alle Domänen gelten.";
 		$apps[$x]['description']['de-de'] = "Grundlegende Einstellungen die für alle Domänen gültig sind.";
+		$apps[$x]['description']['el-gr'] = "Προεπιλεγμένες ρυθμίσεις που ισχύουν για όλους τους τομείς.";
 		$apps[$x]['description']['es-cl'] = "Configuraciones predeterminadas que aplican a todos los dominios.";
 		$apps[$x]['description']['es-mx'] = "Configuración predeterminada que se aplica a todos los dominios.";
-		$apps[$x]['description']['el-gr'] = "Προεπιλεγμένες ρυθμίσεις που ισχύουν για όλους τους τομείς.";
 		$apps[$x]['description']['fr-ca'] = "Paramètres par défaut qui s'appliquent à tous les domaines.";
 		$apps[$x]['description']['fr-fr'] = "Configurations par défaut applicable à tous les domaines";
 		$apps[$x]['description']['he-il'] = "הגדרות ברירת המחדל החלות על כל הדומיינים.";
@@ -29,6 +29,7 @@
 		$apps[$x]['description']['ru-ru'] = "Настройки по умолчанию для всех доменов";
 		$apps[$x]['description']['sv-se'] = "Standardinställningar som gäller alla domäner.";
 		$apps[$x]['description']['uk-ua'] = "Налаштування за умовчанням, які застосовуються до всіх доменів.";
+		$apps[$x]['description']['tr-tr'] = "Tüm etki alanları için geçerli olan varsayılan ayarlar.";
 
 	//permission details
 		$y=0;
@@ -302,6 +303,15 @@
 		$apps[$x]['default_settings'][$y]['default_setting_value'] = "/core/dashboard/";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "false";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Destination after login";
+		$y++;
+		$apps[$x]['default_settings'][$y]['default_setting_uuid'] = "47b951c9-b339-4733-9104-a979f6e2f551";
+		$apps[$x]['default_settings'][$y]['default_setting_category'] = "domain";
+		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "setting_value_input_type";
+		$apps[$x]['default_settings'][$y]['default_setting_name'] = "text";
+		$apps[$x]['default_settings'][$y]['default_setting_value'] = "input";
+		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "true";
+		$apps[$x]['default_settings'][$y]['default_setting_description'] = "";
+		$y++;
 
 	//schema details
 		$y=0;

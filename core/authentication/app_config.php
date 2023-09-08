@@ -14,6 +14,7 @@
 		$apps[$x]['description']['de-at'] = "Stellt ein Authentifizierungs-Framework mit Plugins bereit, um zu prüfen, ob ein Benutzer zur Anmeldung berechtigt ist.";
 		$apps[$x]['description']['de-ch'] = "Stellt ein Authentifizierungs-Framework mit Plugins bereit, um zu prüfen, ob ein Benutzer zur Anmeldung berechtigt ist.";
 		$apps[$x]['description']['de-at'] = "Stellt ein Authentifizierungs-Framework mit Plugins bereit, um zu prüfen, obsich ein Benutzer anmelden darf.";
+		$apps[$x]['description']['el-gr'] = "Παρέχει ένα πλαίσιο ελέγχου ταυτότητας με προσθήκες για να ελέγχει εάν ένας χρήστης είναι εξουσιοδοτημένος να συνδεθεί.";		
 		$apps[$x]['description']['es-cl'] = "Proporciona un marco de autenticación con complementos para verificar si un usuario está autorizado para iniciar sesión.";
 		$apps[$x]['description']['es-mx'] = "Proporciona un marco de autenticación con complementos para verificar si un usuario está autorizado para iniciar sesión.";
 		$apps[$x]['description']['fr-ca'] = "Fournit un cadre d'authentification avec des plugins pour vérifier si un utilisateur est autorisé à se connecter.";
@@ -28,6 +29,7 @@
 		$apps[$x]['description']['ru-ru'] = "Предоставляет платформу проверки подлинности с плагинами для проверки авторизации пользователя.";
 		$apps[$x]['description']['sv-se'] = "Tillhandahåller ett autentiseringsramverk med plugins för att kontrollera om en användare är behörig att logga in.";
 		$apps[$x]['description']['uk-ua'] = "Надає структуру автентифікації з плагінами, щоб перевірити, чи користувач авторизований для входу.";
+		$apps[$x]['description']['tr-tr'] = "Bir kullanıcının oturum açmaya yetkili olup olmadığını kontrol etmek için eklentilerle bir kimlik doğrulama çerçevesi sağlar.";
 
 	//default settings
 		$y=0;
@@ -37,7 +39,7 @@
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "array";
 		$apps[$x]['default_settings'][$y]['default_setting_value'] = "database";
 		$apps[$x]['default_settings'][$y]['default_setting_order'] = "10";
-		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "false";
+		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "true";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "";
 		$y++;
 		$apps[$x]['default_settings'][$y]['default_setting_uuid'] = "bc31a3f4-671b-44ca-8724-64ec077eed0b";
@@ -57,5 +59,14 @@
 		$apps[$x]['default_settings'][$y]['default_setting_order'] = "30";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "false";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "";
+                $y++;
+                $apps[$x]['default_settings'][$y]['default_setting_uuid'] = "59295a4c-7315-4059-aa11-60b6e2f4db48";
+                $apps[$x]['default_settings'][$y]['default_setting_category'] = "authentication";
+                $apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "email_send_mode";
+                $apps[$x]['default_settings'][$y]['default_setting_name'] = "text";
+                $apps[$x]['default_settings'][$y]['default_setting_value'] = "email_queue";
+                $apps[$x]['default_settings'][$y]['default_setting_order'] = "40";
+                $apps[$x]['default_settings'][$y]['default_setting_enabled'] = "true";
+                $apps[$x]['default_settings'][$y]['default_setting_description'] = "Options: email_queue, direct";
 
 ?>

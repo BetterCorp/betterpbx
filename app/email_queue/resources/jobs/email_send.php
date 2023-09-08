@@ -2,16 +2,14 @@
 
 //check the permission
 	if (defined('STDIN')) {
-		//set the include path
-		$conf = glob("{/usr/local/etc,/etc}/fusionpbx/config.conf", GLOB_BRACE);
-		set_include_path(parse_ini_file($conf[0])['document.root']);
+		//includes files
+		require_once dirname(__DIR__, 4) . "/resources/require.php";
 	}
 	else {
 		exit;
 	}
 
 //include files
-	require_once "resources/require.php";
 	include "resources/classes/permissions.php";
 	require $_SERVER['DOCUMENT_ROOT']."/app/email_queue/resources/functions/transcribe.php";
 
@@ -31,8 +29,8 @@
 	if (is_uuid($_GET['email_queue_uuid'])) {
 		$email_queue_uuid = $_GET['email_queue_uuid'];
 		$hostname = urldecode($_GET['hostname']);
-		$debug = $_GET['debug'];
-		$sleep_seconds = $_GET['sleep'];
+		$debug = $_GET['debug'] ?? null;
+		$sleep_seconds = $_GET['sleep'] ?? null;
 	}
 	else {
 		//invalid uuid
@@ -86,7 +84,7 @@
 //create the process id file if the process doesn't exist
 	if (!$pid_exists) {
 		//remove the old pid file
-		if (file_exists($file)) {
+		if (!empty($pid_file) && file_exists($pid_file)) {
 			unlink($pid_file);
 		}
 
@@ -150,7 +148,7 @@
 	//$retry_interval = $_SESSION['email_queue']['retry_interval']['numeric'];
 
 //set defaults
-	if (strlen($email_retry_count) == 0) {
+	if (empty($email_retry_count)) {
 		$email_retry_count = 0;
 	}
 
@@ -286,6 +284,7 @@
 	}
 
 //add email settings
+	$email_settings = '';
 	ksort($_SESSION['email']);
 	foreach ($_SESSION['email'] as $name => $setting) {
 		foreach ($setting as $type => $value) {
@@ -295,11 +294,27 @@
 		}
 	}
 
+//parse email and name
+	if (!empty($email_from)) {
+		if (valid_email($email_from)) {
+			$email_from_address = $email_from;
+		}
+		else {
+			$lt_pos = strpos($email_from, '<');
+			if ($lt_pos !== false) {
+				$email_from_address = str_replace('>', '', substr($email_from, $lt_pos + 1));
+				$email_from_name = trim(substr($email_from, 0, $lt_pos));
+			}
+		}
+	}
+
 //send the email
 	$email = new email;
 	$email->domain_uuid = $domain_uuid;
 	$email->from_address = $email_from_address;
-	$email->from_name = $email_from_name;
+	if (!empty($email_from_name)) {
+		$email->from_name = $email_from_name;
+	}
 	$email->recipients = $email_to;
 	$email->subject = $email_subject;
 	$email->body = $email_body;
