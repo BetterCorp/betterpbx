@@ -1,0 +1,1454 @@
+[
+  {
+    "dates": "January 1st",
+    "date": "2023-01-01",
+    "dateFull": {
+      "year": 2023,
+      "month": 1,
+      "day": 1
+    },
+    "weekday": "Sunday",
+    "name": "New Year's Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "January 2nd",
+    "date": "2023-01-02",
+    "dateFull": {
+      "year": 2023,
+      "month": 1,
+      "day": 2
+    },
+    "weekday": "Monday",
+    "name": "New Year's Day (Observed)",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "February 18th",
+    "date": "2023-02-18",
+    "dateFull": {
+      "year": 2023,
+      "month": 2,
+      "day": 18
+    },
+    "weekday": "Saturday",
+    "name": "Muhammad's Ascension to Heaven",
+    "notes": ""
+  },
+  {
+    "dates": "February 18th",
+    "date": "2023-02-18",
+    "dateFull": {
+      "year": 2023,
+      "month": 2,
+      "day": 18
+    },
+    "weekday": "Saturday",
+    "name": "Maha Shivaratri",
+    "notes": ""
+  },
+  {
+    "dates": "March 7th",
+    "date": "2023-03-07",
+    "dateFull": {
+      "year": 2023,
+      "month": 3,
+      "day": 7
+    },
+    "weekday": "Tuesday",
+    "name": "Festival of Colors",
+    "notes": ""
+  },
+  {
+    "dates": "March 20th",
+    "date": "2023-03-20",
+    "dateFull": {
+      "year": 2023,
+      "month": 3,
+      "day": 20
+    },
+    "weekday": "Monday",
+    "name": "March Equinox",
+    "notes": ""
+  },
+  {
+    "dates": "March 21st",
+    "date": "2023-03-21",
+    "dateFull": {
+      "year": 2023,
+      "month": 3,
+      "day": 21
+    },
+    "weekday": "Tuesday",
+    "name": "Human Rights Day",
+    "notes": ""
+  },
+  {
+    "dates": "April 7th",
+    "date": "2023-04-07",
+    "dateFull": {
+      "year": 2023,
+      "month": 4,
+      "day": 7
+    },
+    "weekday": "Friday",
+    "name": "Good Friday",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "April 8th",
+    "date": "2023-04-08",
+    "dateFull": {
+      "year": 2023,
+      "month": 4,
+      "day": 8
+    },
+    "weekday": "Saturday",
+    "name": "Holy Saturday",
+    "notes": ""
+  },
+  {
+    "dates": "April 9th",
+    "date": "2023-04-09",
+    "dateFull": {
+      "year": 2023,
+      "month": 4,
+      "day": 9
+    },
+    "weekday": "Sunday",
+    "name": "Easter",
+    "notes": ""
+  },
+  {
+    "dates": "April 10th",
+    "date": "2023-04-10",
+    "dateFull": {
+      "year": 2023,
+      "month": 4,
+      "day": 10
+    },
+    "weekday": "Monday",
+    "name": "Family Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "April 17th",
+    "date": "2023-04-17",
+    "dateFull": {
+      "year": 2023,
+      "month": 4,
+      "day": 17
+    },
+    "weekday": "Monday",
+    "name": "Night of Decree",
+    "notes": ""
+  },
+  {
+    "dates": "April 22nd",
+    "date": "2023-04-22",
+    "dateFull": {
+      "year": 2023,
+      "month": 4,
+      "day": 22
+    },
+    "weekday": "Saturday",
+    "name": "Festival of Breaking the Fast",
+    "notes": ""
+  },
+  {
+    "dates": "April 27th",
+    "date": "2023-04-27",
+    "dateFull": {
+      "year": 2023,
+      "month": 4,
+      "day": 27
+    },
+    "weekday": "Thursday",
+    "name": "Freedom Day",
+    "notes": ""
+  },
+  {
+    "dates": "May 1st",
+    "date": "2023-05-01",
+    "dateFull": {
+      "year": 2023,
+      "month": 5,
+      "day": 1
+    },
+    "weekday": "Monday",
+    "name": "Workers' Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "May 14th",
+    "date": "2023-05-14",
+    "dateFull": {
+      "year": 2023,
+      "month": 5,
+      "day": 14
+    },
+    "weekday": "Sunday",
+    "name": "Mother's Day",
+    "notes": ""
+  },
+  {
+    "dates": "May 18th",
+    "date": "2023-05-18",
+    "dateFull": {
+      "year": 2023,
+      "month": 5,
+      "day": 18
+    },
+    "weekday": "Thursday",
+    "name": "Feast of the Ascension of Jesus Christ",
+    "notes": ""
+  },
+  {
+    "dates": "May 28th",
+    "date": "2023-05-28",
+    "dateFull": {
+      "year": 2023,
+      "month": 5,
+      "day": 28
+    },
+    "weekday": "Sunday",
+    "name": "Pentecost",
+    "notes": ""
+  },
+  {
+    "dates": "May 29th",
+    "date": "2023-05-29",
+    "dateFull": {
+      "year": 2023,
+      "month": 5,
+      "day": 29
+    },
+    "weekday": "Monday",
+    "name": "Pentecost Monday",
+    "notes": ""
+  },
+  {
+    "dates": "June 16th",
+    "date": "2023-06-16",
+    "dateFull": {
+      "year": 2023,
+      "month": 6,
+      "day": 16
+    },
+    "weekday": "Friday",
+    "name": "Youth Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "June 18th",
+    "date": "2023-06-18",
+    "dateFull": {
+      "year": 2023,
+      "month": 6,
+      "day": 18
+    },
+    "weekday": "Sunday",
+    "name": "Father's Day",
+    "notes": ""
+  },
+  {
+    "dates": "June 21st",
+    "date": "2023-06-21",
+    "dateFull": {
+      "year": 2023,
+      "month": 6,
+      "day": 21
+    },
+    "weekday": "Wednesday",
+    "name": "June Solstice",
+    "notes": ""
+  },
+  {
+    "dates": "July 19th",
+    "date": "2023-07-19",
+    "dateFull": {
+      "year": 2023,
+      "month": 7,
+      "day": 19
+    },
+    "weekday": "Wednesday",
+    "name": "Islamic New Year's Day",
+    "notes": ""
+  },
+  {
+    "dates": "July 29th",
+    "date": "2023-07-29",
+    "dateFull": {
+      "year": 2023,
+      "month": 7,
+      "day": 29
+    },
+    "weekday": "Saturday",
+    "name": "Feast of the Sacrifice",
+    "notes": ""
+  },
+  {
+    "dates": "August 9th",
+    "date": "2023-08-09",
+    "dateFull": {
+      "year": 2023,
+      "month": 8,
+      "day": 9
+    },
+    "weekday": "Wednesday",
+    "name": "National Women's Day",
+    "notes": ""
+  },
+  {
+    "dates": "August 30th",
+    "date": "2023-08-30",
+    "dateFull": {
+      "year": 2023,
+      "month": 8,
+      "day": 30
+    },
+    "weekday": "Wednesday",
+    "name": "Raksha Bandhan",
+    "notes": ""
+  },
+  {
+    "dates": "September 7th",
+    "date": "2023-09-07",
+    "dateFull": {
+      "year": 2023,
+      "month": 9,
+      "day": 7
+    },
+    "weekday": "Thursday",
+    "name": "Janmashtami",
+    "notes": ""
+  },
+  {
+    "dates": "September 19th",
+    "date": "2023-09-19",
+    "dateFull": {
+      "year": 2023,
+      "month": 9,
+      "day": 19
+    },
+    "weekday": "Tuesday",
+    "name": "Ganesh Chaturthi",
+    "notes": ""
+  },
+  {
+    "dates": "September 23rd",
+    "date": "2023-09-23",
+    "dateFull": {
+      "year": 2023,
+      "month": 9,
+      "day": 23
+    },
+    "weekday": "Saturday",
+    "name": "September Equinox",
+    "notes": ""
+  },
+  {
+    "dates": "September 24th",
+    "date": "2023-09-24",
+    "dateFull": {
+      "year": 2023,
+      "month": 9,
+      "day": 24
+    },
+    "weekday": "Sunday",
+    "name": "Heritage Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "September 25th",
+    "date": "2023-09-25",
+    "dateFull": {
+      "year": 2023,
+      "month": 9,
+      "day": 25
+    },
+    "weekday": "Monday",
+    "name": "Heritage Day (Observed)",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "September 27th",
+    "date": "2023-09-27",
+    "dateFull": {
+      "year": 2023,
+      "month": 9,
+      "day": 27
+    },
+    "weekday": "Wednesday",
+    "name": "Birth of the Prophet",
+    "notes": ""
+  },
+  {
+    "dates": "October 15th",
+    "date": "2023-10-15",
+    "dateFull": {
+      "year": 2023,
+      "month": 10,
+      "day": 15
+    },
+    "weekday": "Sunday",
+    "name": "Navaratri",
+    "notes": ""
+  },
+  {
+    "dates": "October 23rd",
+    "date": "2023-10-23",
+    "dateFull": {
+      "year": 2023,
+      "month": 10,
+      "day": 23
+    },
+    "weekday": "Monday",
+    "name": "Dussehra",
+    "notes": ""
+  },
+  {
+    "dates": "November 1st",
+    "date": "2023-11-01",
+    "dateFull": {
+      "year": 2023,
+      "month": 11,
+      "day": 1
+    },
+    "weekday": "Wednesday",
+    "name": "All Saints' Day",
+    "notes": ""
+  },
+  {
+    "dates": "December 16th",
+    "date": "2023-12-16",
+    "dateFull": {
+      "year": 2023,
+      "month": 12,
+      "day": 16
+    },
+    "weekday": "Saturday",
+    "name": "Day of Reconciliation",
+    "notes": ""
+  },
+  {
+    "dates": "December 22nd",
+    "date": "2023-12-22",
+    "dateFull": {
+      "year": 2023,
+      "month": 12,
+      "day": 22
+    },
+    "weekday": "Friday",
+    "name": "December Solstice",
+    "notes": ""
+  },
+  {
+    "dates": "December 24th",
+    "date": "2023-12-24",
+    "dateFull": {
+      "year": 2023,
+      "month": 12,
+      "day": 24
+    },
+    "weekday": "Sunday",
+    "name": "Christmas Eve",
+    "notes": ""
+  },
+  {
+    "dates": "December 25th",
+    "date": "2023-12-25",
+    "dateFull": {
+      "year": 2023,
+      "month": 12,
+      "day": 25
+    },
+    "weekday": "Monday",
+    "name": "Christmas Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "December 26th",
+    "date": "2023-12-26",
+    "dateFull": {
+      "year": 2023,
+      "month": 12,
+      "day": 26
+    },
+    "weekday": "Tuesday",
+    "name": "Day of Goodwill",
+    "notes": ""
+  },
+  {
+    "dates": "December 31st",
+    "date": "2023-12-31",
+    "dateFull": {
+      "year": 2023,
+      "month": 12,
+      "day": 31
+    },
+    "weekday": "Sunday",
+    "name": "New Year's Eve",
+    "notes": ""
+  },
+  {
+    "dates": "January 1st",
+    "date": "2024-01-01",
+    "dateFull": {
+      "year": 2024,
+      "month": 1,
+      "day": 1
+    },
+    "weekday": "Monday",
+    "name": "New Year's Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "February 7th",
+    "date": "2024-02-07",
+    "dateFull": {
+      "year": 2024,
+      "month": 2,
+      "day": 7
+    },
+    "weekday": "Wednesday",
+    "name": "Muhammad's Ascension to Heaven",
+    "notes": ""
+  },
+  {
+    "dates": "March 8th",
+    "date": "2024-03-08",
+    "dateFull": {
+      "year": 2024,
+      "month": 3,
+      "day": 8
+    },
+    "weekday": "Friday",
+    "name": "Maha Shivaratri",
+    "notes": ""
+  },
+  {
+    "dates": "March 20th",
+    "date": "2024-03-20",
+    "dateFull": {
+      "year": 2024,
+      "month": 3,
+      "day": 20
+    },
+    "weekday": "Wednesday",
+    "name": "March Equinox",
+    "notes": ""
+  },
+  {
+    "dates": "March 21st",
+    "date": "2024-03-21",
+    "dateFull": {
+      "year": 2024,
+      "month": 3,
+      "day": 21
+    },
+    "weekday": "Thursday",
+    "name": "Human Rights Day",
+    "notes": ""
+  },
+  {
+    "dates": "March 25th",
+    "date": "2024-03-25",
+    "dateFull": {
+      "year": 2024,
+      "month": 3,
+      "day": 25
+    },
+    "weekday": "Monday",
+    "name": "Festival of Colors",
+    "notes": ""
+  },
+  {
+    "dates": "March 29th",
+    "date": "2024-03-29",
+    "dateFull": {
+      "year": 2024,
+      "month": 3,
+      "day": 29
+    },
+    "weekday": "Friday",
+    "name": "Good Friday",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "March 30th",
+    "date": "2024-03-30",
+    "dateFull": {
+      "year": 2024,
+      "month": 3,
+      "day": 30
+    },
+    "weekday": "Saturday",
+    "name": "Holy Saturday",
+    "notes": ""
+  },
+  {
+    "dates": "March 31st",
+    "date": "2024-03-31",
+    "dateFull": {
+      "year": 2024,
+      "month": 3,
+      "day": 31
+    },
+    "weekday": "Sunday",
+    "name": "Easter",
+    "notes": ""
+  },
+  {
+    "dates": "April 1st",
+    "date": "2024-04-01",
+    "dateFull": {
+      "year": 2024,
+      "month": 4,
+      "day": 1
+    },
+    "weekday": "Monday",
+    "name": "Family Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "April 5th",
+    "date": "2024-04-05",
+    "dateFull": {
+      "year": 2024,
+      "month": 4,
+      "day": 5
+    },
+    "weekday": "Friday",
+    "name": "Night of Decree",
+    "notes": ""
+  },
+  {
+    "dates": "April 10th",
+    "date": "2024-04-10",
+    "dateFull": {
+      "year": 2024,
+      "month": 4,
+      "day": 10
+    },
+    "weekday": "Wednesday",
+    "name": "Festival of Breaking the Fast",
+    "notes": ""
+  },
+  {
+    "dates": "April 27th",
+    "date": "2024-04-27",
+    "dateFull": {
+      "year": 2024,
+      "month": 4,
+      "day": 27
+    },
+    "weekday": "Saturday",
+    "name": "Freedom Day",
+    "notes": ""
+  },
+  {
+    "dates": "May 1st",
+    "date": "2024-05-01",
+    "dateFull": {
+      "year": 2024,
+      "month": 5,
+      "day": 1
+    },
+    "weekday": "Wednesday",
+    "name": "Workers' Day",
+    "notes": ""
+  },
+  {
+    "dates": "May 9th",
+    "date": "2024-05-09",
+    "dateFull": {
+      "year": 2024,
+      "month": 5,
+      "day": 9
+    },
+    "weekday": "Thursday",
+    "name": "Feast of the Ascension of Jesus Christ",
+    "notes": ""
+  },
+  {
+    "dates": "May 12th",
+    "date": "2024-05-12",
+    "dateFull": {
+      "year": 2024,
+      "month": 5,
+      "day": 12
+    },
+    "weekday": "Sunday",
+    "name": "Mother's Day",
+    "notes": ""
+  },
+  {
+    "dates": "May 19th",
+    "date": "2024-05-19",
+    "dateFull": {
+      "year": 2024,
+      "month": 5,
+      "day": 19
+    },
+    "weekday": "Sunday",
+    "name": "Pentecost",
+    "notes": ""
+  },
+  {
+    "dates": "May 20th",
+    "date": "2024-05-20",
+    "dateFull": {
+      "year": 2024,
+      "month": 5,
+      "day": 20
+    },
+    "weekday": "Monday",
+    "name": "Pentecost Monday",
+    "notes": ""
+  },
+  {
+    "dates": "June 16th",
+    "date": "2024-06-16",
+    "dateFull": {
+      "year": 2024,
+      "month": 6,
+      "day": 16
+    },
+    "weekday": "Sunday",
+    "name": "Father's Day",
+    "notes": ""
+  },
+  {
+    "dates": "June 16th",
+    "date": "2024-06-16",
+    "dateFull": {
+      "year": 2024,
+      "month": 6,
+      "day": 16
+    },
+    "weekday": "Sunday",
+    "name": "Youth Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "June 17th",
+    "date": "2024-06-17",
+    "dateFull": {
+      "year": 2024,
+      "month": 6,
+      "day": 17
+    },
+    "weekday": "Monday",
+    "name": "Youth Day (Observed)",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "June 20th",
+    "date": "2024-06-20",
+    "dateFull": {
+      "year": 2024,
+      "month": 6,
+      "day": 20
+    },
+    "weekday": "Thursday",
+    "name": "June Solstice",
+    "notes": ""
+  },
+  {
+    "dates": "July 8th",
+    "date": "2024-07-08",
+    "dateFull": {
+      "year": 2024,
+      "month": 7,
+      "day": 8
+    },
+    "weekday": "Monday",
+    "name": "Islamic New Year's Day",
+    "notes": ""
+  },
+  {
+    "dates": "July 17th",
+    "date": "2024-07-17",
+    "dateFull": {
+      "year": 2024,
+      "month": 7,
+      "day": 17
+    },
+    "weekday": "Wednesday",
+    "name": "Feast of the Sacrifice",
+    "notes": ""
+  },
+  {
+    "dates": "August 9th",
+    "date": "2024-08-09",
+    "dateFull": {
+      "year": 2024,
+      "month": 8,
+      "day": 9
+    },
+    "weekday": "Friday",
+    "name": "National Women's Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "August 19th",
+    "date": "2024-08-19",
+    "dateFull": {
+      "year": 2024,
+      "month": 8,
+      "day": 19
+    },
+    "weekday": "Monday",
+    "name": "Raksha Bandhan",
+    "notes": ""
+  },
+  {
+    "dates": "August 27th",
+    "date": "2024-08-27",
+    "dateFull": {
+      "year": 2024,
+      "month": 8,
+      "day": 27
+    },
+    "weekday": "Tuesday",
+    "name": "Janmashtami",
+    "notes": ""
+  },
+  {
+    "dates": "September 7th",
+    "date": "2024-09-07",
+    "dateFull": {
+      "year": 2024,
+      "month": 9,
+      "day": 7
+    },
+    "weekday": "Saturday",
+    "name": "Ganesh Chaturthi",
+    "notes": ""
+  },
+  {
+    "dates": "September 16th",
+    "date": "2024-09-16",
+    "dateFull": {
+      "year": 2024,
+      "month": 9,
+      "day": 16
+    },
+    "weekday": "Monday",
+    "name": "Birth of the Prophet",
+    "notes": ""
+  },
+  {
+    "dates": "September 22nd",
+    "date": "2024-09-22",
+    "dateFull": {
+      "year": 2024,
+      "month": 9,
+      "day": 22
+    },
+    "weekday": "Sunday",
+    "name": "September Equinox",
+    "notes": ""
+  },
+  {
+    "dates": "September 24th",
+    "date": "2024-09-24",
+    "dateFull": {
+      "year": 2024,
+      "month": 9,
+      "day": 24
+    },
+    "weekday": "Tuesday",
+    "name": "Heritage Day",
+    "notes": ""
+  },
+  {
+    "dates": "October 3rd",
+    "date": "2024-10-03",
+    "dateFull": {
+      "year": 2024,
+      "month": 10,
+      "day": 3
+    },
+    "weekday": "Thursday",
+    "name": "Navaratri",
+    "notes": ""
+  },
+  {
+    "dates": "October 12th",
+    "date": "2024-10-12",
+    "dateFull": {
+      "year": 2024,
+      "month": 10,
+      "day": 12
+    },
+    "weekday": "Saturday",
+    "name": "Dussehra",
+    "notes": ""
+  },
+  {
+    "dates": "November 1st",
+    "date": "2024-11-01",
+    "dateFull": {
+      "year": 2024,
+      "month": 11,
+      "day": 1
+    },
+    "weekday": "Friday",
+    "name": "All Saints' Day",
+    "notes": ""
+  },
+  {
+    "dates": "December 16th",
+    "date": "2024-12-16",
+    "dateFull": {
+      "year": 2024,
+      "month": 12,
+      "day": 16
+    },
+    "weekday": "Monday",
+    "name": "Day of Reconciliation",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "December 21st",
+    "date": "2024-12-21",
+    "dateFull": {
+      "year": 2024,
+      "month": 12,
+      "day": 21
+    },
+    "weekday": "Saturday",
+    "name": "December Solstice",
+    "notes": ""
+  },
+  {
+    "dates": "December 24th",
+    "date": "2024-12-24",
+    "dateFull": {
+      "year": 2024,
+      "month": 12,
+      "day": 24
+    },
+    "weekday": "Tuesday",
+    "name": "Christmas Eve",
+    "notes": ""
+  },
+  {
+    "dates": "December 25th",
+    "date": "2024-12-25",
+    "dateFull": {
+      "year": 2024,
+      "month": 12,
+      "day": 25
+    },
+    "weekday": "Wednesday",
+    "name": "Christmas Day",
+    "notes": ""
+  },
+  {
+    "dates": "December 26th",
+    "date": "2024-12-26",
+    "dateFull": {
+      "year": 2024,
+      "month": 12,
+      "day": 26
+    },
+    "weekday": "Thursday",
+    "name": "Day of Goodwill",
+    "notes": ""
+  },
+  {
+    "dates": "December 31st",
+    "date": "2024-12-31",
+    "dateFull": {
+      "year": 2024,
+      "month": 12,
+      "day": 31
+    },
+    "weekday": "Tuesday",
+    "name": "New Year's Eve",
+    "notes": ""
+  },
+  {
+    "dates": "January 1st",
+    "date": "2025-01-01",
+    "dateFull": {
+      "year": 2025,
+      "month": 1,
+      "day": 1
+    },
+    "weekday": "Wednesday",
+    "name": "New Year's Day",
+    "notes": ""
+  },
+  {
+    "dates": "January 27th",
+    "date": "2025-01-27",
+    "dateFull": {
+      "year": 2025,
+      "month": 1,
+      "day": 27
+    },
+    "weekday": "Monday",
+    "name": "Muhammad's Ascension to Heaven",
+    "notes": ""
+  },
+  {
+    "dates": "February 26th",
+    "date": "2025-02-26",
+    "dateFull": {
+      "year": 2025,
+      "month": 2,
+      "day": 26
+    },
+    "weekday": "Wednesday",
+    "name": "Maha Shivaratri ",
+    "notes": ""
+  },
+  {
+    "dates": "March 14th",
+    "date": "2025-03-14",
+    "dateFull": {
+      "year": 2025,
+      "month": 3,
+      "day": 14
+    },
+    "weekday": "Friday",
+    "name": "Festival of Colors",
+    "notes": ""
+  },
+  {
+    "dates": "March 20th",
+    "date": "2025-03-20",
+    "dateFull": {
+      "year": 2025,
+      "month": 3,
+      "day": 20
+    },
+    "weekday": "Thursday",
+    "name": "March Equinox",
+    "notes": ""
+  },
+  {
+    "dates": "March 21st",
+    "date": "2025-03-21",
+    "dateFull": {
+      "year": 2025,
+      "month": 3,
+      "day": 21
+    },
+    "weekday": "Friday",
+    "name": "Human Rights Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "March 26th",
+    "date": "2025-03-26",
+    "dateFull": {
+      "year": 2025,
+      "month": 3,
+      "day": 26
+    },
+    "weekday": "Wednesday",
+    "name": "Night of Decree",
+    "notes": ""
+  },
+  {
+    "dates": "March 31st",
+    "date": "2025-03-31",
+    "dateFull": {
+      "year": 2025,
+      "month": 3,
+      "day": 31
+    },
+    "weekday": "Monday",
+    "name": "Festival of Breaking the Fast",
+    "notes": ""
+  },
+  {
+    "dates": "April 18th",
+    "date": "2025-04-18",
+    "dateFull": {
+      "year": 2025,
+      "month": 4,
+      "day": 18
+    },
+    "weekday": "Friday",
+    "name": "Good Friday",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "April 19th",
+    "date": "2025-04-19",
+    "dateFull": {
+      "year": 2025,
+      "month": 4,
+      "day": 19
+    },
+    "weekday": "Saturday",
+    "name": "Holy Saturday",
+    "notes": ""
+  },
+  {
+    "dates": "April 20th",
+    "date": "2025-04-20",
+    "dateFull": {
+      "year": 2025,
+      "month": 4,
+      "day": 20
+    },
+    "weekday": "Sunday",
+    "name": "Easter",
+    "notes": ""
+  },
+  {
+    "dates": "April 21st",
+    "date": "2025-04-21",
+    "dateFull": {
+      "year": 2025,
+      "month": 4,
+      "day": 21
+    },
+    "weekday": "Monday",
+    "name": "Family Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "April 27th",
+    "date": "2025-04-27",
+    "dateFull": {
+      "year": 2025,
+      "month": 4,
+      "day": 27
+    },
+    "weekday": "Sunday",
+    "name": "Freedom Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "April 28th",
+    "date": "2025-04-28",
+    "dateFull": {
+      "year": 2025,
+      "month": 4,
+      "day": 28
+    },
+    "weekday": "Monday",
+    "name": "Freedom Day (Observed)",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "May 1st",
+    "date": "2025-05-01",
+    "dateFull": {
+      "year": 2025,
+      "month": 5,
+      "day": 1
+    },
+    "weekday": "Thursday",
+    "name": "Workers' Day",
+    "notes": ""
+  },
+  {
+    "dates": "May 11th",
+    "date": "2025-05-11",
+    "dateFull": {
+      "year": 2025,
+      "month": 5,
+      "day": 11
+    },
+    "weekday": "Sunday",
+    "name": "Mother's Day",
+    "notes": ""
+  },
+  {
+    "dates": "May 29th",
+    "date": "2025-05-29",
+    "dateFull": {
+      "year": 2025,
+      "month": 5,
+      "day": 29
+    },
+    "weekday": "Thursday",
+    "name": "Feast of the Ascension of Jesus Christ",
+    "notes": ""
+  },
+  {
+    "dates": "June 7th",
+    "date": "2025-06-07",
+    "dateFull": {
+      "year": 2025,
+      "month": 6,
+      "day": 7
+    },
+    "weekday": "Saturday",
+    "name": "Feast of the Sacrifice",
+    "notes": ""
+  },
+  {
+    "dates": "June 8th",
+    "date": "2025-06-08",
+    "dateFull": {
+      "year": 2025,
+      "month": 6,
+      "day": 8
+    },
+    "weekday": "Sunday",
+    "name": "Pentecost",
+    "notes": ""
+  },
+  {
+    "dates": "June 9th",
+    "date": "2025-06-09",
+    "dateFull": {
+      "year": 2025,
+      "month": 6,
+      "day": 9
+    },
+    "weekday": "Monday",
+    "name": "Pentecost Monday",
+    "notes": ""
+  },
+  {
+    "dates": "June 15th",
+    "date": "2025-06-15",
+    "dateFull": {
+      "year": 2025,
+      "month": 6,
+      "day": 15
+    },
+    "weekday": "Sunday",
+    "name": "Father's Day",
+    "notes": ""
+  },
+  {
+    "dates": "June 16th",
+    "date": "2025-06-16",
+    "dateFull": {
+      "year": 2025,
+      "month": 6,
+      "day": 16
+    },
+    "weekday": "Monday",
+    "name": "Youth Day",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "June 21st",
+    "date": "2025-06-21",
+    "dateFull": {
+      "year": 2025,
+      "month": 6,
+      "day": 21
+    },
+    "weekday": "Saturday",
+    "name": "June Solstice",
+    "notes": ""
+  },
+  {
+    "dates": "June 27th",
+    "date": "2025-06-27",
+    "dateFull": {
+      "year": 2025,
+      "month": 6,
+      "day": 27
+    },
+    "weekday": "Friday",
+    "name": "Islamic New Year's Day",
+    "notes": ""
+  },
+  {
+    "dates": "August 9th",
+    "date": "2025-08-09",
+    "dateFull": {
+      "year": 2025,
+      "month": 8,
+      "day": 9
+    },
+    "weekday": "Saturday",
+    "name": "National Women's Day",
+    "notes": ""
+  },
+  {
+    "dates": "August 9th",
+    "date": "2025-08-09",
+    "dateFull": {
+      "year": 2025,
+      "month": 8,
+      "day": 9
+    },
+    "weekday": "Saturday",
+    "name": "Raksha Bandhan",
+    "notes": ""
+  },
+  {
+    "dates": "August 16th",
+    "date": "2025-08-16",
+    "dateFull": {
+      "year": 2025,
+      "month": 8,
+      "day": 16
+    },
+    "weekday": "Saturday",
+    "name": "Janmashtami",
+    "notes": ""
+  },
+  {
+    "dates": "August 27th",
+    "date": "2025-08-27",
+    "dateFull": {
+      "year": 2025,
+      "month": 8,
+      "day": 27
+    },
+    "weekday": "Wednesday",
+    "name": "Ganesh Chaturthi",
+    "notes": ""
+  },
+  {
+    "dates": "September 5th",
+    "date": "2025-09-05",
+    "dateFull": {
+      "year": 2025,
+      "month": 9,
+      "day": 5
+    },
+    "weekday": "Friday",
+    "name": "Birth of the Prophet",
+    "notes": ""
+  },
+  {
+    "dates": "September 22nd",
+    "date": "2025-09-22",
+    "dateFull": {
+      "year": 2025,
+      "month": 9,
+      "day": 22
+    },
+    "weekday": "Monday",
+    "name": "September Equinox",
+    "notes": ""
+  },
+  {
+    "dates": "September 22nd",
+    "date": "2025-09-22",
+    "dateFull": {
+      "year": 2025,
+      "month": 9,
+      "day": 22
+    },
+    "weekday": "Monday",
+    "name": "Navaratri",
+    "notes": ""
+  },
+  {
+    "dates": "September 24th",
+    "date": "2025-09-24",
+    "dateFull": {
+      "year": 2025,
+      "month": 9,
+      "day": 24
+    },
+    "weekday": "Wednesday",
+    "name": "Heritage Day",
+    "notes": ""
+  },
+  {
+    "dates": "October 2nd",
+    "date": "2025-10-02",
+    "dateFull": {
+      "year": 2025,
+      "month": 10,
+      "day": 2
+    },
+    "weekday": "Thursday",
+    "name": "Dussehra",
+    "notes": ""
+  },
+  {
+    "dates": "November 1st",
+    "date": "2025-11-01",
+    "dateFull": {
+      "year": 2025,
+      "month": 11,
+      "day": 1
+    },
+    "weekday": "Saturday",
+    "name": "All Saints' Day",
+    "notes": ""
+  },
+  {
+    "dates": "December 16th",
+    "date": "2025-12-16",
+    "dateFull": {
+      "year": 2025,
+      "month": 12,
+      "day": 16
+    },
+    "weekday": "Tuesday",
+    "name": "Day of Reconciliation",
+    "notes": ""
+  },
+  {
+    "dates": "December 21st",
+    "date": "2025-12-21",
+    "dateFull": {
+      "year": 2025,
+      "month": 12,
+      "day": 21
+    },
+    "weekday": "Sunday",
+    "name": "December Solstice",
+    "notes": ""
+  },
+  {
+    "dates": "December 24th",
+    "date": "2025-12-24",
+    "dateFull": {
+      "year": 2025,
+      "month": 12,
+      "day": 24
+    },
+    "weekday": "Wednesday",
+    "name": "Christmas Eve",
+    "notes": ""
+  },
+  {
+    "dates": "December 25th",
+    "date": "2025-12-25",
+    "dateFull": {
+      "year": 2025,
+      "month": 12,
+      "day": 25
+    },
+    "weekday": "Thursday",
+    "name": "Christmas Day",
+    "notes": ""
+  },
+  {
+    "dates": "December 26th",
+    "date": "2025-12-26",
+    "dateFull": {
+      "year": 2025,
+      "month": 12,
+      "day": 26
+    },
+    "weekday": "Friday",
+    "name": "Day of Goodwill",
+    "notes": " Long weekend."
+  },
+  {
+    "dates": "December 31st",
+    "date": "2025-12-31",
+    "dateFull": {
+      "year": 2025,
+      "month": 12,
+      "day": 31
+    },
+    "weekday": "Wednesday",
+    "name": "New Year's Eve",
+    "notes": ""
+  }
+]
