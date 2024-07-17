@@ -83,7 +83,7 @@
 				$outbound_caller_id_number = $row["outbound_caller_id_number"];
 				$context = $row["context"];
 				$profile = $row["profile"];
-				$enabled = $row["enabled"];
+				$enabled = 'false';//$row["enabled"]; //Force disabled by default so it does not try re-register until the gateway is edited
 				$description = $row["description"]." (".$text['label-copy'].")";
 			}
 			unset($sql, $parameters, $row);
@@ -135,9 +135,9 @@
 			unset($array);
 
 		//add new gateway to session variable
-			if ($enabled == 'true') {
+			/*if ($enabled == 'true') {
 				$_SESSION['gateways'][$gateway_uuid] = $gateway;
-			}
+			}*/
 
 		//synchronize the xml config
 			save_gateway_xml();
@@ -148,8 +148,14 @@
 			$cache = new cache;
 			$cache->delete("configuration:sofia.conf:".$hostname);
 
+		//close the connection
+			fclose($fp);
+
 		//set message
 			message::add($text['message-copy']);
+	  
+	  //navigate to the new copied gateway
+			header("Location: gateway_edit.php?id=" . $gateway_uuid);
 	}
 
 //redirect the user
