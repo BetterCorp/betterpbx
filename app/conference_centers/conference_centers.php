@@ -87,6 +87,7 @@
 //get variables used to control the order
 	$order_by = $_GET["order_by"] ?? '';
 	$order = $_GET["order"] ?? '';
+	$sort = $order_by == 'conference_center_extension' ? 'natural' : null;
 
 //add the search term
 	$search = strtolower($_GET["search"] ?? '');
@@ -125,7 +126,7 @@
 
 //get the list
 	$sql = str_replace('count(*)', '*', $sql);
-	$sql .= order_by($order_by, $order);
+	$sql .= order_by($order_by, $order, null, null, $sort);
 	$sql .= limit_offset($rows_per_page, $offset);
 	$database = new database;
 	$conference_centers = $database->select($sql, $parameters ?? null, 'all');
@@ -134,6 +135,12 @@
 //create token
 	$object = new token;
 	$token = $object->create($_SERVER['PHP_SELF']);
+
+//update the array to show only the greeting file name
+	$x = 0;
+	foreach ($conference_centers as &$row) {
+		$row['conference_center_greeting'] = basename($row['conference_center_greeting'] ?? '');
+	}
 
 //include the header
 	$document['title'] = $text['title-conference_centers'];

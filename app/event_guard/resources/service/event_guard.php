@@ -106,20 +106,9 @@
 	//$ip_address = '10.7.0.253';
 	//$result = access_allowed($ip_address);
 
-//get the settings
-	//$setting_name = $_SESSION['category']['subcategory']['text'];
-
-//set the event socket variables
-	$event_socket_ip_address = $_SESSION['event_socket_ip_address'];
-	$event_socket_port = $_SESSION['event_socket_port'];
-	$event_socket_password = $_SESSION['event_socket_password'];
-
-//end the session
-	session_destroy();
-
 //connect to event socket
 	$socket = new event_socket;
-	if (!$socket->connect($event_socket_ip_address, $event_socket_port, $event_socket_password)) {
+	if (!$socket->connect()) {
 		echo "Unable to connect to event socket\n";
 	}
 
@@ -155,7 +144,7 @@
 		//reconnect to event socket
 		if (!$socket->connected()) {
 			//echo "Not connected to even socket\n";
-			if ($socket->connect($event_socket_ip_address, $event_socket_port, $event_socket_password)) {
+			if ($socket->connect()) {
 				$cmd = "event json ALL";
 				$result = $socket->request($cmd);
 				if ($debug) { print_r($result); }

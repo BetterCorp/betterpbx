@@ -54,7 +54,6 @@
 
 //get http post variables and set them to php variables
 	if (!empty($_POST)) {
-//view_array($_POST);
 		$bridge_uuid = $_POST["bridge_uuid"];
 		$bridge_name = $_POST["bridge_name"];
 		$bridge_action = $_POST["bridge_action"];
@@ -219,13 +218,17 @@
 
 //initialize the bridge_variables array from session bridge variables
 	$session_variables = []; $i = 0;
-	foreach($_SESSION['bridge']['variable'] as $variable) {
-		$variable = explode("=", $variable);
-		$session_variables[$i]['name'] = $variable[0];
-		$session_variables[$i]['value'] = $variable[1] ?? '';
-		$session_variables[$i]['label'] = ucwords(str_replace('_', ' ', $variable[0]));
-		$session_variables[$i]['label'] = str_replace('Effective Caller Id', 'Caller ID', $session_variables[$i]['label']);
-		$i++;
+	if (!empty($_SESSION['bridge']['variable'])) {
+		foreach($_SESSION['bridge']['variable'] as $variable) {
+			if (!empty($variable)) {
+				$variable = explode("=", $variable);
+				$session_variables[$i]['name'] = $variable[0];
+				$session_variables[$i]['value'] = $variable[1] ?? '';
+				$session_variables[$i]['label'] = ucwords(str_replace('_', ' ', $variable[0]));
+				$session_variables[$i]['label'] = str_replace('Effective Caller Id', 'Caller ID', $session_variables[$i]['label']);
+				$i++;
+			}
+		}
 	}
 
 //get the bridge variables from the database bridge_destination value
@@ -234,21 +237,27 @@
 		//get the variables from inside the { and } brackets
 		preg_match('/^\{([^}]+)\}/', $bridge_destination, $matches);
 
-		//create a variables array from the comma delimitted string
-		$variables = explode(",", $matches[1]);
+		if (!empty($matches) && is_array($matches) && @sizeof($matches) != 0) {
 
-		//strip the variables from the $bridge_destination variable
-		$bridge_destination = str_replace("{$matches[0]}", '', $bridge_destination);
+			//create a variables array from the comma delimitted string
+			$variables = explode(",", $matches[1]);
+
+			//strip the variables from the $bridge_destination variable
+			$bridge_destination = str_replace("{$matches[0]}", '', $bridge_destination);
+
+		}
 
 		//build a bridge variables data set
 		$x = 0;
-		foreach($variables as $variable) {
-			$pairs = explode("=", $variable);
-			$database_variables[$x]['name'] = $pairs[0];
-			$database_variables[$x]['value'] = $pairs[1];
-			$database_variables[$x]['label'] = ucwords(str_replace('_', ' ', $pairs[0]));
-			$database_variables[$x]['label'] = str_replace('Effective Caller Id', 'Caller ID', $database_variables[$x]['label']);
-			$x++;
+		if (!empty($variables) && is_array($variables)) {
+			foreach($variables as $variable) {
+				$pairs = explode("=", $variable);
+				$database_variables[$x]['name'] = $pairs[0];
+				$database_variables[$x]['value'] = $pairs[1];
+				$database_variables[$x]['label'] = ucwords(str_replace('_', ' ', $pairs[0]));
+				$database_variables[$x]['label'] = str_replace('Effective Caller Id', 'Caller ID', $database_variables[$x]['label']);
+				$x++;
+			}
 		}
 	}
 
@@ -310,9 +319,9 @@
 
 //get the gateways
 	$actions = explode(',', $bridge_destination);
-	foreach($actions as $action) {
+	foreach ($actions as $action) {
 		$action_array = explode('/',$action);
-		if ($action_array[1] == 'gateway') {
+		if (!empty($action_array) && is_array($action_array) && !empty($action_array[1]) && $action_array[1] == 'gateway') {
 			$bridge_gateways[] = $action_array[2];
 			$destination_number = $action_array[3];
 		}
@@ -385,9 +394,11 @@
 	echo "		";
 	echo "	}\n";
 	echo "\n";
-	echo "	window.onload = function() {\n";
-	echo "		action_control('".$bridge_action."');\n";
-	echo "	};\n";
+	if (!empty($bridge_action)) {
+		echo "	window.onload = function() {\n";
+		echo "		action_control('".$bridge_action."');\n";
+		echo "	};\n";
+	}
 	echo "</script>\n";
 
 //show the content
@@ -431,7 +442,7 @@
 	echo "		<option value=''></option>\n";
 	$i = 0;
 	foreach($bridge_actions as $row) {
-		echo "		<option value='".$row['action']."' ".($bridge_action == $row['action'] ? "selected='selected'" : null).">".$row['label']."</option>\n";
+		echo "		<option value='".$row['action']."' ".(!empty($bridge_action) && $bridge_action == $row['action'] ? "selected='selected'" : null).">".$row['label']."</option>\n";
 	}
 	echo "	</select>\n";
 	echo "<br />\n";
@@ -465,7 +476,7 @@
 	echo "	<select class='formfld' name='bridge_profile'>\n";
 	echo "		<option value=''></option>\n";
 	foreach ($sip_profiles as $row) {
-		if ($bridge_profile == $row["sip_profile_name"]) {
+		if (!empty($bridge_profile) && $bridge_profile == $row["sip_profile_name"]) {
 			echo "	<option value='".$row['sip_profile_name']."' selected='selected'>".escape($row["sip_profile_name"])."</option>\n";
 		}
 		else {
@@ -485,9 +496,9 @@
 	echo "<td width='70%' class='vtable' style='position: relative;' align='left'>\n";
 	for ($x = 0; $x <= 2; $x++) {
 		if ($x > 0) { echo "<br />\n"; }
-		echo "<select name=\"bridge_gateways[]\" id=\"gateway\" class=\"formfld\" $onchange>\n";
+		echo "<select name='bridge_gateways[]' id='gateway' class='formfld' ".($onchange ?? '').">\n";
 		echo "<option value=''></option>\n";
-		echo "<optgroup label='".$text['label-gateway']."gateway'>\n";
+		echo "<optgroup label='".$text['label-bridge_gateways']."'>\n";
 		$previous_domain_uuid = '';
 		foreach($gateways as $row) {
 			if (permission_exists('outbound_route_any_gateway')) {
@@ -503,7 +514,7 @@
 					echo "</optgroup>";
 					echo "<optgroup label='&nbsp; &nbsp;".$domain_name."'>\n";
 				}
-				if ($row['gateway_uuid'] == $bridge_gateways[$x]) {
+				if (!empty($bridge_gateways) && is_array($bridge_gateways) && $row['gateway_uuid'] == $bridge_gateways[$x]) {
 					echo "<option value=\"".escape($row['gateway_uuid']).":".escape($row['gateway'])."\" selected=\"selected\">".escape($row['gateway'])."</option>\n"; //." db:".$row['gateway_uuid']." bg:".$bridge_gateways[$x]
 				}
 				else {
@@ -511,7 +522,7 @@
 				}
 			}
 			else {
-				if ($row['gateway_uuid'] == $bridge_gateways[$x]) {
+				if (!empty($bridge_gateways) && is_array($bridge_gateways) && $row['gateway_uuid'] == $bridge_gateways[$x]) {
 					echo "<option value=\"".escape($row['gateway_uuid']).":".escape($row['gateway'])."\" $onchange selected=\"selected\">".escape($row['gateway'])."</option>\n";
 				}
 				else {
@@ -538,7 +549,7 @@
 	echo "	".$text['label-destination_number']."\n";
 	echo "</td>\n";
 	echo "<td class='vtable' style='position: relative;' align='left'>\n";
-	echo "	<textarea class='formfld' name='destination_number'>".escape($destination_number)."</textarea>\n";
+	echo "	<textarea class='formfld' name='destination_number'>".escape($destination_number ?? '')."</textarea>\n";
 	echo "<br />\n";
 	echo $text['description-destination_number']."\n";
 	echo "</td>\n";

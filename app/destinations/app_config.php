@@ -34,7 +34,7 @@
 		$apps[$x]['destinations'][$y]['type'] = "sql";
 		$apps[$x]['destinations'][$y]['label'] = "destinations";
 		$apps[$x]['destinations'][$y]['name'] = "destinations";
-		$apps[$x]['destinations'][$y]['sql'] = "select destination_uuid, destination_number, destination_context, destination_description from v_destinations ";
+		$apps[$x]['destinations'][$y]['sql'] = "select destination_uuid, destination_uuid as uuid, destination_number, destination_context, destination_description from v_destinations ";
 		$apps[$x]['destinations'][$y]['where'] = "where (domain_uuid = '\${domain_uuid}' or domain_uuid is null) and (destination_type = 'outbound' or destination_type = 'local') and destination_enabled = 'true' ";
 		$apps[$x]['destinations'][$y]['order_by'] = "destination_number asc";
 		$apps[$x]['destinations'][$y]['field']['destination_uuid'] = "destination_uuid";
@@ -135,6 +135,9 @@
 		$apps[$x]['permissions'][$y]['groups'][] = "admin";
 		$y++;
 		$apps[$x]['permissions'][$y]['name'] = "destination_distinctive_ring";
+		$apps[$x]['permissions'][$y]['groups'][] = "superadmin";
+		$y++;
+		$apps[$x]['permissions'][$y]['name'] = "destination_ringback";
 		$apps[$x]['permissions'][$y]['groups'][] = "superadmin";
 		$y++;
 		$apps[$x]['permissions'][$y]['name'] = "destination_accountcode";
@@ -323,6 +326,10 @@
 		$apps[$x]['db'][$y]['fields'][$z]['name'] = "destination_distinctive_ring";
 		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
 		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "Select whether to set distinctive ring.";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "destination_ringback";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "Select whether to set the ringback.";
 		$z++;
 		$apps[$x]['db'][$y]['fields'][$z]['name'] = "destination_accountcode";
 		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";

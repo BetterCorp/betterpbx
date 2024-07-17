@@ -35,9 +35,9 @@
 			}
 			else {
 				//create the event socket connection
-					$fp = event_socket_create($_SESSION['event_socket_ip_address'], $_SESSION['event_socket_port'], $_SESSION['event_socket_password']);
+					$esl = event_socket::create();
 				//reload the access control list this also runs reloadxml
-					$response = event_socket_request($fp, 'api reloadxml');
+					$response = event_socket::api('reloadxml');
 					$_SESSION["reload_xml"] = '';
 					unset($_SESSION["reload_xml"]);
 					usleep(500);
@@ -141,7 +141,7 @@
 	ob_start();
 
 //for translate tool (if available)
-	if (file_exists($_SERVER["DOCUMENT_ROOT"].PROJECT_PATH."/app/translate")) {
+	if (file_exists($_SERVER["DOCUMENT_ROOT"].PROJECT_PATH."/app/translate/translate_header.php")) {
 		require_once("app/translate/translate_header.php");
 	}
 
