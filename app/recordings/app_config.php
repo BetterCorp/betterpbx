@@ -5,7 +5,7 @@
 		$apps[$x]['uuid'] = "83913217-c7a2-9e90-925d-a866eb40b60e";
 		$apps[$x]['category'] = "Switch";;
 		$apps[$x]['subcategory'] = "";
-		$apps[$x]['version'] = "1.0";
+		$apps[$x]['version'] = "1.1";
 		$apps[$x]['license'] = "Mozilla Public License 1.1";
 		$apps[$x]['url'] = "http://www.fusionpbx.com";
 		$apps[$x]['description']['en-us'] = "Manage recordings primarily used with an IVR.";
@@ -174,6 +174,11 @@
 		$z++;
 		$apps[$x]['db'][$y]['fields'][$z]['name']['text'] = "recording_name";
 		$apps[$x]['db'][$y]['fields'][$z]['name']['deprecated'] = "recordingname";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['search'] = 'true';
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "recording_voice";
 		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
 		$apps[$x]['db'][$y]['fields'][$z]['search'] = 'true';
 		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";

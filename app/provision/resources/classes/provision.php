@@ -39,13 +39,12 @@
 		public function __construct($params = []) {
 
 			//preset the the values
-				$database = null;
 				$settings = null;
 				$domain_uuid = null;
 
 			//use the parameters to set the values if they exist
 				if (isset($params['database'])) {
-					$database = $params['database'];
+					$this->database = $params['database'];
 				}
 				if (isset($params['settings'])) {
 					$settings = $params['settings'];
@@ -55,20 +54,19 @@
 				}
 
 			//check if we can use the settings object to get the database object
-				if (!empty($settings) && empty($database)) {
-					$database = $settings->database();
+				if (!empty($settings) && empty($this->database)) {
+					$this->database = $settings->database();
 				}
 
 			//fill in missing
-				if (empty($database)) {
-					$database = database::new();
+				if (empty($this->database)) {
+					$this->database = database::new();
 				}
 				if (empty($settings)) {
-					$settings = new settings(['database' => $database, 'domain_uuid' => $domain_uuid]);
+					$settings = new settings(['database' => $this->database, 'domain_uuid' => $domain_uuid]);
 				}
 
 			//assign to the object
-				$this->database = $database;
 				$this->settings = $settings;
 				$this->domain_uuid = $domain_uuid;
 
@@ -142,8 +140,7 @@
 				$sql .= "where device_address = :device_address ";
 				$sql .= "and device_address <> '000000000000' ";
 				$parameters['device_address'] = $device_address;
-				$database = new database;
-				$num_rows = $database->select($sql, $parameters, 'column');
+				$num_rows = $this->database->select($sql, $parameters, 'column');
 				if ($num_rows > 0) {
 					return true;
 				}
@@ -236,11 +233,10 @@
 				$parameters['device_user_uuid'] = $device_user_uuid;
 			}
 			$parameters['domain_uuid'] = $domain_uuid;
-			$database = new database;
-			$database_contacts = $database->select($sql, $parameters, 'all');
+			$database_contacts = $this->database->select($sql, $parameters, 'all');
 			if (is_array($database_contacts)) {
 				$x = 0;
-				foreach ($database_contacts as &$row) {
+				foreach ($database_contacts as $row) {
 					$uuid = $row['contact_uuid'];
 					$phone_label = strtolower($row['phone_label'] ?? '');
 					$contact_category = strtolower($row['contact_category'] ?? '');
@@ -274,7 +270,7 @@
 					unset($contact, $numbers, $uuid, $phone_label);
 					$x++;
 				}
-				unset($parameters);
+				unset($sql, $parameters);
 
 			}
 		}
@@ -312,9 +308,8 @@
 					$sql = "select domain_name from v_domains ";
 					$sql .= "where domain_uuid = :domain_uuid ";
 					$parameters['domain_uuid'] = $domain_uuid;
-					$database = new database;
-					$domain_name = $database->select($sql, $parameters, 'column');
-					unset($parameters);
+					$domain_name = $this->database->select($sql, $parameters, 'column');
+					unset($sql, $parameters);
 				}
 
 			//build the provision array
@@ -336,15 +331,9 @@
 							$sql = "select * from v_devices ";
 							$sql .= "where device_address = :device_address ";
 							$sql .= "and device_address <> '000000000000' ";
-							if ($this->settings->get('provision','http_domain_filter', 'false') === "true") {
-								$sql  .= "and domain_uuid=:domain_uuid ";
-								$parameters['domain_uuid'] = $domain_uuid;
-							}
 							$parameters['device_address'] = $device_address;
-							$database = new database;
-							$row = $database->select($sql, $parameters, 'row');
-							unset($parameters);
-
+							$row = $this->database->select($sql, $parameters, 'row');
+							unset($sql, $parameters);
 							if (is_array($row) && sizeof($row) != 0) {
 
 								//checks either device enabled
@@ -370,9 +359,8 @@
 									$parameters['device_provisioned_method'] = (isset($_SERVER["HTTPS"]) ? 'https' : 'http');
 									$parameters['device_provisioned_ip'] = $_SERVER['REMOTE_ADDR'];
 									$parameters['device_provisioned_agent'] = $_SERVER['HTTP_USER_AGENT'];
-									$database = new database;
-									$database->execute($sql, $parameters);
-									unset($parameters);
+									$this->database->execute($sql, $parameters);
+									unset($sql, $parameters);
 
 								//set the variables from values in the database
 									$device_uuid = $row["device_uuid"];
@@ -398,8 +386,7 @@
 								$sql .= "and device_enabled = 'true' ";
 								$sql .= "limit 1 ";
 								$parameters['domain_uuid'] = $domain_uuid;
-								$database = new database;
-								$row = $database->select($sql, $parameters, 'row');
+								$row = $this->database->select($sql, $parameters, 'row');
 								if (!empty($row) && is_array($row) && sizeof($row) != 0) {
 									$device_label = $row["device_label"];
 									$device_template = $row["device_template"];
@@ -411,7 +398,7 @@
 									$device_enabled = $row["device_enabled"];
 									$device_description = $row["device_description"];
 								}
-								unset($row, $parameters);
+								unset($sql, $row, $parameters);
 							}
 					}
 					else {
@@ -566,14 +553,13 @@
 								$p->add("device_edit", "temp");
 
 								//save to the data
-								$database = new database;
-								$database->app_name = 'devices';
-								$database->app_uuid = '4efa1a1a-32e7-bf83-534b-6c8299958a8e';
+								$this->database->app_name = 'devices';
+								$this->database->app_uuid = '4efa1a1a-32e7-bf83-534b-6c8299958a8e';
 								if (!empty($device_uuid)) {
-									$database->uuid($device_uuid);
+									$this->database->uuid($device_uuid);
 								}
-								$database->save($array);
-								$message = $database->message;
+								$this->database->save($array);
+								$message = $this->database->message;
 
 								//remove the temporary permission
 								$p->delete("device_add", "temp");
@@ -587,43 +573,34 @@
 					$sql = "select * from v_devices ";
 					$sql .= "where device_uuid = :device_uuid ";
 					$sql .= "and device_enabled = 'true' ";
-					if ($provision['http_domain_filter'] == "true") {
-						$sql  .= "and domain_uuid = :domain_uuid ";
-						$parameters['domain_uuid'] = $domain_uuid;
-					}
 					$parameters['device_uuid'] = $device_uuid;
-					$database = new database;
-					$row = $database->select($sql, $parameters, 'row');
+					$row = $this->database->select($sql, $parameters, 'row');
 					if (is_array($row) && sizeof($row) != 0) {
 						$device_uuid_alternate = $row["device_uuid_alternate"];
-						unset($row, $parameters);
+						unset($sql, $row, $parameters);
 						if (is_uuid($device_uuid_alternate)) {
 							//override the original device_uuid
-								$device_uuid = $device_uuid_alternate;
+							$device_uuid = $device_uuid_alternate;
+
 							//get the new devices information
-								$sql = "select * from v_devices ";
-								$sql .= "where device_uuid = :device_uuid ";
-								if($provision['http_domain_filter'] == "true") {
-									$sql  .= "and domain_uuid = :domain_uuid ";
-									$parameters['domain_uuid'] = $domain_uuid;
+							$sql = "select * from v_devices ";
+							$sql .= "where device_uuid = :device_uuid ";
+							$parameters['device_uuid'] = $device_uuid;
+							$row = $this->database->select($sql, $parameters, 'row');
+							if (is_array($row) && sizeof($row) != 0) {
+								if ($row["device_enabled"] == "true") {
+									$device_label = $row["device_label"];
+									$device_profile_uuid = $row["device_profile_uuid"];
+									$device_firmware_version = $row["device_firmware_version"];
+									$device_user_uuid = $row["device_user_uuid"];
+									$device_location = strtolower($row["device_location"]);
+									//keep the original device_vendor
+									$device_enabled = $row["device_enabled"];
+									//keep the original device_template
+									$device_description = $row["device_description"];
 								}
-								$parameters['device_uuid'] = $device_uuid;
-								$database = new database;
-								$row = $database->select($sql, $parameters, 'row');
-								if (is_array($row) && sizeof($row) != 0) {
-									if ($row["device_enabled"] == "true") {
-										$device_label = $row["device_label"];
-										$device_profile_uuid = $row["device_profile_uuid"];
-										$device_firmware_version = $row["device_firmware_version"];
-										$device_user_uuid = $row["device_user_uuid"];
-										$device_location = strtolower($row["device_location"]);
-										//keep the original device_vendor
-										$device_enabled = $row["device_enabled"];
-										//keep the original device_template
-										$device_description = $row["device_description"];
-									}
-								}
-								unset($row, $parameters);
+							}
+							unset($sql, $row, $parameters);
 						}
 					}
 				}
@@ -634,8 +611,7 @@
 					$sql .= "where device_profile_uuid = :device_profile_uuid ";
 					$sql .= "and profile_setting_enabled = 'true' ";
 					$parameters['device_profile_uuid'] = $device_profile_uuid;
-					$database = new database;
-					$device_profile_settings = $database->select($sql, $parameters, 'all');
+					$device_profile_settings = $this->database->select($sql, $parameters, 'all');
 					if (is_array($device_profile_settings) && sizeof($device_profile_settings) != 0) {
 						foreach($device_profile_settings as $row) {
 							$key = $row['profile_setting_name'];
@@ -652,8 +628,7 @@
 					$sql .= "where device_uuid = :device_uuid ";
 					$sql .= "and device_setting_enabled = 'true' ";
 					$parameters['device_uuid'] = $device_uuid;
-					$database = new database;
-					$device_settings = $database->select($sql, $parameters, 'all');
+					$device_settings = $this->database->select($sql, $parameters, 'all');
 					if (is_array($device_settings) && sizeof($device_settings) != 0) {
 						foreach($device_settings as $row) {
 							$key = $row['device_setting_subcategory'];
@@ -693,13 +668,12 @@
 							$sql .= "where device_uuid = :device_uuid ";
 							$sql .= "and (enabled = 'true' or enabled is null or enabled = '') ";
 							$parameters['device_uuid'] = $device_uuid;
-							$database = new database;
-							//$database_device_lines = $database->select($sql, $parameters, 'all');
-							foreach ($database->select($sql, $parameters, 'all') as $row) {
+							//$database_device_lines = $this->database->select($sql, $parameters, 'all');
+							foreach ($this->database->select($sql, $parameters, 'all') as $row) {
 								$id = $row['line_number'];
 								$device_lines[$id] = $row;
 							}
-							unset($parameters);
+							unset($sql, $parameters);
 
 						//get the device profile keys
 							if (is_uuid($device_profile_uuid)) {
@@ -739,8 +713,7 @@
 									$sql .= "cast(profile_key_id as numeric) asc ";
 								}
 								$parameters['device_profile_uuid'] = $device_profile_uuid;
-								$database = new database;
-								$keys = $database->select($sql, $parameters, 'all');
+								$keys = $this->database->select($sql, $parameters, 'all');
 
 								//add the profile keys to the device keys array
 								if (is_array($keys) && sizeof($keys) != 0) {
@@ -765,7 +738,7 @@
 										$device_keys[$id]['device_key_owner'] = "profile";
 									}
 								}
-								unset($parameters, $keys);
+								unset($sql, $parameters, $keys);
 							}
 
 						//get the device keys
@@ -793,8 +766,7 @@
 								$sql .= "cast(device_key_id as numeric) asc ";
 							}
 							$parameters['device_uuid'] = $device_uuid;
-							$database = new database;
-							$keys = $database->select($sql, $parameters, 'all');
+							$keys = $this->database->select($sql, $parameters, 'all');
 
 						//override profile keys with the device keys
 							if (is_array($keys)) {
@@ -818,7 +790,7 @@
 									$device_keys[$id]['device_key_owner'] = "device";
 								}
 							}
-							unset($parameters, $keys);
+							unset($sql, $parameters, $keys);
 
 						//set the variables
 							if (is_array($device_lines) && sizeof($device_lines) != 0) {
@@ -932,8 +904,7 @@
 							$sql .= "and directory_visible = 'true' ";
 							$sql .= "order by number_alias, extension asc ";
 							$parameters['domain_uuid'] = $domain_uuid;
-							$database = new database;
-							$extensions = $database->select($sql, $parameters, 'all');
+							$extensions = $this->database->select($sql, $parameters, 'all');
 							if (is_array($extensions) && sizeof($extensions) != 0) {
 								foreach ($extensions as $row) {
 									//get the contact_uuid
@@ -966,7 +937,7 @@
 										unset($name_array, $contact_name_given, $contact_name_family, $phone_extension);
 								}
 							}
-							unset($parameters);
+							unset($sql, $parameters);
 					}
 
 				//assign the contacts array to the template
@@ -1162,11 +1133,10 @@
 					if (is_uuid($device_user_uuid)) {
 						$sql = "select contact_uuid from v_users where user_uuid = :device_user_uuid ";
 						$parameters['device_user_uuid'] = $device_user_uuid;
-						$database = new database;
-						$contact_uuid = $database->select($sql, $parameters, 'column');
+						$contact_uuid = $this->database->select($sql, $parameters, 'column');
 						$view->assign("ldap_username", "uid=" . $contact_uuid . "," . $this->settings->get('provision','grandstream_ldap_user_base', ''));
 						$view->assign("ldap_password",md5($laddr_salt.$device_user_uuid));
-						unset($parameters);
+						unset($sql, $parameters);
 					}
 
 				//get the time zone
@@ -1295,18 +1265,17 @@
 				$sql = "select * from v_devices ";
 				//$sql .= "where domain_uuid = :domain_uuid ";
 				//$parameters['domain_uuid'] = $this->domain_uuid;
-				$database = new database;
-				$result = $database->select($sql, null, 'all');
+				$result = $this->database->select($sql, null, 'all');
 
 			//process each device
 				if (is_array($result)) {
-					foreach ($result as &$row) {
+					foreach ($result as $row) {
 						//get the values from the database and set as variables
 							$domain_uuid = $row["domain_uuid"];
 							$device_uuid = $row["device_uuid"];
 							$device_address = $row["device_address"];
 							$device_label = $row["device_label"];
-							$device_vendor = strtolower($row["device_vendor"]);
+							$device_vendor = strtolower($row["device_vendor"] ?? '');
 							$device_model = $row["device_model"];
 							$device_firmware_version = $row["device_firmware_version"];
 							$device_enabled = $row["device_enabled"];
@@ -1342,7 +1311,7 @@
 
 						//loop through the provision templates
 							if (is_array($dir_array)) {
-								foreach ($dir_array as &$template_path) {
+								foreach ($dir_array as $template_path) {
 									if (is_dir($template_path)) continue;
 									if (!file_exists($template_path)) continue;
 

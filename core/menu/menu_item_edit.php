@@ -433,39 +433,46 @@
 	echo "	<tr>";
 	echo "		<td class='vncell'>".$text['label-icon']."</td>";
 	echo "		<td class='vtable' style='vertical-align: bottom;'>";
-	if (file_exists($_SERVER["PROJECT_ROOT"].'/resources/fontawesome/fas_icons.php')) {
-		include 'resources/fontawesome/fas_icons.php';
-		if (is_array($font_awesome_solid_icons) && @sizeof($font_awesome_solid_icons) != 0) {
-			// rebuild and sort array
-			foreach ($font_awesome_solid_icons as $i => $icon_class) {
-				$icon_label = str_replace('fa-', '', $icon_class);
-				$icon_label = str_replace('-', ' ', $icon_label);
-				$icon_label = ucwords($icon_label);
-				$icons[$icon_class] = $icon_label;
-			}
-			asort($icons, SORT_STRING);
-			echo "<table cellpadding='0' cellspacing='0' border='0'>\n";
-			echo "	<tr>\n";
-			echo "		<td>\n";
-			echo "			<select class='formfld' name='menu_item_icon' id='menu_item_icon' onchange=\"$('#icons').slideUp(); $('#grid_icon').fadeIn();\">\n";
-			echo "				<option value=''></option>\n";
-			foreach ($icons as $icon_class => $icon_label) {
-				$selected = ($menu_item_icon == $icon_class) ? "selected" : null;
-				echo "			<option value='".escape($icon_class)."' ".$selected.">".escape($icon_label)."</option>\n";
-			}
-			echo "			</select>\n";
-			echo "		</td>\n";
-			echo "		<td style='padding: 0 0 0 5px;'>\n";
-			echo "			<button id='grid_icon' type='button' class='btn btn-default list_control_icon' style='font-size: 15px; padding-top: 1px; padding-left: 3px;' onclick=\"$('#icons').fadeIn(); $(this).fadeOut();\"><span class='fas fa-th'></span></button>";
-			echo "		</td>\n";
-			echo "	</tr>\n";
-			echo "</table>\n";
-			echo "<div id='icons' style='clear: both; display: none; margin-top: 8px; padding-top: 10px; color: #000; max-height: 400px; overflow: auto;'>\n";
-			foreach ($icons as $icon_class => $icon_label) {
-				echo "<span class='fas ".escape($icon_class)." fa-fw' style='font-size: 24px; float: left; margin: 0 8px 8px 0; cursor: pointer; opacity: 0.3;' title='".escape($icon_label)."' onclick=\"$('#menu_item_icon').val('".escape($icon_class)."'); $('#icons').slideUp(); $('#grid_icon').fadeIn();\" onmouseover=\"this.style.opacity='1';\" onmouseout=\"this.style.opacity='0.3';\"></span>\n";
-			}
-			echo "</div>";
+	if (file_exists($_SERVER["PROJECT_ROOT"].'/resources/fontawesome/fa_icons.php')) {
+		include $_SERVER["PROJECT_ROOT"].'/resources/fontawesome/fa_icons.php';
+	}
+	if (!empty($font_awesome_icons) && is_array($font_awesome_icons)) {
+		echo "<table cellpadding='0' cellspacing='0' border='0'>\n";
+		echo "	<tr>\n";
+		echo "		<td>\n";
+		echo "			<select class='formfld' name='menu_item_icon' id='selected_icon' onchange=\"$('#icons').slideUp(200); $('#icon_search').fadeOut(200, function() { $('#grid_icon').fadeIn(); });\">\n";
+		echo "				<option value=''></option>\n";
+		foreach ($font_awesome_icons as $icon) {
+			$selected = $menu_item_icon == implode(' ', $icon['classes']) ? "selected" : null;
+			echo "			<option value='".escape(implode(' ', $icon['classes']))."' ".$selected.">".escape($icon['label'])."</option>\n";
 		}
+		echo "			</select>\n";
+		echo "		</td>\n";
+		echo "		<td style='padding: 0 0 0 5px;'>\n";
+		echo "			<button id='grid_icon' type='button' class='btn btn-default list_control_icon' style='font-size: 15px; padding-top: 1px; padding-left: 3px;' onclick=\"load_icons(); $(this).fadeOut(200, function() { $('#icons').fadeIn(200); $('#icon_search').fadeIn(200).focus(); });\"><span class='fa-solid fa-th'></span></button>";
+		echo "			<input id='icon_search' type='text' class='formfld' style='display: none;' onkeyup=\"if (this.value.length >= 3) { delay_submit(this.value); } else if (this.value == '') { load_icons(); } else { $('#icons').html(''); }\" placeholder=\"".$text['label-search']."\">\n";
+		echo "		</td>\n";
+		echo "	</tr>\n";
+		echo "</table>\n";
+		echo "<div id='icons' style='clear: both; display: none; margin-top: 8px; padding-top: 10px; color: #000; max-height: 400px; overflow: auto;'></div>";
+
+		echo "<script>\n";
+		//load icons by search
+		echo "function load_icons(search) {\n";
+		echo "	xhttp = new XMLHttpRequest();\n";
+		echo "	xhttp.open('GET', '".PROJECT_PATH."/resources/fontawesome/fa_icons.php?output=icons' + (search ? '&search=' + search : ''), false);\n";
+		echo "	xhttp.send();\n";
+		echo "	document.getElementById('icons').innerHTML = xhttp.responseText;\n";
+		echo "}\n";
+		//delay kepress action for 1/2 second
+		echo "var keypress_timer;\n";
+		echo "function delay_submit(search) {\n";
+		echo "	clearTimeout(keypress_timer);\n";
+		echo "	keypress_timer = setTimeout(function(){\n";
+		echo "		load_icons(search);\n";
+		echo "	}, 500);\n";
+		echo "}\n";
+		echo "</script>\n";
 	}
 	else {
 		echo "		<input type='text' class='formfld' name='menu_item_icon' value='".escape($menu_item_icon)."'>";

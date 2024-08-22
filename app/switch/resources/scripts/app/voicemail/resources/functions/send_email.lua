@@ -1,5 +1,5 @@
 --	Part of FusionPBX
---	Copyright (C) 2013 - 2020 Mark J Crane <markjcrane@fusionpbx.com>
+--	Copyright (C) 2013 - 2024 Mark J Crane <markjcrane@fusionpbx.com>
 --	All rights reserved.
 --
 --	Redistribution and use in source and binary forms, with or without
@@ -144,16 +144,22 @@
 							--message_priority = row["message_priority"];
 						--get the recordings from the database
 							if (storage_type == "base64") then
-								--set the voicemail message path
+								--set the voicemail intro and message paths
 									message_location = voicemail_dir.."/"..id.."/msg_"..uuid.."."..vm_message_ext;
+									intro_location = voicemail_dir.."/"..id.."/intro_"..uuid.."."..vm_message_ext;
 
-								--save the recording to the file system
+								--save the recordings to the file system
 									if (string.len(row["message_base64"]) > 32) then
 										--include the file io
 											local file = require "resources.functions.file"
 
-										--write decoded string to file
+										--write decoded message string to file
 											file.write_base64(message_location, row["message_base64"]);
+
+										--write decoded intro string to file, if any
+											if (string.len(row["message_intro_base64"]) > 32) then
+												file.write_base64(intro_location, row["message_intro_base64"]);
+											end
 									end
 							end
 					end);
@@ -199,10 +205,11 @@
 					link_address = http_protocol.."://"..domain_name..project_path;
 
 				--set proper delete status
-					if (voicemail_local_after_email == "false" and voicemail_local_after_forward == "false") then
-						local local_after_email = "false";
+					local local_after_email = '';
+					if (voicemail_local_after_email == "false" or voicemail_local_after_forward == "false") then
+						local_after_email = "false";
 					else
-						local local_after_email = "true";
+						local_after_email = "true";
 					end
 
 				--prepare the headers
@@ -227,6 +234,13 @@
 
 				--prepare file
 					file = voicemail_dir.."/"..id.."/msg_"..uuid.."."..vm_message_ext;
+
+				--combine intro, if exists, with message for emailing (only)
+					intro = voicemail_dir.."/"..id.."/intro_"..uuid.."."..vm_message_ext;
+					combined = voicemail_dir.."/"..id.."/intro_msg_"..uuid.."."..vm_message_ext;
+					if (file_exists(intro) and file_exists(file)) then
+						os.execute("sox "..intro.." "..file.." "..combined);
+					end
 
 				--prepare the subject
 					if (subject ~= nil) then
@@ -307,13 +321,22 @@
 						smtp_from = smtp_from_name.."<"..smtp_from..">";
 					end
 
-				--send the email
-					send_mail(headers,
-						smtp_from,
-						voicemail_mail_to,
-						{subject, body},
-						(voicemail_file == "attach") and file
-					);
+				--send the email with, or without, including the intro
+					if (file_exists(combined)) then
+						send_mail(headers,
+							smtp_from,
+							voicemail_mail_to,
+							{subject, body},
+							(voicemail_file == "attach") and combined
+						);
+					else
+						send_mail(headers,
+							smtp_from,
+							voicemail_mail_to,
+							{subject, body},
+							(voicemail_file == "attach") and file
+						);
+					end
 			end
 
 		--whether to keep the voicemail message and details local after email
@@ -330,18 +353,30 @@
 							freeswitch.consoleLog("notice", "[voicemail] SQL: " .. sql .. "; params:" .. json.encode(params) .. "\n");
 						end
 						dbh:query(sql, params);
-					--delete voicemail recording file
+					--delete voicemail recording files
 						if (file_exists(file)) then
 							os.remove(file);
+						end
+						if (file_exists(intro)) then
+							os.remove(intro);
+						end
+						if (file_exists(combined)) then
+							os.remove(combined);
 						end
 					--set message waiting indicator
 						message_waiting(id, domain_uuid);
 					--clear the variable
 						db_voicemail_uuid = '';
 				elseif (storage_type == "base64") then
-					--delete voicemail recording file
+					--delete voicemail recording files
 						if (file_exists(file)) then
 							os.remove(file);
+						end
+						if (file_exists(intro)) then
+							os.remove(intro);
+						end
+						if (file_exists(combined)) then
+							os.remove(combined);
 						end
 				end
 

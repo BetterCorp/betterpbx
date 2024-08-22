@@ -34,6 +34,9 @@
 	elseif (file_exists("/etc/fusionpbx/config.conf")){
 		//Linux
 	}
+	elseif (file_exists(getenv('SystemDrive') . DIRECTORY_SEPARATOR . 'ProgramData' . DIRECTORY_SEPARATOR . 'fusionpbx' . DIRECTORY_SEPARATOR . 'config.conf')) {
+		// Windows
+	}
 	else {
 		header("Location: /core/install/install.php");
 		exit;
@@ -41,6 +44,9 @@
 
 //additional includes
 	require_once "resources/check_auth.php";
+
+//initialize the database
+	$database = new database;
 
 //disable login message
 	if (isset($_GET['msg']) && $_GET['msg'] == 'dismiss') {
@@ -52,7 +58,6 @@
 		$sql .= "default_setting_category = 'login' ";
 		$sql .= "and default_setting_subcategory = 'message' ";
 		$sql .= "and default_setting_name = 'text' ";
-		$database = new database;
 		$database->execute($sql);
 		unset($sql);
 	}
@@ -75,13 +80,17 @@
 	$sql .= "dashboard_icon, ";
 	$sql .= "dashboard_url, ";
 	$sql .= "dashboard_target, ";
+	$sql .= "dashboard_width, ";
+	$sql .= "dashboard_height, ";
 	$sql .= "dashboard_content, ";
+	$sql .= "dashboard_content_text_align, ";
 	$sql .= "dashboard_content_details, ";
 	$sql .= "dashboard_chart_type, ";
-	$sql .= "dashboard_heading_text_color, ";
-	$sql .= "dashboard_heading_text_color_hover, ";
-	$sql .= "dashboard_heading_background_color, ";
-	$sql .= "dashboard_heading_background_color_hover, ";
+	$sql .= "cast(dashboard_label_enabled as text), ";
+	$sql .= "dashboard_label_text_color, ";
+	$sql .= "dashboard_label_text_color_hover, ";
+	$sql .= "dashboard_label_background_color, ";
+	$sql .= "dashboard_label_background_color_hover, ";
 	$sql .= "dashboard_number_text_color, ";
 	$sql .= "dashboard_number_text_color_hover, ";
 	$sql .= "dashboard_background_color, ";
@@ -95,13 +104,13 @@
 	$sql .= "dashboard_description ";
 	$sql .= "from v_dashboard as d ";
 	$sql .= "where dashboard_enabled = 'true' ";
+	$sql .= "and dashboard_parent_uuid is null ";
 	$sql .= "and dashboard_uuid in (";
 	$sql .= "	select dashboard_uuid from v_dashboard_groups where group_uuid in (";
 	$sql .= "		".$group_uuids_in." ";
 	$sql .= "	)";
 	$sql .= ")";
-	$sql .= "order by dashboard_order asc ";
-	$database = new database;
+	$sql .= "order by dashboard_order, dashboard_name asc ";
 	$dashboard = $database->select($sql, $parameters ?? null, 'all');
 	unset($sql, $parameters);
 
@@ -117,13 +126,16 @@
 					$dashboard_name = trim(preg_replace("/[^a-z]/", '_', strtolower($row['dashboard_name'])),'_');
 					if ($widget == $dashboard_name) {
 						$dashboard_order = $dashboard_order + 10;
+						$array['dashboard'][$x]['dashboard_uuid'] = $row['dashboard_uuid'];
 						$array['dashboard'][$x]['dashboard_name'] = $row['dashboard_name'];
 						$array['dashboard'][$x]['dashboard_icon'] = $row['dashboard_icon'];
 						$array['dashboard'][$x]['dashboard_url'] = $row['dashboard_url'];
 						$array['dashboard'][$x]['dashboard_content'] = $row['dashboard_content'];
+						$array['dashboard'][$x]['dashboard_content_text_align'] = $row['dashboard_content_text_align'];
 						$array['dashboard'][$x]['dashboard_content_details'] = $row['dashboard_content_details'];
 						$array['dashboard'][$x]['dashboard_target'] = $row['dashboard_target'];
-						$array['dashboard'][$x]['dashboard_uuid'] = $row['dashboard_uuid'];
+						$array['dashboard'][$x]['dashboard_width'] = $row['dashboard_width'];
+						$array['dashboard'][$x]['dashboard_height'] = $row['dashboard_height'];
 						$array['dashboard'][$x]['dashboard_order'] = $dashboard_order;
 						$x++;
 					}
@@ -131,7 +143,6 @@
 			}
 
 			//save the data
-			$database = new database;
 			$database->app_name = 'dashboard';
 			$database->app_uuid = '55533bef-4f04-434a-92af-999c1e9927f7';
 			$database->save($array);
@@ -170,7 +181,7 @@
 	echo "	Chart.defaults.plugins.legend.display = false;\n";
 	echo "</script>\n";
 
-// determine initial state all button to display
+//determine initial state all button to display
 	$expanded_all = true;
 	if (is_array($dashboard) && @sizeof($dashboard) != 0) {
 		foreach ($dashboard as $row) {
@@ -191,8 +202,8 @@
 		echo button::create(['type'=>'submit','label'=>$text['button-save'],'icon'=>$_SESSION['theme']['button_icon_save'],'id'=>'btn_save','name'=>'btn_save','style'=>'display: none; margin-left: 15px;']);
 	}
 	echo "<span id='expand_contract'>\n";
-		echo button::create(['type'=>'button','label'=>$text['button-expand_all'],'icon'=>$_SESSION['theme']['button_icon_expand'],'id'=>'btn_expand','name'=>'btn_expand','style'=>($expanded_all ? 'display: none;' : null),'onclick'=>"$('.hud_details').slideDown('fast'); $(this).hide(); $('#btn_contract').show();"]);
-		echo button::create(['type'=>'button','label'=>$text['button-collapse_all'],'icon'=>$_SESSION['theme']['button_icon_contract'],'id'=>'btn_contract','name'=>'btn_contract','style'=>(!$expanded_all ? 'display: none;' : null),'onclick'=>"$('.hud_details').slideUp('fast'); $(this).hide(); $('#btn_expand').show();"]);
+		echo button::create(['type'=>'button','label'=>$text['button-expand_all'],'icon'=>$_SESSION['theme']['button_icon_expand'],'id'=>'btn_expand','name'=>'btn_expand','style'=>($expanded_all ? 'display: none;' : null),'onclick'=>"$('.hud_details').slideDown('fast'); $(this).hide(); $('#btn_contract').show(); toggle_grid_row_end_all();"]);
+		echo button::create(['type'=>'button','label'=>$text['button-collapse_all'],'icon'=>$_SESSION['theme']['button_icon_contract'],'id'=>'btn_contract','name'=>'btn_contract','style'=>(!$expanded_all ? 'display: none;' : null),'onclick'=>"$('.hud_details').slideUp('fast'); $(this).hide(); $('#btn_expand').show(); toggle_grid_row_end_all();"]);
 	echo "</span>\n";
 	if (permission_exists('dashboard_edit')) {
 		echo button::create(['type'=>'button','label'=>$text['button-edit'],'icon'=>$_SESSION['theme']['button_icon_edit'],'id'=>'btn_edit','name'=>'btn_edit','style'=>'margin-left: 15px;','onclick'=>"edit_mode('on');"]);
@@ -235,7 +246,7 @@ div.hud_content {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  padding-bottom: 13px;
+  align-content: start;
 }
 
 div.hud_chart {
@@ -247,16 +258,16 @@ div.hud_chart {
 <?php
 foreach ($dashboard as $row) {
 	$dashboard_name = trim(preg_replace("/[^a-z]/", '_', strtolower($row['dashboard_name'])),'_');
-	if (!empty($row['dashboard_heading_text_color']) || !empty($row['dashboard_heading_background_color'])) {
+	if (!empty($row['dashboard_label_text_color']) || !empty($row['dashboard_label_background_color'])) {
 		echo "#".$dashboard_name." .hud_title {\n";
-		if (!empty($row['dashboard_heading_text_color'])) { echo "	color: ".$row['dashboard_heading_text_color'].";\n"; }
-		if (!empty($row['dashboard_heading_background_color'])) { echo "	background-color: ".$row['dashboard_heading_background_color'].";\n"; }
+		if (!empty($row['dashboard_label_text_color'])) { echo "	color: ".$row['dashboard_label_text_color'].";\n"; }
+		if (!empty($row['dashboard_label_background_color'])) { echo "	background-color: ".$row['dashboard_label_background_color'].";\n"; }
 		echo "}\n";
 	}
-	if (!empty($row['dashboard_heading_text_color_hover']) || !empty($row['dashboard_heading_background_color_hover'])) {
+	if (!empty($row['dashboard_label_text_color_hover']) || !empty($row['dashboard_label_background_color_hover'])) {
 		echo "#".$dashboard_name.":hover .hud_title {\n";
-		if (!empty($row['dashboard_heading_text_color_hover'])) { echo "	color: ".$row['dashboard_heading_text_color_hover'].";\n"; }
-		if (!empty($row['dashboard_heading_background_color_hover'])) { echo "	background-color: ".$row['dashboard_heading_background_color_hover'].";\n"; }
+		if (!empty($row['dashboard_label_text_color_hover'])) { echo "	color: ".$row['dashboard_label_text_color_hover'].";\n"; }
+		if (!empty($row['dashboard_label_background_color_hover'])) { echo "	background-color: ".$row['dashboard_label_background_color_hover'].";\n"; }
 		echo "}\n";
 	}
 	if (!empty($row['dashboard_number_text_color'])) {
@@ -290,7 +301,15 @@ foreach ($dashboard as $row) {
 		echo "	background-image: linear-gradient(to right, ".$detail_background_color[1]." 0%, ".$detail_background_color[0]." 30%, ".$detail_background_color[0]." 70%, ".$detail_background_color[1]." 100%);\n";
 		echo "}\n";
 	}
-	if ($row['dashboard_path'] == "core/dashboard/resources/dashboard/icon.php") {
+	if ($row['dashboard_label_enabled'] == 'false') {
+		echo "#".$dashboard_name." .hud_title {\n";
+		echo "	display: none;\n";
+		echo "}\n";
+		echo "#".$dashboard_name." .hud_content {\n";
+		echo "	align-content: center;\n";
+		echo "}\n";
+	}
+	if ($row['dashboard_path'] == "dashboard/icon") {
 		echo "#".$dashboard_name." div.hud_content,\n";
 		echo "#".$dashboard_name." span.hud_title,\n";
 		echo "#".$dashboard_name." span.hud_stat {\n";
@@ -303,7 +322,7 @@ foreach ($dashboard as $row) {
 			echo "	height: 89.5px;\n";
 			echo "}\n";
 			echo "#".$dashboard_name." .hud_stat {\n";
-			echo "	line-height: 0.1;\n";
+			echo "	line-height: 0;\n";
 			echo "	font-size: 30pt;\n";
 			echo "}\n";
 			echo "#".$dashboard_name." .hud_chart {\n";
@@ -312,8 +331,8 @@ foreach ($dashboard as $row) {
 			echo "	padding-top: 0;\n";
 			echo "}\n";
 			echo "#".$dashboard_name." div.hud_content .fas {\n";
-			echo "	line-height: 0.1;\n";
-			echo "	font-size: 30pt;\n";
+			echo "	line-height: 0;\n";
+			echo "	font-size: 24pt;\n";
 			echo "}\n";
 			break;
 		case 2:
@@ -327,6 +346,7 @@ foreach ($dashboard as $row) {
 			echo "}\n";
 			break;
 	}
+
 }
 ?>
 
@@ -410,19 +430,53 @@ foreach ($dashboard as $row) {
 
 <script>
 function toggle_grid_row_end(dashboard_name) {
-	var widget = document.getElementById(dashboard_name.toLowerCase().replace(/ /g, '_'));
-	var state = widget.getAttribute('data-state');
-	var current_row_end = widget.style.gridRowEnd;
+	let widget = document.getElementById(dashboard_name.toLowerCase().replace(/ /g, '_'));
+	let state = widget.getAttribute('data-state');
+	let current_row_end = widget.style.gridRowEnd;
+	let current_row_end_number = current_row_end.startsWith('span ') ? Number(current_row_end.replace('span ', '')) : 0;
 
 	if (state == 'expanded') {
-		widget.style.gridRowEnd = 'span ' + (Number(current_row_end.replace('span ', '')) - 3);
-		widget.dataset.state = "contracted";
+		widget.style.gridRowEnd = 'span ' + (current_row_end_number - 3);
+		widget.dataset.state = 'contracted';
 	}
 	else {
-		widget.style.gridRowEnd = 'span ' + (Number(current_row_end.replace('span ', '')) + 3);
+		widget.style.gridRowEnd = 'span ' + (current_row_end_number + 3);
 		widget.dataset.state = 'expanded';
 	}
 }
+
+let first_toggle = false;
+
+function toggle_grid_row_end_all() {
+    let widgets = document.querySelectorAll('div.widget');
+
+    widgets.forEach(div => {
+        let state = div.getAttribute('data-state');
+        let current_row_end = div.style.gridRowEnd;
+        let current_row_end_number = current_row_end.startsWith('span ') ? Number(current_row_end.replace('span ', '')) : 0;
+
+		// Skip if widget details state is disabled
+        if (state === 'disabled') {
+            return;
+        }
+
+		// On the first call, skip expanded widgets
+        if (!first_toggle && state === 'expanded') {
+            return;
+        }
+
+        if (state === 'expanded') {
+            div.style.gridRowEnd = 'span ' + (current_row_end_number - 3);
+            div.dataset.state = 'contracted';
+        } else {
+            div.style.gridRowEnd = 'span ' + (current_row_end_number + 3);
+            div.dataset.state = 'expanded';
+        }
+    });
+
+    first_toggle = true;
+}
+
 </script>
 
 <?php
@@ -431,14 +485,18 @@ function toggle_grid_row_end(dashboard_name) {
 	echo "<div class='widgets' id='widgets' style='padding: 0 5px;'>\n";
 	$x = 0;
 	foreach ($dashboard as $row) {
+		$dashboard_uuid = $row['dashboard_uuid'];
 		$dashboard_name = $row['dashboard_name'];
 		$dashboard_icon = $row['dashboard_icon'] ?? '';
-		$dashboard_url  = $row['dashboard_url'] ?? '';
-		$dashboard_target  = $row['dashboard_target'] ?? '';
-		$dashboard_content  = $row['dashboard_content'] ?? '';
-		$dashboard_content_details  = $row['dashboard_content_details'] ?? '';
+		$dashboard_url = $row['dashboard_url'] ?? '';
+		$dashboard_target = $row['dashboard_target'] ?? '';
+		$dashboard_width = $row['dashboard_width'] ?? '';
+		$dashboard_height = $row['dashboard_height'] ?? '';
+		$dashboard_content = $row['dashboard_content'] ?? '';
+		$dashboard_content_text_align = $row['dashboard_content_text_align'] ?? '';
+		$dashboard_content_details = $row['dashboard_content_details'] ?? '';
 		$dashboard_chart_type = $row['dashboard_chart_type'] ?? "doughnut";
-		$dashboard_heading_text_color = $row['dashboard_heading_text_color'] ?? $settings->get('theme', 'dashboard_heading_text_color');
+		$dashboard_label_text_color = $row['dashboard_label_text_color'] ?? $settings->get('theme', 'dashboard_label_text_color');
 		$dashboard_number_text_color = $row['dashboard_number_text_color'] ?? $settings->get('theme', 'dashboard_number_text_color');
 		$dashboard_details_state = $row['dashboard_details_state'] ?? "expanded";
 		$dashboard_row_span = $row['dashboard_row_span'] ?? 2;
@@ -447,8 +505,19 @@ function toggle_grid_row_end(dashboard_name) {
 		}
 
 		echo "<div class='widget' style='grid-row-end: span ".$dashboard_row_span.";' data-state='".$dashboard_details_state."' id='".trim(preg_replace("/[^a-z]/", '_', strtolower($dashboard_name)),'_')."' draggable='false'>\n";
-		include $row['dashboard_path'];
+		$dashboard_path_array = explode('/', $row['dashboard_path']);
+		$path_array = glob(dirname(__DIR__, 2).'/*/'.$dashboard_path_array[0].'/resources/dashboard/'.$dashboard_path_array[1].'.php');
+		include $path_array[0];
+		//$file_name = dirname(__DIR__, 2).'/app/'.$dashboard_path_array[0].'/resources/dashboard/'.$dashboard_path_array[1].'.php';
+		//if (file_exists(dirname(__DIR__, 2).'/core/'.$dashboard_path_array[0].'/resources/dashboard/'.$dashboard_path_array[1].'.php')) {
+		//	include dirname(__DIR__, 2).'/core/'.$dashboard_path_array[0].'/resources/dashboard/'.$dashboard_path_array[1].'.php';
+		//}
+		//elseif (file_exists(dirname(__DIR__, 2).'/app/'.$dashboard_path_array[0].'/resources/dashboard/'.$dashboard_path_array[1].'.php')) {
+		//	include dirname(__DIR__, 2).'/app/'.$dashboard_path_array[0].'/resources/dashboard/'.$dashboard_path_array[1].'.php';
+		//}
+
 		echo "</div>\n";
+
 		$x++;
 	}
 	echo "</div>\n";
@@ -553,3 +622,4 @@ function toggle_grid_row_end(dashboard_name) {
 	require_once "resources/footer.php";
 
 ?>
+

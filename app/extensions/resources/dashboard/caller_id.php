@@ -95,8 +95,7 @@
 				//save to the data
 					$database->app_name = 'extensions';
 					$database->app_uuid = 'e68d9689-2769-e013-28fa-6214bf47fca3';
-					$database->save($array);
-					$message = $database->message;
+					$message = $database->save($array);
 
 				//update the session array
 					if ($message['message'] == 'OK' && $message['code'] == '200') {
@@ -216,7 +215,7 @@
 				echo "						labels: {\n";
 				echo "							usePointStyle: true,\n";
 				echo "							pointStyle: 'rect',\n";
-				echo "							color: '".$dashboard_heading_text_color."'\n";
+				echo "							color: '".$dashboard_label_text_color."'\n";
 				echo "						}\n";
 				echo "					}\n";
 				echo "				}\n";
@@ -279,7 +278,7 @@
 							if (count($destinations) > 0) {
 								echo "<select class='formfld' name='extensions[".$x."][outbound_caller_id]' id='outbound_caller_id_number_".$x."' style='width: 100%; min-width: 150px;'>\n";
 								echo "	<option value=''></option>\n";
-								foreach ($destinations as &$field) {
+								foreach ($destinations as $field) {
 									if (!empty($field['destination_caller_id_number'])) {
 										echo "<option value='".escape($field['destination_caller_id_name'])."@".escape($field['destination_caller_id_number'])."' ".($row['outbound_caller_id_number'] == $field['destination_caller_id_number'] ? "selected='selected'" : null).">".escape($field['destination_caller_id_name'])." ".escape($field['destination_caller_id_number'])."</option>\n";
 									}

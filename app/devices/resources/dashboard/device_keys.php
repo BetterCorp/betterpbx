@@ -36,7 +36,7 @@
 	}
 
 //get the vendor functions
-	$sql = "select v.name as vendor_name, f.name, f.value ";
+	$sql = "select v.name as vendor_name, f.type, f.value ";
 	$sql .= "from v_device_vendors as v, v_device_vendor_functions as f ";
 	$sql .= "where v.device_vendor_uuid = f.device_vendor_uuid ";
 	$sql .= "and f.device_vendor_function_uuid in ";
@@ -57,7 +57,7 @@
 	$sql .= ") ";
 	$sql .= "and v.enabled = 'true' ";
 	$sql .= "and f.enabled = 'true' ";
-	$sql .= "order by v.name asc, f.name asc ";
+	$sql .= "order by v.name asc, f.type asc ";
 	$vendor_functions = $database->select($sql, (is_array($parameters) ? $parameters : null), 'all');
 	unset($sql, $sql_where_or, $parameters);
 
@@ -159,7 +159,7 @@
 
 				//add or update the device keys
 					if (is_array($_POST['device_keys'])) {
-						foreach ($_POST['device_keys'] as &$row) {
+						foreach ($_POST['device_keys'] as $row) {
 
 							//validate the data
 								$save = true;
@@ -187,7 +187,7 @@
 							//process the profile keys
 								if (!empty($row["device_profile_uuid"])) {
 									//get the profile key settings from the array
-										foreach ($device_profile_keys as &$field) {
+										foreach ($device_profile_keys as $field) {
 											if ($device_key_uuid == $field["device_key_uuid"]) {
 												$database = $field;
 												break;
@@ -266,7 +266,7 @@
 									//save the changes
 										$database->app_name = 'devices';
 										$database->app_uuid = '4efa1a1a-32e7-bf83-534b-6c8299958a8e';
-										$database->save($array);
+										$result = $database->save($array);
 
 									//remove the temporary permissions
 										$p->delete('device_keys_add', 'temp');
@@ -333,10 +333,7 @@
 //get the device keys in the right order where device keys are listed after the profile keys
 	if (!empty($device_uuid) && is_uuid($device_uuid)) {
 		$sql = "select * from v_device_keys ";
-		$sql .= "where (";
-		$sql .= "device_uuid = :device_uuid ";
-		$sql .= is_uuid($device_profile_uuid) ? "or device_profile_uuid = :device_profile_uuid " : null;
-		$sql .= ") ";
+		$sql .= "where device_uuid = :device_uuid ";
 		$sql .= "order by ";
 		$sql .= "device_key_vendor asc, ";
 		$sql .= "case device_key_category ";
@@ -348,9 +345,6 @@
 		$sql .= $db_type == "mysql" ? "device_key_id asc " : "cast(device_key_id as numeric) asc, ";
 		$sql .= "case when device_uuid is null then 0 else 1 end asc ";
 		$parameters['device_uuid'] = $device_uuid;
-		if (is_uuid($device_profile_uuid)) {
-			$parameters['device_profile_uuid'] = $device_profile_uuid;
-		}
 		$keys = $database->select($sql, $parameters, 'all');
 		unset($sql, $parameters);
 	}
@@ -592,10 +586,10 @@
 							$selected = "selected='selected'";
 						}
 						if (empty($row['device_key_vendor'])) {
-							echo "					<option value='".$function['value']."' $selected >".$text['label-'.$function['name']]."</option>\n";
+							echo "					<option value='".$function['value']."' $selected >".$text['label-'.$function['type']]."</option>\n";
 						}
 						if (!empty($row['device_key_vendor']) && $row['device_key_vendor'] == $function['vendor_name']) {
-							echo "					<option value='".$function['value']."' $selected >".$text['label-'.$function['name']]."</option>\n";
+							echo "					<option value='".$function['value']."' $selected >".$text['label-'.$function['type']]."</option>\n";
 						}
 						$previous_vendor = $function['vendor_name'];
 						$i++;

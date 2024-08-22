@@ -41,7 +41,7 @@
 	<script language='JavaScript' type='text/javascript' src='{$project_path}/resources/bootstrap/js/bootstrap-colorpicker.min.js.php'></script>
 	<script language='JavaScript' type='text/javascript' src='{$project_path}/resources/bootstrap/js/bootstrap-pwstrength.min.js.php'></script>
 	<script language='JavaScript' type='text/javascript'>{literal}window.FontAwesomeConfig = { autoReplaceSvg: false }{/literal}</script>
-	<script language='JavaScript' type='text/javascript' src='{$project_path}/resources/fontawesome/js/solid.min.js.php' defer></script>
+	<script language='JavaScript' type='text/javascript' src='{$project_path}/resources/fontawesome/js/all.min.js.php' defer></script>
 
 {*//web font loader *}
 	{if isset($settings.theme.font_loader) && $settings.theme.font_loader == 'true'}
@@ -777,6 +777,7 @@
 				audio_clock = setInterval(function () { update_progress(player_id); }, 20);
 
 				$('[id*=recording_button]').not('[id*=recording_button_' + player_id + ']').html("<span class='{/literal}{$settings.theme.button_icon_play}{literal} fa-fw'></span>");
+				$('[id*=recording_button_intro]').not('[id*=recording_button_' + player_id + ']').html("<span class='{/literal}{$settings.theme.button_icon_comment}{literal} fa-fw'></span>");
 				$('[id*=recording_progress_bar]').not('[id*=recording_progress_bar_' + player_id + ']').css('display', 'none');
 
 				$('audio').each(function(){
@@ -789,7 +790,12 @@
 			else {
 				recording_audio.pause();
 				recording_id_playing = '';
-				document.getElementById('recording_button_' + player_id).innerHTML = "<span class='{/literal}{$settings.theme.button_icon_play}{literal} fa-fw'></span>";
+				if (player_id.substring(0,6) == 'intro_') {
+					document.getElementById('recording_button_' + player_id).innerHTML = "<span class='{/literal}{$settings.theme.button_icon_comment}{literal} fa-fw'></span>";
+				}
+				else {
+					document.getElementById('recording_button_' + player_id).innerHTML = "<span class='{/literal}{$settings.theme.button_icon_play}{literal} fa-fw'></span>";
+				}
 				clearInterval(audio_clock);
 			}
 		}
@@ -806,7 +812,12 @@
 			if (document.getElementById('recording_progress_bar_' + player_id)) {
 				document.getElementById('recording_progress_bar_' + player_id).style.display='none';
 			}
-			document.getElementById('recording_button_' + player_id).innerHTML = "<span class='{/literal}{$settings.theme.button_icon_play}{literal} fa-fw'></span>";
+			if (player_id.substring(0,6) == 'intro_') {
+				document.getElementById('recording_button_' + player_id).innerHTML = "<span class='{/literal}{$settings.theme.button_icon_comment}{literal} fa-fw'></span>";
+			}
+			else {
+				document.getElementById('recording_button_' + player_id).innerHTML = "<span class='{/literal}{$settings.theme.button_icon_play}{literal} fa-fw'></span>";
+			}
 			clearInterval(audio_clock);
 		}
 
@@ -1166,7 +1177,7 @@
 
 	{*//video background *}
 	{if !empty($settings.theme.background_video)}
-		<video id="background-video" autoplay muted poster="" onloadstart="this.playbackRate = 1; this.pause();">
+		<video id="background-video" autoplay muted poster="" disablePictureInPicture="true" onloadstart="this.playbackRate = 1; this.pause();">
 			<source src="{$settings.theme.background_video}" type="video/mp4">
 		</video>
 	{/if}

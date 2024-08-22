@@ -33,6 +33,9 @@
 	if (permission_exists('voicemail_view')) {
 		//access granted
 	}
+	elseif (permission_exists('voicemail_message_view')) {
+		header('Location: /app/voicemails/voicemail_messages.php');
+	}
 	else {
 		echo "access denied";
 		exit;
@@ -169,7 +172,7 @@
 		$voicemails_count_tmp = $database->select($sql, $parameters, 'all');
 
 		$voicemails_count = array();
-		foreach ($voicemails_count_tmp as &$row) {
+		foreach ($voicemails_count_tmp as $row) {
 			$voicemails_count[$row['voicemail_uuid']] = $row['voicemail_count'];
 		}
 		unset($sql, $parameters, $voicemails_count_tmp);
@@ -185,7 +188,7 @@
 		$voicemail_greetings_count_tmp = $database->select($sql, $parameters, 'all');
 
 		$voicemail_greetings_count = array();
-		foreach ($voicemail_greetings_count_tmp as &$row) {
+		foreach ($voicemail_greetings_count_tmp as $row) {
 			$voicemail_greetings_count[$row['voicemail_id']] = $row['greeting_count'];
 		}
 		unset($sql, $parameters, $voicemail_greetings_count_tmp);
@@ -204,7 +207,10 @@
 	echo "	<div class='heading'><b>".$text['title-voicemails']." (".$num_rows.")</b></div>\n";
 	echo "	<div class='actions'>\n";
 	if (permission_exists('voicemail_import')) {
-		echo button::create(['type'=>'button','label'=>$text['button-import'],'icon'=>$_SESSION['theme']['button_icon_import'],'style'=>'margin-right: 15px;','link'=>'voicemail_imports.php']);
+		echo button::create(['type'=>'button','label'=>$text['button-import'],'icon'=>$_SESSION['theme']['button_icon_import'],'style'=>'','link'=>'voicemail_imports.php']);
+	}
+	if (permission_exists('voicemail_export')) {
+		echo button::create(['type'=>'button','label'=>$text['button-export'],'icon'=>$_SESSION['theme']['button_icon_export'],'style'=>'margin-right: 15px;','link'=>'voicemail_export.php']);
 	}
 	if (permission_exists('voicemail_add')) {
 		echo button::create(['type'=>'button','label'=>$text['button-add'],'icon'=>$_SESSION['theme']['button_icon_add'],'id'=>'btn_add','link'=>'voicemail_edit.php']);
