@@ -246,8 +246,6 @@
 							$obj->start($gateways);
 						}
 
-					//close the connection
-						fclose($fp);
 					//clear the apply settings reminder
 						$_SESSION["reload_xml"] = false;
 
