@@ -17,7 +17,7 @@
 
 	The Initial Developer of the Original Code is
 	Mark J Crane <markjcrane@fusionpbx.com>
-	Portions created by the Initial Developer are Copyright (C) 2008 - 2023
+	Portions created by the Initial Developer are Copyright (C) 2008-2024
 	the Initial Developer. All Rights Reserved.
 
 	Contributor(s):
@@ -312,7 +312,7 @@
 
 //show the content
 	echo "<div class='action_bar' id='action_bar'>\n";
-	echo "	<div class='heading'><b>".$text['header-devices']." (".$num_rows.")</b></div>\n";
+	echo "	<div class='heading'><b>".$text['header-devices']."</b><div class='count'>".number_format($num_rows)."</div></div>\n";
 	echo "	<div class='actions'>\n";
 	if ($has_device_import) {
 		echo button::create(['type'=>'button','label'=>$text['button-import'],'icon'=>$settings->get('theme', 'button_icon_import'),'link'=>'device_imports.php']);
@@ -384,6 +384,7 @@
 	echo "<input type='hidden' name='search' value=\"".escape($search)."\">\n";
 	echo "<input type='hidden' name='fields' value=\"".escape($fields)."\">\n";
 
+	echo "<div class='card'>\n";
 	echo "<table class='list'>\n";
 	echo "<tr class='list-header'>\n";
 	if ($has_device_edit || $has_device_delete) {
@@ -485,6 +486,7 @@
 	unset($devices);
 
 	echo "</table>\n";
+	echo "</div>\n";
 	echo "<br />\n";
 	echo "<div align='center'>".$paging_controls."</div>\n";
 

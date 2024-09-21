@@ -17,7 +17,7 @@
 
 	The Initial Developer of the Original Code is
 	Mark J Crane <markjcrane@fusionpbx.com>
-	Portions created by the Initial Developer are Copyright (C) 2018 - 2023
+	Portions created by the Initial Developer are Copyright (C) 2018-2024
 	the Initial Developer. All Rights Reserved.
 
 	Contributor(s):
@@ -194,7 +194,7 @@
 
 //show the content
 	echo "<div class='action_bar' id='action_bar'>\n";
-	echo "	<div class='heading'><b>".$text['title-call_recordings']." </b></div>\n";
+	echo "	<div class='heading'><b>".$text['title-call_recordings']." </b><div class='count'>".number_format($result_count)."</div></div>\n";
 	echo "	<div class='actions'>\n";
 	if (permission_exists('call_recording_download') && !empty($call_recordings)) {
 		echo button::create(['type'=>'button','label'=>$text['button-download'],'icon'=>$_SESSION['theme']['button_icon_download'],'id'=>'btn_download','name'=>'btn_download','style'=>'display: none;','collapse'=>'hide-xs','onclick'=>"list_action_set('download'); list_form_submit('form_list');"]);
@@ -236,6 +236,7 @@
 	echo "<input type='hidden' id='action' name='action' value=''>\n";
 	echo "<input type='hidden' name='search' value=\"".escape($search)."\">\n";
 
+	echo "<div class='card'>\n";
 	echo "<table class='list'>\n";
 	echo "<tr class='list-header'>\n";
 	$col_count = 8;
@@ -343,6 +344,7 @@
 	}
 
 	echo "</table>\n";
+	echo "</div>\n";
 	echo "<br />\n";
 	echo "<div align='center'>".$paging_controls."</div>\n";
 	echo "<input type='hidden' name='".$token['name']."' value='".$token['hash']."'>\n";

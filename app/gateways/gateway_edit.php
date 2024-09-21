@@ -400,7 +400,7 @@
 	echo "<br /><br />\n";
 
 	echo "<form name='frm' id='frm' method='post'>\n";
-
+	echo "<div class='card'>\n";
 	echo "<table width='100%' border='0' cellpadding='0' cellspacing='0'>\n";
 
 	echo "<tr>\n";
@@ -939,7 +939,7 @@
 	echo "</tr>\n";
 
 	echo "</table>";
-	echo "<br><br>";
+	echo "</div>\n";
 
 	if ($action == "update") {
 		echo "<input type='hidden' name='gateway_uuid' value='".escape($gateway_uuid)."'>\n";
@@ -947,6 +947,7 @@
 	echo "<input type='hidden' name='".$token['name']."' value='".$token['hash']."'>\n";
 
 	echo "</form>";
+	echo "<br><br>";
 
 //hide password fields before submit
 	echo "<script>\n";

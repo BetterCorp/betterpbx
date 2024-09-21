@@ -20,6 +20,7 @@
 		$apps[$x]['description']['fr-fr'] = "Historique des Appels complets.";
 		$apps[$x]['description']['he-il'] = "";
 		$apps[$x]['description']['it-it'] = "";
+		$apps[$x]['description']['ka-ge'] = "დეტალური ჩანაწერები ზარის შესახებ.";
 		$apps[$x]['description']['nl-nl'] = "Gespreks data (CDR) met alle informatie over het gesprek.";
 		$apps[$x]['description']['pl-pl'] = "";
 		$apps[$x]['description']['pt-br'] = "";
@@ -597,6 +598,10 @@
 		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";
 		$z++;
 		$apps[$x]['db'][$y]['fields'][$z]['name'] = "billmsec";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "numeric";
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "hold_accum_seconds";
 		$apps[$x]['db'][$y]['fields'][$z]['type'] = "numeric";
 		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";
 		$z++;

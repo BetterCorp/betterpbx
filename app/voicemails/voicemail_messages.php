@@ -370,6 +370,7 @@
 		echo "<form id='form_list' method='post'>\n";
 		echo "<input type='hidden' id='action' name='action' value=''>\n";
 
+		echo "<div class='card'>\n";
 		echo "<table class='list'>\n";
 		echo "<tr style='display: none;'><td></td></tr>\n"; // dummy row to adjust the alternating background color
 
@@ -457,10 +458,7 @@
 					}
 					echo button::create(['type'=>'button','title'=>$text['label-play'].' / '.$text['label-pause'].' '.$text['label-message'],'icon'=>$_SESSION['theme']['button_icon_play'],'id'=>'recording_button_'.escape($row['voicemail_message_uuid']),'onclick'=>"recording_play('".escape($row['voicemail_message_uuid'])."','".$row['voicemail_id'].'|'.$row['voicemail_uuid']."','message');"]);
 					echo button::create(['type'=>'button','title'=>$text['label-download'],'icon'=>$_SESSION['theme']['button_icon_download'],'link'=>"voicemail_messages.php?action=download&id=".urlencode($row['voicemail_id'])."&voicemail_uuid=".escape($row['voicemail_uuid'])."&uuid=".escape($row['voicemail_message_uuid'])."&t=bin&r=".uuid(),'onclick'=>"$(this).closest('tr').children('td').css('font-weight','normal');"]);
-					if (
-						(!empty($_SESSION['voicemail']['transcribe_enabled']['boolean']) && $_SESSION['voicemail']['transcribe_enabled']['boolean'] == 'true' && !empty($row['message_transcription'])) ||
-						($transcribe_enabled == 'true' && !empty($transcribe_engine) && $transcriptions_exists === true)
-						) {
+					if (!empty($row['message_transcription']) || ($transcribe_enabled == 'true' && !empty($transcribe_engine) && $transcriptions_exists === true)) {
 						echo button::create(['type'=>'button','title'=>$text['label-transcription'],'icon'=>'quote-right','style'=>(empty($row['message_transcription']) ? 'visibility:hidden;' : null),'onclick'=>(!empty($bold) ? "mark_saved('".$row['voicemail_message_uuid']."', '".$row['voicemail_uuid']."');" : null)."document.getElementById('transcription_".$row['voicemail_message_uuid']."').style.display = document.getElementById('transcription_".$row['voicemail_message_uuid']."').style.display == 'none' ? 'table-row' : 'none'; this.blur(); return false;"]);
 					}
 					echo "	</td>\n";
@@ -469,10 +467,7 @@
 						echo "	<td class='right no-wrap hide-sm-dn' style='".$bold."'>".escape($row['file_size_label'])."</td>\n";
 					}
 					echo "</tr>\n";
-					if (
-						(!empty($_SESSION['voicemail']['transcribe_enabled']['boolean']) && $_SESSION['voicemail']['transcribe_enabled']['boolean'] == 'true' && !empty($row['message_transcription'])) ||
-						($transcribe_enabled == 'true' && !empty($transcribe_engine) && $transcriptions_exists === true)
-						) {
+					if (!empty($row['message_transcription']) || ($transcribe_enabled == 'true' && !empty($transcribe_engine) && $transcriptions_exists === true)) {
 						echo "<tr style='display: none;'><td></td></tr>\n"; // dummy row to maintain same background color for transcription row
 						echo "<tr id='transcription_".$row['voicemail_message_uuid']."' class='list-row' style='display: none;'>\n";
 						echo "	<td style='padding: 10px 20px 15px 20px;' colspan='".$col_count."'>\n";
@@ -492,6 +487,7 @@
 			$previous_voicemail_id = $field['voicemail_id'];
 		}
 		echo "</table>\n";
+		echo "</div>\n";
 		echo "<br />\n";
 		echo "<div align='center'>".$paging_controls."</div>\n";
 		echo "<input type='hidden' name='".$token['name']."' value='".$token['hash']."'>\n";

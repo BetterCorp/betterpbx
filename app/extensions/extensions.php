@@ -221,7 +221,7 @@
 
 //show the content
 	echo "<div class='action_bar' id='action_bar'>\n";
-	echo "	<div class='heading'><b>".$text['header-extensions']." (".$num_rows.")</b></div>\n";
+	echo "	<div class='heading'><b>".$text['header-extensions']."</b><div class='count'>".number_format($num_rows)."</div></div>\n";
 	echo "	<div class='actions'>\n";
 	if (permission_exists('extension_import') && (!isset($_SESSION['limit']['extensions']['numeric']) || $total_extensions < $_SESSION['limit']['extensions']['numeric'])) {
 		echo button::create(['type'=>'button','label'=>$text['button-import'],'icon'=>$_SESSION['theme']['button_icon_import'],'link'=>'extension_imports.php']);
@@ -294,6 +294,7 @@
 	echo "<input type='hidden' id='action' name='action' value=''>\n";
 	echo "<input type='hidden' name='search' value=\"".escape($search)."\">\n";
 
+	echo "<div class='card'>\n";
 	echo "<table class='list'>\n";
 	echo "<tr class='list-header'>\n";
 	if (permission_exists('extension_enabled') || permission_exists('extension_delete')) {
@@ -431,6 +432,8 @@
 	}
 
 	echo "</table>\n";
+	echo "</div>\n";
+
 	echo "<br />\n";
 	echo "<div align='center'>".$paging_controls."</div>\n";
 

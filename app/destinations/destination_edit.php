@@ -17,7 +17,7 @@
 
 	The Initial Developer of the Original Code is
 	Mark J Crane <markjcrane@fusionpbx.com>
-	Portions created by the Initial Developer are Copyright (C) 2008-2023
+	Portions created by the Initial Developer are Copyright (C) 2008-2024
 	the Initial Developer. All Rights Reserved.
 
 	Contributor(s):
@@ -1554,6 +1554,7 @@
 	echo $text['description-destinations']."\n";
 	echo "<br /><br />\n";
 
+	echo "<div class='card'>\n";
 	echo "<table width='100%' border='0' cellpadding='0' cellspacing='0'>\n";
 
 	//destination type
@@ -1570,7 +1571,9 @@
 	}
 	echo "	<option value='inbound' ".($selected[0] ?? null).">".$text['option-inbound']."</option>\n";
 	echo "	<option value='outbound' ".($selected[1] ?? null).">".$text['option-outbound']."</option>\n";
-	echo "	<option value='local' ".($selected[2] ?? null).">".$text['option-local']."</option>\n";
+	if (permission_exists('destination_local')) {
+		echo "	<option value='local' ".($selected[2] ?? null).">".$text['option-local']."</option>\n";
+	}
 	unset($selected);
 	echo "	</select>\n";
 	echo "<br />\n";
@@ -2078,6 +2081,7 @@
 	echo "</tr>\n";
 
 	echo "</table>";
+	echo "</div>\n";
 	echo "<br><br>";
 
 	//hidden values
