@@ -12,15 +12,14 @@ header('Expires: '.gmdate('D, d M Y H:i:s',time()+3600).' GMT');
 /* SET DEFAULTS */
 
 $pre_text_color = $_SESSION['theme']['pre_text_color']['text'] ?? '#5f5f5f';
-$footer_background_color = $_SESSION['theme']['footer_background_color']['text'] ?? 'rgba(0,0,0,0.2)';
+$footer_background_color = $_SESSION['theme']['footer_background_color']['text'] ?? 'transparent';
 $footer_border_radius = $_SESSION['theme']['footer_border_radius']['text'] ?? null;
-$footer_background_color = $_SESSION['theme']['footer_background_color']['text'] ?? 'rgba(0,0,0,0.2)';
-$footer_color = $_SESSION['theme']['footer_color']['text'] ?? 'rgba(255,255,255,0.3)';
+$footer_color = $_SESSION['theme']['footer_color']['text'] ?? 'rgb(121 121 121 / 30%)';
 $text_link_color = $_SESSION['theme']['text_link_color']['text'] ?? '#004083';
 $text_link_color_hover = $_SESSION['theme']['text_link_color_hover']['text'] ?? '#5082ca';
 $menu_main_background_image = $_SESSION['theme']['menu_main_background_image']['text'] ?? null;
-$menu_main_background_color = $_SESSION['theme']['menu_main_background_color']['text'] ?? 'rgba(0,0,0,0.90)';
-$menu_main_shadow_color = isset($_SESSION['theme']['menu_main_shadow_color']['text']) ? '0 0 5px '.$_SESSION['theme']['menu_main_shadow_color']['text'] : 'none';
+$menu_main_background_color = $_SESSION['theme']['menu_main_background_color']['text'] ?? '#8800FF';
+$menu_main_shadow_color = isset($_SESSION['theme']['menu_main_shadow_color']['text']) ? 'rgba(0, 0, 0, 0.24) 0px 3px 8px' : 'none';
 $menu_main_border_color = $_SESSION['theme']['menu_main_border_color']['text'] ?? 'transparent';
 $menu_main_border_size = $_SESSION['theme']['menu_main_border_size']['text'] ?? 0;
 $menu_position = $_SESSION['theme']['menu_position']['text'] ?? 'top';
@@ -70,17 +69,17 @@ $body_header_text_link_color_hover = $_SESSION['theme']['body_header_text_link_c
 $button_height = $_SESSION['theme']['button_height']['text'] ?? '28px';
 $button_padding = $_SESSION['theme']['button_padding']['text'] ?? '5px 8px';
 $button_border_size = $_SESSION['theme']['button_border_size']['text'] ?? '1px';
-$button_border_color = $_SESSION['theme']['button_border_color']['text'] ?? '#242424';
+$button_border_color = $_SESSION['theme']['button_border_color']['text'] ?? '#8800FF';
 $button_border_radius = $_SESSION['theme']['button_border_radius']['text'] ?? null;
-$button_background_color = $_SESSION['theme']['button_background_color']['text'] ?? '#4f4f4f';
-$button_background_color_bottom = $_SESSION['theme']['button_background_color_bottom']['text'] ?? '#000000';
+$button_background_color = $_SESSION['theme']['button_background_color']['text'] ?? '#8800FF';
+$button_background_color_bottom = $_SESSION['theme']['button_background_color_bottom']['text'] ?? '#8800FF';
 $button_text_font = $_SESSION['theme']['button_text_font']['text'] ?? 'Candara, Calibri, Segoe, "Segoe UI", Optima, Arial, sans-serif';
 $button_text_color = $_SESSION['theme']['button_text_color']['text'] ?? '#ffffff';
 $button_text_weight = $_SESSION['theme']['button_text_weight']['text'] ?? 'bold';
 $button_text_size = $_SESSION['theme']['button_text_size']['text'] ?? '11px';
 $button_border_color_hover = $_SESSION['theme']['button_border_color_hover']['text'] ?? '#000000';
-$button_background_color_hover = $_SESSION['theme']['button_background_color_hover']['text'] ?? '#000000';
-$button_background_color_bottom_hover = $_SESSION['theme']['button_background_color_bottom_hover']['text'] ?? '#000000';
+$button_background_color_hover = $_SESSION['theme']['button_background_color_hover']['text'] ?? '#a03cf7';
+$button_background_color_bottom_hover = $_SESSION['theme']['button_background_color_bottom_hover']['text'] ?? '#a03cf7';
 $button_text_color_hover = $_SESSION['theme']['button_text_color_hover']['text'] ?? '#ffffff';
 $button_icons = $_SESSION['theme']['button_icons']['text'] ?? 'auto';
 $body_icon_color = $_SESSION['theme']['body_icon_color']['text'] ?? 'rgba(0,0,0,0.25)';
@@ -111,19 +110,19 @@ $login_body_top = $_SESSION['theme']['login_body_top']['text'] ?? '50%';
 $login_body_left = $_SESSION['theme']['login_body_left']['text'] ?? '50%';
 $login_body_padding = $_SESSION['theme']['login_body_padding']['text'] ?? '30px';
 $login_body_width = $_SESSION['theme']['login_body_width']['text'] ?? 'auto';
-$login_body_background_color = $_SESSION['theme']['login_body_background_color']['text'] ?? 'rgba(255,255,255,0.35)';
+$login_body_background_color = $_SESSION['theme']['login_body_background_color']['text'] ?? 'rgba(255,255,255,1)';
 $login_body_border_radius = $_SESSION['theme']['login_body_border_radius']['text'] ?? null;
 $login_body_border_size = $_SESSION['theme']['login_body_border_size']['text'] ?? 0;
 $login_body_border_color = $_SESSION['theme']['login_body_border_color']['text'] ?? 'transparent';
 $login_body_border_style = $login_body_border_size || $login_body_border_color ? 'solid' : 'none';
-$login_body_shadow_color = isset($_SESSION['theme']['login_body_shadow_color']['text']) ? '0 1px 20px '.$_SESSION['theme']['login_body_shadow_color']['text'] : 'none';
+$login_body_shadow_color = isset($_SESSION['theme']['login_body_shadow_color']['text']) ? '0 1px 20px #8800ffad' : 'none';
 $login_link_text_color = $_SESSION['theme']['login_link_text_color']['text'] ?? '#004083';
 $login_link_text_size = $_SESSION['theme']['login_link_text_size']['text'] ?? '11px';
 $login_link_text_font = $_SESSION['theme']['login_link_text_font']['text'] ?? 'Arial';
 $login_link_text_color_hover = $_SESSION['theme']['login_link_text_color_hover']['text'] ?? '#5082ca';
 $body_color = $_SESSION['theme']['body_color']['text'] ?? '#ffffff';
 $body_border_radius = $_SESSION['theme']['body_border_radius']['text'] ?? null;
-$body_shadow_color = isset($_SESSION['theme']['body_shadow_color']['text']) ? '0 1px 4px '.$_SESSION['theme']['body_shadow_color']['text'] : 'none';
+$body_shadow_color = isset($_SESSION['theme']['body_shadow_color']['text']) ? 'rgba(0, 0, 0, 0.35) 0px 5px 15px;' : 'none';
 $body_text_color = $_SESSION['theme']['body_text_color']['text'] ?? '#5f5f5f';
 $body_text_size = $_SESSION['theme']['body_text_size']['text'] ?? '12px';
 $body_text_font = $_SESSION['theme']['body_text_font']['text'] ?? 'arial';
@@ -539,14 +538,15 @@ else { //default: white
 		object-fit: cover;
 		position: fixed;
 		<?php
-		if (!empty($background_color)) {
-			echo $background_color;
-		}
-		if (isset($_SESSION['theme']['background_filter']['text'])) {
-			echo "		backdrop-filter: ".$_SESSION['theme']['background_filter']['text'].";\n";
-			echo "		-webkit-backdrop-filter: ".$_SESSION['theme']['background_filter']['text'].";\n";
-		}
+// 		if (!empty($background_color)) {
+// 			echo $background_color;
+// 		}
+// 		if (isset($_SESSION['theme']['background_filter']['text'])) {
+// 			echo "		backdrop-filter: ".$_SESSION['theme']['background_filter']['text'].";\n";
+// 			echo "		-webkit-backdrop-filter: ".$_SESSION['theme']['background_filter']['text'].";\n";
+// 		}
 		?>
+        background: #eff5fd;
 		left: 0;
 		right: 0;
 		top: 0;
