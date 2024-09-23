@@ -468,8 +468,8 @@ if (!empty($background_colors[0]) || !empty($background_colors[1])) { //backgrou
 		$background_color .= "		background: linear-gradient(to bottom, ".$background_colors[0]." 0%, ".$background_colors[1]." 100%);\n";
 	}
 }
-else { //default: white
-	$background_color = "";
+else { //default: dark
+	$background_color = "#333333";
 }
 
 
@@ -538,15 +538,14 @@ else { //default: white
 		object-fit: cover;
 		position: fixed;
 		<?php
-// 		if (!empty($background_color)) {
-// 			echo $background_color;
-// 		}
-// 		if (isset($_SESSION['theme']['background_filter']['text'])) {
-// 			echo "		backdrop-filter: ".$_SESSION['theme']['background_filter']['text'].";\n";
-// 			echo "		-webkit-backdrop-filter: ".$_SESSION['theme']['background_filter']['text'].";\n";
-// 		}
+ 		if (!empty($background_color)) {
+ 			echo $background_color;
+ 		}
+ 		if (isset($_SESSION['theme']['background_filter']['text'])) {
+ 			echo "		backdrop-filter: ".$_SESSION['theme']['background_filter']['text'].";\n";
+ 			echo "		-webkit-backdrop-filter: ".$_SESSION['theme']['background_filter']['text'].";\n";
+ 		}
 		?>
-        background: #eff5fd;
 		left: 0;
 		right: 0;
 		top: 0;
