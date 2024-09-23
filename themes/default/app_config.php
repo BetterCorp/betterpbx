@@ -44,7 +44,7 @@
 		$apps[$x]['default_settings'][$y]['default_setting_category'] = "theme";
 		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "background_color";
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "array";
-		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#f2f4f5";
+		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#333333";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "true";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Set a background color.";
 		$y++;
@@ -61,14 +61,14 @@
 		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "background_color_enabled";
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "boolean";
 		$apps[$x]['default_settings'][$y]['default_setting_value'] = "true";
-		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "true";
+		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "false";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Enable use of background color.";
 		$y++;
 		$apps[$x]['default_settings'][$y]['default_setting_uuid'] = "d79fb881-8a1c-4082-9ef9-5ff359186e30";
 		$apps[$x]['default_settings'][$y]['default_setting_category'] = "theme";
 		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "background_color";
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "array";
-		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#f2f9ff";
+		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#333333";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "false";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Set a secondary background color, for a gradient effect.";
 		$y++;
