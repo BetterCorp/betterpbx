@@ -80,6 +80,23 @@
 			$database = new database;
 			$database->execute($sql);
 			unset($sql);
+			
+			$sql = "update v_default_settings ";
+			$sql .= "set default_setting_value = '#333333',  default_setting_enabled = 'true' ";
+			$sql .= "where default_setting_subcategory = 'background_color' ";
+			$sql .= "and default_setting_category = 'theme' ";
+			$sql .= "and default_setting_enabled = 'true' ";
+			$database = new database;
+			$database->execute($sql);
+			unset($sql);			
+			
+			$sql = "update v_default_settings ";
+			$sql .= "set default_setting_value = 'true', default_setting_enabled = 'true' ";
+			$sql .= "where default_setting_subcategory = 'background_color_enabled' ";
+			$sql .= "and default_setting_category = 'theme' ";
+			$database = new database;
+			$database->execute($sql);
+			unset($sql);
 
 		//replace glyphicon icon with v6 font awesome icons for default main menu items
 			$queries[] = "update v_menu_items set menu_item_icon = 'fa-solid fa-house' where menu_item_icon = 'glyphicon-home' ";
