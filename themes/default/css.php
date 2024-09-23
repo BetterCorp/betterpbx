@@ -77,7 +77,7 @@ $button_text_font = $_SESSION['theme']['button_text_font']['text'] ?? 'Candara, 
 $button_text_color = $_SESSION['theme']['button_text_color']['text'] ?? '#ffffff';
 $button_text_weight = $_SESSION['theme']['button_text_weight']['text'] ?? 'bold';
 $button_text_size = $_SESSION['theme']['button_text_size']['text'] ?? '11px';
-$button_border_color_hover = $_SESSION['theme']['button_border_color_hover']['text'] ?? '#000000';
+$button_border_color_hover = $_SESSION['theme']['button_border_color_hover']['text'] ?? '#a03cf7';
 $button_background_color_hover = $_SESSION['theme']['button_background_color_hover']['text'] ?? '#a03cf7';
 $button_background_color_bottom_hover = $_SESSION['theme']['button_background_color_bottom_hover']['text'] ?? '#a03cf7';
 $button_text_color_hover = $_SESSION['theme']['button_text_color_hover']['text'] ?? '#ffffff';
@@ -248,7 +248,7 @@ $dashboard_detail_background_color_edge = $_SESSION['theme']['dashboard_detail_b
 $dashboard_detail_background_color_center = $_SESSION['theme']['dashboard_detail_background_color_center']['text'] ?? '#ffffff';
 $dashboard_detail_row_text_size = $_SESSION['theme']['dashboard_detail_row_text_size']['text'] ?? '11px';
 $dashboard_shadow_color = $_SESSION['theme']['dashboard_shadow_color']['text'] ?? '#d0d8e5';
-$dashboard_footer_background_color = $_SESSION['theme']['dashboard_footer_background_color']['text'] ?? '#e5e9f0';
+$dashboard_footer_background_color = $_SESSION['theme']['dashboard_footer_background_color']['text'] ?? 'transparent';
 $dashboard_footer_background_color_hover = $_SESSION['theme']['dashboard_footer_background_color_hover']['text'] ?? color_adjust($dashboard_footer_background_color, 0.02);
 $dashboard_footer_dots_color = $_SESSION['theme']['dashboard_footer_dots_color']['text'] ?? '#a4aebf';
 $dashboard_footer_dots_color_hover = $_SESSION['theme']['dashboard_footer_dots_color_hover']['text'] ?? $dashboard_footer_dots_color;
@@ -468,8 +468,8 @@ if (!empty($background_colors[0]) || !empty($background_colors[1])) { //backgrou
 		$background_color .= "		background: linear-gradient(to bottom, ".$background_colors[0]." 0%, ".$background_colors[1]." 100%);\n";
 	}
 }
-else { //default: dark
-	$background_color = "#333333";
+else { //default: white
+	$background_color = "";
 }
 
 

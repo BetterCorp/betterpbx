@@ -260,7 +260,7 @@
 		$apps[$x]['default_settings'][$y]['default_setting_category'] = "theme";
 		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "footer_background_color";
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "text";
-		$apps[$x]['default_settings'][$y]['default_setting_value'] = "rgba(0,0,0,0.0)";
+		$apps[$x]['default_settings'][$y]['default_setting_value'] = "transparent";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "true";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Set the background color (and opacity) for the footer bar.";
 		$y++;
@@ -1316,7 +1316,7 @@
 		$apps[$x]['default_settings'][$y]['default_setting_category'] = "theme";
 		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "dashboard_footer_background_color";
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "text";
-		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#e5e9f0";
+		$apps[$x]['default_settings'][$y]['default_setting_value'] = "transparent";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "false";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Set the background color (and opacity) of the Dashboard block footer bar.";
 		$y++;
@@ -1324,7 +1324,7 @@
 		$apps[$x]['default_settings'][$y]['default_setting_category'] = "theme";
 		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "dashboard_footer_background_color_hover";
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "text";
-		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#ebeef3";
+		$apps[$x]['default_settings'][$y]['default_setting_value'] = "transparent";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "false";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Set the background hover color (and opacity) of the Dashboard block footer bar.";
 		$y++;
@@ -1516,7 +1516,7 @@
 		$apps[$x]['default_settings'][$y]['default_setting_category'] = "theme";
 		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "login_background_color";
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "array";
-		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#6c89b5";
+		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#333333";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "false";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Set the background color of the login page.";
 		$y++;
@@ -1524,7 +1524,7 @@
 		$apps[$x]['default_settings'][$y]['default_setting_category'] = "theme";
 		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "login_background_color";
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "array";
-		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#144794";
+		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#333333";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "false";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Set a secondary background color of the login page, for a gradient effect.";
 		$y++;
@@ -1668,7 +1668,7 @@
 		$apps[$x]['default_settings'][$y]['default_setting_category'] = "theme";
 		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "button_background_color";
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "text";
-		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#4099ff";
+		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#8800FF";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "true";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Set the background main/top color (and opacity) of buttons.";
 		$y++;
@@ -1676,7 +1676,7 @@
 		$apps[$x]['default_settings'][$y]['default_setting_category'] = "theme";
 		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "button_background_color_bottom";
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "text";
-		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#4099ff";
+		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#8800FF";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "true";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Set the background bottom color (and opacity) of buttons.";
 		$y++;
@@ -1684,7 +1684,7 @@
 		$apps[$x]['default_settings'][$y]['default_setting_category'] = "theme";
 		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "button_background_color_hover";
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "text";
-		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#74b4fd";
+		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#a03cf7";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "true";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Set the background main/top hover color (and opacity) of buttons.";
 		$y++;
@@ -1692,7 +1692,7 @@
 		$apps[$x]['default_settings'][$y]['default_setting_category'] = "theme";
 		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "button_background_color_bottom_hover";
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "text";
-		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#74b4fd";
+		$apps[$x]['default_settings'][$y]['default_setting_value'] = "#a03cf7";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "true";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Set the background bottom hover color (and opacity) of buttons.";
 		$y++;
