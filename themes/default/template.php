@@ -244,11 +244,11 @@
 		//domain selector controls
 			{if $domain_selector_enabled}
 				{literal}
-				$('.domain_selector_domain').on('click', function() { show_domains(); });
-				$('#header_domain_selector_domain').on('click', function() { show_domains(); });
+				$('.header_domain_selector_domain').on('click', function() { event.preventDefault(); show_domains(); });
 				$('#domains_hide').on('click', function() { hide_domains(); });
 
 				function show_domains() {
+					$('#body_header_user_menu').fadeOut(200);
 					search_domains('domains_list');
 
 					$('#domains_visible').val(1);
@@ -258,7 +258,6 @@
 						$('.navbar').css('margin-right',scrollbar_width); //adjust navbar margin to compensate
 						$('#domains_container').css('right',-scrollbar_width); //domain container right position to compensate
 					}
-					$(document).scrollTop(0);
 					$('#domains_container').show();
 					$('#domains_block').animate({marginRight: '+=300'}, 400, function() {
 						$('#domains_search').trigger('focus');
@@ -687,6 +686,27 @@
 				});
 				{/literal}
 			{/if}
+
+		//side/fixed menu: hide an open user menu in the body header or menu on scroll
+			{if $settings.theme.menu_style == 'side' || $settings.theme.menu_style == 'fixed' }
+				{literal}
+				$(window).on('scroll', function() {
+					$('#body_header_user_menu').fadeOut(200);
+				});
+				$('div#main_content').on('click', function() {
+					$('#body_header_user_menu').fadeOut(200);
+				});
+				{/literal}
+			{/if}
+
+		//create function to mimic toggling fade and slide at the same time
+			{literal}
+			(function($){
+				$.fn.toggleFadeSlide = function(speed = 200, easing, callback){
+					return this.animate({opacity: 'toggle', height: 'toggle'}, speed, easing, callback);
+				};
+			})(jQuery);
+			{/literal}
 
 	{literal}
 	}); //document ready end

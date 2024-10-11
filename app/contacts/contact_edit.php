@@ -496,19 +496,17 @@
 			$y = 0;
 			if (!empty($contact_attachments)) {
 				foreach ($contact_attachments as $row) {
-					if (!empty($row['attachment_description'])) {
-						$array['contacts'][0]['contact_attachments'][$y]['contact_attachment_uuid'] = $row["contact_attachment_uuid"];
-						$array['contacts'][0]['contact_attachments'][$y]['domain_uuid'] = $row["domain_uuid"];
-						$array['contacts'][0]['contact_attachments'][$y]['contact_uuid'] = $row["contact_uuid"];
-						$array['contacts'][0]['contact_attachments'][$y]['attachment_primary'] = $row["attachment_primary"];
-						//$array['contacts'][0]['contact_attachments'][$y]['attachment_filename'] = $row["attachment_filename"];
-						//$array['contacts'][0]['contact_attachments'][$y]['attachment_content'] = $row["attachment_content"];
-						$array['contacts'][0]['contact_attachments'][$y]['attachment_description'] = $row["attachment_description"];
-						//$array['contacts'][0]['contact_attachments'][$y]['attachment_uploaded_date'] = $row["attachment_uploaded_date"];
-						//$array['contacts'][0]['contact_attachments'][$y]['attachment_uploaded_user_uuid'] = $row["attachment_uploaded_user_uuid"];
-						//$array['contacts'][0]['contact_attachments'][$y]['attachment_size'] = $row["attachment_size"];
-						$y++;
-					}
+					$array['contacts'][0]['contact_attachments'][$y]['contact_attachment_uuid'] = $row["contact_attachment_uuid"];
+					$array['contacts'][0]['contact_attachments'][$y]['domain_uuid'] = $row["domain_uuid"];
+					$array['contacts'][0]['contact_attachments'][$y]['contact_uuid'] = $row["contact_uuid"];
+					$array['contacts'][0]['contact_attachments'][$y]['attachment_primary'] = $row["attachment_primary"];
+					//$array['contacts'][0]['contact_attachments'][$y]['attachment_filename'] = $row["attachment_filename"];
+					//$array['contacts'][0]['contact_attachments'][$y]['attachment_content'] = $row["attachment_content"];
+					$array['contacts'][0]['contact_attachments'][$y]['attachment_description'] = $row["attachment_description"] ?? null;
+					//$array['contacts'][0]['contact_attachments'][$y]['attachment_uploaded_date'] = $row["attachment_uploaded_date"];
+					//$array['contacts'][0]['contact_attachments'][$y]['attachment_uploaded_user_uuid'] = $row["attachment_uploaded_user_uuid"];
+					//$array['contacts'][0]['contact_attachments'][$y]['attachment_size'] = $row["attachment_size"];
+					$y++;
 				}
 			}
 
@@ -1013,7 +1011,7 @@
 	echo "<style>";
 	echo "	#qr_code_container {";
 	echo "		z-index: 999999; ";
-	echo "		position: absolute; ";
+	echo "		position: fixed; ";
 	echo "		left: 0; ";
 	echo "		top: 0; ";
 	echo "		right: 0; ";
@@ -1023,18 +1021,24 @@
 	echo "	}";
 	echo "	#qr_code {";
 	echo "		display: block; ";
-	echo "		width: 650px; ";
-	echo "		height: 650px; ";
+	echo "		width: 100%; ";
+	echo "		max-width: 650px; ";
+	echo "		height: auto; ";
 	echo "		-webkit-box-shadow: 0px 1px 20px #888; ";
 	echo "		-moz-box-shadow: 0px 1px 20px #888; ";
 	echo "		box-shadow: 0px 1px 20px #888;";
+	echo "	}";
+	echo "	#qr_code > img {";
+	echo "		width: 100%; ";
+	echo "		max-width: 650px; ";
+	echo "		height: auto; ";
 	echo "	}";
 	echo "</style>";
 	echo "<script src='".PROJECT_PATH."/resources/jquery/jquery-qrcode.min.js'></script>";
 	echo "<script language='JavaScript' type='text/javascript'>";
 	echo "	$(document).ready(function() {";
 	echo "		$('#qr_code').qrcode({ ";
-	echo "			render: 'canvas', ";
+	echo "			render: 'image', ";
 	echo "			minVersion: 6, ";
 	echo "			maxVersion: 40, ";
 	echo "			ecLevel: 'H', ";
@@ -1051,6 +1055,23 @@
 	echo "		});";
 	echo "	});";
 	echo "</script>";
+
+//styles and attachment viewing layer
+	if (permission_exists('contact_attachment_view') && !empty($contact_attachments) && is_array($contact_attachments)) {
+		echo "<style>\n";
+		echo "	#contact_attachment_layer {\n";
+		echo "		z-index: 999999;\n";
+		echo "		position: fixed;\n";
+		echo "		left: 0px;\n";
+		echo "		top: 0px;\n";
+		echo "		right: 0px;\n";
+		echo "		bottom: 0px;\n";
+		echo "		text-align: center;\n";
+		echo "		vertical-align: middle;\n";
+		echo "	}\n";
+		echo "</style>\n";
+		echo "<div id='contact_attachment_layer' style='display: none;'></div>\n";
+	}
 
 //show the content
 	echo "<form name='frm' id='frm' method='post' action=''>\n";
@@ -2301,7 +2322,7 @@ if (permission_exists('contact_relation_view')) {
 
 		$x = 0;
 		foreach($contact_relations as $row) {
-			
+
 			//get contact details and contact_name
 			$sql = "select contact_uuid, contact_organization, contact_name_given, contact_name_family, contact_nickname ";
 			$sql .= "from v_contacts ";
@@ -2545,21 +2566,6 @@ if (permission_exists('contact_attachment_view')) {
 		}
 		echo "		</div>\n";
 
-		//styles and attachment layer
-		echo "<style>\n";
-		echo "	#contact_attachment_layer {\n";
-		echo "		z-index: 999999;\n";
-		echo "		position: absolute;\n";
-		echo "		left: 0px;\n";
-		echo "		top: 0px;\n";
-		echo "		right: 0px;\n";
-		echo "		bottom: 0px;\n";
-		echo "		text-align: center;\n";
-		echo "		vertical-align: middle;\n";
-		echo "	}\n";
-		echo "</style>\n";
-		echo "<div id='contact_attachment_layer' style='display: none;'></div>\n";
-
 		//script
 		echo "<script>\n";
 		echo "	function display_attachment(id) {\n";
@@ -2577,7 +2583,7 @@ if (permission_exists('contact_attachment_view')) {
 		//if ($action == 'update') {
 			echo "<input type='hidden' name='attachment_filename' value=\"".escape($row['attachment_filename'])."\">\n";
 			if ($attachment_type == 'jpg' || $attachment_type == 'jpeg' || $attachment_type == 'gif' || $attachment_type == 'png') {
-				echo "<img src='data:image/".$attachment_type.";base64,".escape($row['attachment_content'])."' style='border: none; max-width: 220px; max-height: 220px;' oncontextmenu=\"window.open('contact_attachment.php?id=".escape($row['contact_attachment_uuid'])."&action=download'); return false;\">";
+				echo "<img src='data:image/".$attachment_type.";base64,".escape($row['attachment_content'])."' style='border: none; cursor: pointer; width: 100%; height: auto;' onclick=\"display_attachment('".escape($row['contact_attachment_uuid'])."');\">";
 			}
 			else {
 				echo "<a href='contact_attachment.php?id=".escape($row['contact_attachment_uuid'])."&action=download' style='font-size: 120%;'>".escape($row['attachment_filename'])."</a>";
@@ -2614,7 +2620,7 @@ if (permission_exists('contact_attachment_view')) {
 		echo "		</select>\n";
 		echo "	</div>\n";
 
-		echo "	<div class='label required'>\n";
+		echo "	<div class='label'>\n";
 		echo "		".$text['label-description']."\n";
 		echo "	</div>\n";
 		echo "	<div class='field no-wrap'>\n";
