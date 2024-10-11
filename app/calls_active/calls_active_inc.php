@@ -113,7 +113,7 @@
 
 		//show content
 			echo "<div class='action_bar' id='action_bar'>\n";
-			echo "	<div class='heading'><b>".$text['title']." (".$num_rows.")</b></div>\n";
+			echo "	<div class='heading'><b>".$text['title']."</b><div class='count'>".number_format($num_rows)."</div></div>\n";
 			echo "	<div class='actions'>\n";
 			echo "		<span id='refresh_state'>".button::create(['type'=>'button','title'=>$text['label-refresh_pause'],'icon'=>'sync-alt fa-spin','onclick'=>'refresh_stop()'])."</span>";
 			if (permission_exists('call_active_eavesdrop') && !empty($_SESSION['user']['extensions'])) {
@@ -160,6 +160,7 @@
 			echo "<form id='form_list' method='post' action='calls_exec.php'>\n";
 			echo "<input type='hidden' id='action' name='action' value=''>\n";
 
+			echo "<div class='card'>\n";
 			echo "<table class='list'>\n";
 			echo "<tr class='list-header'>\n";
 			if (permission_exists('call_active_hangup')) {
@@ -262,6 +263,7 @@
 			}
 
 			echo "</table>\n";
+			echo "</div>\n";
 
 			echo "<input type='hidden' name='".$token['name']."' value='".$token['hash']."'>\n";
 

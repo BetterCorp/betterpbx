@@ -103,12 +103,14 @@
 			$attachment_content = file_get_contents($attachment['tmp_name']);
 
 			//list of image extensions
-			$image_extensions = array('png','jpg','jpeg','gif','bmp', 'webp'); 
+			$image_extensions = array('png','jpg','jpeg','gif','bmp', 'webp');
 
 			//read the image from the string then output the image without meta data
 			if (in_array($attachment_extension, $image_extensions)) {
 				//create the image object from the content string
 				$image = imagecreatefromstring($attachment_content);
+				imagealphablending($image, FALSE);
+				imagesavealpha($image, TRUE);
 
 				//start output buffering to capture the image data
 				ob_start();
@@ -205,6 +207,7 @@
 	echo "	<div style='clear: both;'></div>\n";
 	echo "</div>\n";
 
+	echo "<div class='card'>\n";
 	echo "<table width='100%'  border='0' cellpadding='0' cellspacing='0'>\n";
 
 	echo "<tr>\n";
@@ -263,6 +266,7 @@
 	echo "</tr>\n";
 
 	echo "</table>";
+	echo "</div>\n";
 	echo "<br><br>";
 
 	echo "<input type='hidden' name='contact_uuid' value='".escape($contact_uuid)."'>\n";

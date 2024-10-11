@@ -42,6 +42,9 @@
 	$language = new text;
 	$text = $language->get();
 
+//initialize the database connection
+	$database = database::new();
+
 //set defaults
 	$recording_name = '';
 	$recording_message = '';
@@ -247,7 +250,6 @@
 				$array['recordings'][0]['recording_description'] = $recording_description;
 
 				//execute update
-				$database = new database;
 				$database->app_name = 'recordings';
 				$database->app_uuid = '83913217-c7a2-9e90-925d-a866eb40b60e';
 				$database->save($array);
@@ -273,7 +275,6 @@
 		$sql .= "and recording_uuid = :recording_uuid ";
 		$parameters['domain_uuid'] = $domain_uuid;
 		$parameters['recording_uuid'] = $recording_uuid;
-		$database = new database;
 		$row = $database->select($sql, $parameters, 'row');
 		if (is_array($row) && @sizeof($row) != 0) {
 			$recording_filename = $row["recording_filename"];
@@ -312,6 +313,7 @@
 		echo modal::create(['id'=>'modal-delete','type'=>'delete','actions'=>button::create(['type'=>'submit','label'=>$text['button-continue'],'icon'=>'check','id'=>'btn_delete','style'=>'float: right; margin-left: 15px;','collapse'=>'never','name'=>'action','value'=>'delete','onclick'=>"modal_close();"])]);
 	}
 
+	echo "<div class='card'>\n";
 	echo "<table width='100%' border='0' cellpadding='0' cellspacing='0'>\n";
 
 	echo "<tr>\n";
@@ -458,8 +460,8 @@
 			}
 			else {
 				echo "	<select class='formfld' id='create_recording' name='create_recording'>\n";
-				echo "		<option value='true' ".($create_recording == 'true' ? "selected='selected'" : null).">".$text['option-true']."</option>\n";
-				echo "		<option value='false' ".($create_recording == 'false' ? "selected='selected'" : null).">".$text['option-false']."</option>\n";
+				echo "		<option value='true'>".$text['option-true']."</option>\n";
+				echo "		<option value='false' selected='selected'>".$text['option-false']."</option>\n";
 				echo "	</select>\n";
 			}
 			echo "<br />\n";
@@ -481,6 +483,7 @@
 	echo "</tr>\n";
 
 	echo "</table>";
+	echo "</div>\n";
 	echo "<br /><br />";
 
 	if (!empty($recording_uuid) && is_uuid($recording_uuid)) {

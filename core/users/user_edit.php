@@ -17,7 +17,7 @@
 
 	The Initial Developer of the Original Code is
 	Mark J Crane <markjcrane@fusionpbx.com>
-	Portions created by the Initial Developer are Copyright (C) 2008-2023
+	Portions created by the Initial Developer are Copyright (C) 2008-2024
 	the Initial Developer. All Rights Reserved.
 
 	Contributor(s):
@@ -725,6 +725,9 @@
 		echo button::create(['type'=>'button','label'=>$text['button-permissions'],'icon'=>'key','style'=>$button_margin,'link'=>PROJECT_PATH.'/app/user_permissions/user_permissions.php?id='.urlencode($user_uuid)]);
 		unset($button_margin);
 	}
+	if (permission_exists('user_setting_view')) {
+		echo button::create(['type'=>'button','label'=>$text['button-settings'],'icon'=>$_SESSION['theme']['button_icon_settings'],'id'=>'btn_settings','style'=>'','link'=>PROJECT_PATH.'/core/user_settings/user_settings.php?id='.urlencode($user_uuid)]);
+	}
 	echo button::create(['type'=>'button','label'=>$text['button-save'],'icon'=>$_SESSION['theme']['button_icon_save'],'id'=>'btn_save','style'=>'margin-left: 15px;','onclick'=>'submit_form();']);
 	echo "	</div>\n";
 	echo "	<div style='clear: both;'></div>\n";
@@ -733,6 +736,7 @@
 	echo $text['description-user_edit']."\n";
 	echo "<br /><br />\n";
 
+	echo "<div class='card'>\n";
 	echo "<table cellpadding='0' cellspacing='0' border='0' width='100%'>";
 
 	echo "	<tr>";
@@ -1073,6 +1077,7 @@
 			echo button::create(['type'=>'button',
 				'label'=>$text['button-generate'],
 				'icon'=>'key',
+				'style'=>'margin-top: 1px; margin-bottom: 1px;',
 				'onclick'=>"document.getElementById('api_key').value = '".generate_password(32,3)."';
 					document.getElementById('frm').submit();"]);
 		}
@@ -1082,6 +1087,7 @@
 				'label'=>$text['button-view'],
 				'id'=>'button-api_key_view',
 				'icon'=>'key',
+				'style'=>'margin-top: 1px; margin-bottom: 1px;',
 				'onclick'=>"document.getElementById ('button-api_key_view').style.display = 'none';
 					document.getElementById('api_key').style.display = 'inline';
 					document.getElementById('button-api_key_hide').style.display = 'inline';
@@ -1207,6 +1213,7 @@
 	echo "</tr>\n";
 
 	echo "</table>";
+	echo "</div>\n";
 	echo "<br /><br />";
 
 	if ($action == 'edit') {
@@ -1219,14 +1226,8 @@
 
 	echo "</form>";
 
-	if (permission_exists("user_edit") && permission_exists('user_setting_view') && $action == 'edit') {
-		require $_SERVER["DOCUMENT_ROOT"].PROJECT_PATH."/core/user_settings/user_settings.php";
-		echo "<br><br>";
-	}
-
-	echo "<script>\n";
-
 //hide password fields before submit
+	echo "<script>\n";
 	echo "	function submit_form() {\n";
 	echo "		hide_password_fields();\n";
 	echo "		$('form#frm').submit();\n";

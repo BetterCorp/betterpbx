@@ -176,11 +176,11 @@
 				//set the file name
 				$file_name = 'greeting_'.$i.'.'.$file_ext;
 
-				//set the greeting id	
+				//set the greeting id
 				if (!file_exists($greeting_dir.'/'.$file_name)) {
 					//set the greeting id
 					$greeting_id = $i;
-					
+
 					//end the loop
 					break;
 				}
@@ -349,7 +349,7 @@
 
 //show the content
 	echo "<div class='action_bar' id='action_bar'>\n";
-	echo "	<div class='heading'><b>".$text['title']." (".$num_rows.")</b></div>\n";
+	echo "	<div class='heading'><b>".$text['title']."</b><div class='count'>".number_format($num_rows)."</div></div>\n";
 	echo "	<div class='actions'>\n";
 	echo button::create(['type'=>'button','label'=>$text['button-back'],'icon'=>$_SESSION['theme']['button_icon_back'],'id'=>'btn_back','link'=>$_SESSION['back'][$_SERVER['PHP_SELF']]]);
 	$margin_left = false;
@@ -392,6 +392,7 @@
 	echo "<input type='hidden' id='action' name='action' value=''>\n";
 	echo "<input type='hidden' id='voicemail_id' name='voicemail_id' value='".escape($voicemail_id)."'>\n";
 
+	echo "<div class='card'>\n";
 	echo "<table class='list'>\n";
 	echo "<tr class='list-header'>\n";
 	$col_count = 0;
@@ -503,6 +504,7 @@
 	}
 
 	echo "</table>\n";
+	echo "</div>\n";
 	echo "<br />\n";
 	echo "<input type='hidden' name='".$token['name']."' value='".$token['hash']."'>\n";
 	echo "</form>\n";

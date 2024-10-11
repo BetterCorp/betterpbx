@@ -20,6 +20,7 @@
 		$apps[$x]['description']['fr-fr'] = "Pour recevoir un fax, configurez une extension du FAX et après diriger un numéro vers lui.";
 		$apps[$x]['description']['he-il'] = "";
 		$apps[$x]['description']['it-it'] = "";
+		$apps[$x]['description']['ka-ge'] = "ფაქსის მისაღებად მოირგეთ ფაქსის გაფართოება და გადაამისამართეთ შემომავალი ფაქსი გამოყოფილი ნომრით, ან შეგიძლიათ გამოიცნოთ ფაქსის ტონი ჩანართში 'საჯარო'.";
 		$apps[$x]['description']['nl-nl'] = "";
 		$apps[$x]['description']['pl-pl'] = "";
 		$apps[$x]['description']['pt-br'] = "";
@@ -88,6 +89,11 @@
 		$y++;
 		$apps[$x]['permissions'][$y]['name'] = "fax_sent_view";
 		$apps[$x]['permissions'][$y]['menu']['uuid'] = "9c9642e4-2b9b-2785-18d0-6c0a4ede2b2f";
+		$apps[$x]['permissions'][$y]['groups'][] = "superadmin";
+		$apps[$x]['permissions'][$y]['groups'][] = "admin";
+		$apps[$x]['permissions'][$y]['groups'][] = "fax";
+		$y++;
+		$apps[$x]['permissions'][$y]['name'] = "fax_sent_recipient";
 		$apps[$x]['permissions'][$y]['groups'][] = "superadmin";
 		$apps[$x]['permissions'][$y]['groups'][] = "admin";
 		$apps[$x]['permissions'][$y]['groups'][] = "fax";
@@ -249,6 +255,11 @@
 		//$apps[$x]['permissions'][$y]['groups'][] = "fax";
 		$y++;
 		$apps[$x]['permissions'][$y]['name'] = "fax_email";
+		$apps[$x]['permissions'][$y]['groups'][] = "superadmin";
+		$apps[$x]['permissions'][$y]['groups'][] = "admin";
+		$apps[$x]['permissions'][$y]['groups'][] = "fax";
+		$y++;
+		$apps[$x]['permissions'][$y]['name'] = "fax_email_confirmation";
 		$apps[$x]['permissions'][$y]['groups'][] = "superadmin";
 		$apps[$x]['permissions'][$y]['groups'][] = "admin";
 		$apps[$x]['permissions'][$y]['groups'][] = "fax";
@@ -536,6 +547,11 @@
 		$apps[$x]['db'][$y]['fields'][$z]['search'] = 'true';
 		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";
 		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name']['text'] = "fax_email_confirmation";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['search'] = 'true';
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "Delivery addresses for fax confirmations";
+		$z++;
 		$apps[$x]['db'][$y]['fields'][$z]['name']['text'] = "fax_file";
 		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
 		$apps[$x]['db'][$y]['fields'][$z]['search'] = 'true';
@@ -746,6 +762,10 @@
 		$apps[$x]['db'][$y]['fields'][$z]['name'] = "fax_mode";
 		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
 		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "rx / tx  - Rx means receive and Tx means transmit.";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "fax_recipient";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";
 		$z++;
 		$apps[$x]['db'][$y]['fields'][$z]['name'] = "fax_destination";
 		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";

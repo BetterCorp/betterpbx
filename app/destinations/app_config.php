@@ -20,6 +20,7 @@
 		$apps[$x]['description']['fr-fr'] = "Défini les numéros externes.";
 		$apps[$x]['description']['he-il'] = "";
 		$apps[$x]['description']['it-it'] = "";
+		$apps[$x]['description']['ka-ge'] = "გამოიყენება გარე დანიშნულების ნომრების აღწერისთვის.";
 		$apps[$x]['description']['nl-nl'] = "Gebruikt om externe bestemmingen vast te leggen.";
 		$apps[$x]['description']['pl-pl'] = "";
 		$apps[$x]['description']['pt-br'] = "Usado para gerenciar números de destinos externos.";
@@ -163,6 +164,8 @@
 		$apps[$x]['permissions'][$y]['name'] = "other_destinations";
 		$apps[$x]['permissions'][$y]['groups'][] = "superadmin";
 		$apps[$x]['permissions'][$y]['groups'][] = "admin";
+		$y++;
+		$apps[$x]['permissions'][$y]['name'] = "destination_local";
 		$y++;
 
 	//default settings

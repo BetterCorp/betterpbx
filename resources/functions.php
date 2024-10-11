@@ -149,12 +149,11 @@
 		function uuid() {
 			$uuid = null;
 			if (PHP_OS === 'FreeBSD') {
-				$uuid = trim(shell_exec("uuid -v 4"));
+				$uuid = trim(shell_exec("uuidgen"));
 				if (is_uuid($uuid)) {
 					return $uuid;
 				} else {
-					echo "Please install the following package.\n";
-					echo "pkg install ossp-uuid\n";
+					echo "Please install uuidgen.\n";
 					exit;
 				}
 			}
@@ -167,7 +166,7 @@
 					if (is_uuid($uuid)) {
 						return $uuid;
 					} else {
-						echo "Please install the uuidgen.\n";
+						echo "Please install uuidgen.\n";
 						exit;
 					}
 				}
@@ -323,7 +322,7 @@
 	//check if the permission exists
 	if (!function_exists('permission_exists')) {
 
-		function permission_exists($permission_name, $operator = 'or') {
+		function permission_exists($permission_name) {
 			$database = database::new();
 			$permission = new permissions($database);
 			return $permission->exists($permission_name);
@@ -2465,6 +2464,59 @@ if (!function_exists('url_get_contents')) {
 		$data = curl_exec($ch);
 		curl_close($ch);
 		return $data;
+	}
+}
+
+//get system memory details
+if (!function_exists('get_memory_details')) {
+	function get_memory_details() {
+		if (PHP_OS == 'Linux') {
+			$meminfo = file_get_contents("/proc/meminfo");
+			$data = [];
+
+			foreach (explode("\n", $meminfo) as $line) {
+				if (preg_match('/^(\w+):\s+(\d+)\skB$/', $line, $matches)) {
+					$data[$matches[1]] = $matches[2];
+				}
+			}
+
+			if (isset($data['MemTotal']) && isset($data['MemAvailable'])) {
+				$array['total_memory'] = $data['MemTotal'];
+				$array['available_memory'] = $data['MemAvailable'];
+				$array['used_memory'] = $array['total_memory'] - $array['available_memory'];
+
+				$array['memory_usage'] = ($array['used_memory'] / $array['total_memory']) * 100;
+				$array['memory_percent'] = round($array['memory_usage'], 2);
+				return $array;
+			}
+		}
+
+		if (PHP_OS == 'FreeBSD') {
+			//define the output array
+			$output = [];
+
+			// get the memory information using sysctl
+			exec('sysctl -n hw.physmem hw.pagesize vm.stats.vm.v_free_count vm.stats.vm.v_inactive_count vm.stats.vm.v_cache_count vm.stats.vm.v_wire_count', $output);
+
+			if (count($output) === 6) {
+				list($array['total_memory'], $page_size, $free_pages, $inactive_pages, $cache_pages, $wired_pages) = $output;
+
+				// total memory in bytes
+				$array['total_memory'] = (int)$array['total_memory'];
+
+				// pages to bytes conversion
+				$array['available_memory'] = ($free_pages + $inactive_pages + $cache_pages) * (int)$page_size;
+				$array['used_memory'] = $array['total_memory'] - $array['available_memory'];
+
+				// calculate memory usage percentage
+				$array['memory_usage'] = ($array['used_memory'] / $array['total_memory']) * 100;
+
+				$array['memory_percent'] = round($array['memory_usage'], 2) . '%';
+				return $array;
+			}
+		}
+
+		return false;
 	}
 }
 

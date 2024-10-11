@@ -1140,6 +1140,7 @@
 	echo "	<div style='clear: both;'></div>\n";
 	echo "</div>\n";
 
+	echo "<div class='card'>\n";
 	echo "<table width='100%' border='0' cellpadding='0' cellspacing='0'>\n";
 
 	echo "<tr>\n";
@@ -1771,7 +1772,7 @@
 		echo "</td>\n";
 		echo "</tr>\n";
 
-		if (permission_exists('voicemail_transcription_enabled') && ($_SESSION['voicemail']['transcribe_enabled']['boolean'] ?? '') == "true") {
+		if (permission_exists('voicemail_transcription_enabled') && ($_SESSION['transcribe']['enabled']['boolean'] ?? '') == "true") {
 			echo "<tr>\n";
 			echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
 			echo "	".$text['label-voicemail_transcription_enabled']."\n";
@@ -2284,6 +2285,7 @@
 	echo "</tr>\n";
 
 	echo "</table>";
+	echo "</div>\n";
 	echo "<br><br>";
 
 	if (isset($page) && is_numeric($page)) {
