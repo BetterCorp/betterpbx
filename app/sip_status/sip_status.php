@@ -199,7 +199,23 @@
 					echo "	</td>\n";
 					echo "	<td>".$text['label-gateway']."</td>\n";
 					echo "	<td class='hide-sm-dn'>".escape($row->to)."</td>\n";
-					echo "	<td class='no-wrap'>".escape($row->state)."</td>\n";
+					echo "	<td class='no-wrap'>";
+					if ($row->state === 'REGED') {
+						echo '<span class="badge badge-success badge-pill">REGISTERED</span>';
+					} else if ($row->state === 'UNREGED') {
+						echo '<span class="badge badge-secondary badge-pill">DISABLED</span>';
+					} else if ($row->state === 'TRYING') {
+						echo '<span class="badge badge-warning badge-pill">TRYING</span>';
+					} else if ($row->state === 'FAIL_WAIT') {
+						echo '<span class="badge badge-danger badge-pill">FAILED</span>';
+					} else if ($row->state === 'UNREGISTER') {
+						echo '<span class="badge badge-info badge-pill">UNREGISTER</span>';
+					} else if ($row->state === 'REGISTER') {
+						echo '<span class="badge badge-info badge-pill">REGISTER</span>';
+					} else {
+						echo escape($row->state);
+					}
+					echo "</td>\n";
 					echo "	<td class='center no-link'>";
 					echo button::create(['type'=>'button','class'=>'link','label'=>$text['button-stop'],'link'=>"cmd.php?profile=".urlencode($row->profile)."&gateway=".urlencode((!empty($gateway_uuid) ? $gateway_uuid : $row->name))."&action=killgw"]);
 					echo "	</td>\n";
