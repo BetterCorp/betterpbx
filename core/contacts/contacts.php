@@ -407,7 +407,7 @@
 			foreach($contacts as $contactRow) {
 				$list_row_url = "contact_view.php?id=".urlencode($contactRow['contact_uuid'])."&query_string=".urlencode($_SERVER["QUERY_STRING"]);
 				echo "<tr class='list-row' href='".$list_row_url."'>\n";
-				echo "	<td class='no-wrap'><a href='".$list_row_url."'>".escape($contactRow['contact_name_given'])." ".escape($contactRow['contact_name_family'])." (".escape($contactRow['contact_nickname']).")</a>&nbsp;</td>\n";
+				echo "	<td class='no-wrap'>[".escape($contactRow['contact_organization'])."] <a href='".$list_row_url."'>".escape($contactRow['contact_name_given'])." ".escape($contactRow['contact_name_family'])." (".escape($contactRow['contact_nickname']).")</a>&nbsp;</td>\n";
 				
 				$contact_uuid = $contactRow['contact_uuid'];
 				echo "	<td>";
