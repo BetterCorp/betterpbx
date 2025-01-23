@@ -272,7 +272,7 @@
 	echo "	<div class='heading'><b>".$text['header-upgrade']."</b></div>\n";
 	echo "	<div class='actions'>\n";
 	echo button::create(['type'=>'submit','label'=>$text['button-upgrade_execute'],'icon'=>$_SESSION['theme']['button_icon_save'],'id'=>'btn_save','collapse'=>'never']);
-	echo button::create(['type'=>'button','title'=>$text['button-upgrade_full'],'icon'=>$_SESSION['theme']['button_icon_view'],'link'=>'index.php?action=upgrade_full']);
+	echo button::create(['type'=>'button','title'=>$text['button-upgrade_full'],'icon'=>'fa-solid fa-upload fa-fw','link'=>'index.php?action=upgrade_full']);
 	echo "	</div>\n";
 	echo "	<div style='clear: both;'></div>\n";
 	echo "</div>\n";
@@ -510,7 +510,7 @@
 	echo "	});\n";
 	echo "}\n";
 	if ($getAction == 'upgrade_full') {
-		echo "document.querySelectorAll('#upgrade_form input[type=\"checkbox\"]').forEach(x=>x.checked=true);document.querySelector('#upgrade_form input[type=\"submit\"]').click()";
+		echo "document.querySelectorAll('#upgrade_form input[type=\"checkbox\"]').forEach(x=>x.checked=true);document.querySelector('#upgrade_form button[type=\"submit\"]').click()";
 	}
 	echo "</script>\n";
 
