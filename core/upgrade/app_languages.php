@@ -1404,6 +1404,18 @@ $text['button-upgrade_execute']['zh-cn'] = "执行";
 $text['button-upgrade_execute']['ja-jp'] = "実行する";
 $text['button-upgrade_execute']['ko-kr'] = "실행하다";
 
+$text['button-upgrade_full']['en-us'] = "Full Upgrade";
+$text['button-upgrade_full']['en-gb'] = "Full Upgrade";
+$text['button-upgrade_full']['ar-eg'] = "ترقية كاملة";
+$text['button-upgrade_full']['de-at'] = "Vollständige Aktualisierung";
+$text['button-upgrade_full']['de-ch'] = "Vollständige Aktualisierung";
+$text['button-upgrade_full']['de-de'] = "Vollständige Aktualisierung";
+$text['button-upgrade_full']['el-gr'] = "Πλήρης Αναβάθμιση";
+$text['button-upgrade_full']['es-cl'] = "Actualización Completa";
+$text['button-upgrade_full']['es-mx'] = "Actualización Completa";
+$text['button-upgrade_full']['fr-ca'] = "Mise à niveau complète";
+$text['button-upgrade_full']['fr-fr'] = "Mise à niveau complète";
+
 $text['label-all_of_the_above']['en-us'] = "All of the Above";
 $text['label-all_of_the_above']['en-gb'] = "All of the Above";
 $text['label-all_of_the_above']['ar-eg'] = "كل ما ورداعلاه";

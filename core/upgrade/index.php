@@ -73,6 +73,7 @@
 	if (is_array($updateable_repos)) { $repos_count = @sizeof($updateable_repos); }
 	$repos_count++;
 
+	$getAction = $_GET['action'] ?? null;
 //process the http post
 	if (!empty($_POST) && @sizeof($_POST) > 0) {
 
@@ -265,12 +266,13 @@
 	echo "</div>\n";
 
 //show the content
-	echo "<form name='frm' id='frm' method='post'>\n";
+	echo "<form name='frm' id='upgrade_form' method='post' action='index.php'>\n";
 
 	echo "<div class='action_bar' id='action_bar'>\n";
 	echo "	<div class='heading'><b>".$text['header-upgrade']."</b></div>\n";
 	echo "	<div class='actions'>\n";
 	echo button::create(['type'=>'submit','label'=>$text['button-upgrade_execute'],'icon'=>$_SESSION['theme']['button_icon_save'],'id'=>'btn_save','collapse'=>'never']);
+	echo button::create(['type'=>'button','title'=>$text['button-upgrade_full'],'icon'=>$_SESSION['theme']['button_icon_view'],'link'=>'index.php?action=upgrade_full']);
 	echo "	</div>\n";
 	echo "	<div style='clear: both;'></div>\n";
 	echo "</div>\n";
@@ -507,6 +509,9 @@
 	echo "		}\n";
 	echo "	});\n";
 	echo "}\n";
+	if ($getAction == 'upgrade_full') {
+		echo "document.querySelectorAll('#upgrade_form input[type=\"checkbox\"]').forEach(x=>x.checked=true);document.querySelector('#upgrade_form input[type=\"submit\"]').click()";
+	}
 	echo "</script>\n";
 
 //include the footer
