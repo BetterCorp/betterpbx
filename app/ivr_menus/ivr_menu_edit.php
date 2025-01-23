@@ -401,7 +401,7 @@
 					$array['dialplans'][0]["app_uuid"] = "a5788e9b-58bc-bd1b-df59-fff5d51253ab";
 
 				//add the dialplan permission
-					$p = new permissions;
+					$p = permissions::new();
 					if ($action == "add") {
 						$p->add("dialplan_add", "temp");
 					}
@@ -838,7 +838,7 @@
 	echo "<td class='vncell' rowspan='2' valign='top' align='left' nowrap='nowrap'>\n";
 	echo "	".$text['label-'.$instance_label]."\n";
 	echo "</td>\n";
-	echo "<td class='vtable playback_progress_bar_background' id='recording_progress_bar_".$instance_id."' onclick=\"recording_play('".$instance_id."', document.getElementById('".$instance_id."').value, document.getElementById('".$instance_id."').options[document.getElementById('".$instance_id."').selectedIndex].parentNode.getAttribute('data-type'));\" style='display: none; border-bottom: none; padding-top: 0 !important; padding-bottom: 0 !important;' align='left'><span class='playback_progress_bar' id='recording_progress_".$instance_id."'></span></td>\n";
+	echo "<td class='vtable playback_progress_bar_background' id='recording_progress_bar_".$instance_id."' onclick=\"recording_seek(event,'".$instance_id."');\" style='display: none; border-bottom: none; padding-top: 0 !important; padding-bottom: 0 !important;' align='left'><span class='playback_progress_bar' id='recording_progress_".$instance_id."'></span></td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
 	echo "<td class='vtable' align='left'>\n";
@@ -867,6 +867,16 @@
 					if (!empty($instance_value) && $instance_value == $row["value"]) {
 						$selected = "selected='selected'";
 						$playable = '../switch/sounds.php?action=download&filename='.$row["value"];
+						$found = true;
+					}
+					else {
+						unset($selected);
+					}
+				}
+				else if ($key == 'phrases') {
+					if (!empty($instance_value) && $instance_value == $row["value"]) {
+						$selected = "selected='selected'";
+						$playable = '';
 						$found = true;
 					}
 					else {
@@ -911,7 +921,7 @@
 	echo "<td class='vncell' rowspan='2' valign='top' align='left' nowrap='nowrap'>\n";
 	echo "	".$text['label-'.$instance_label]."\n";
 	echo "</td>\n";
-	echo "<td class='vtable playback_progress_bar_background' id='recording_progress_bar_".$instance_id."' onclick=\"recording_play('".$instance_id."', document.getElementById('".$instance_id."').value, document.getElementById('".$instance_id."').options[document.getElementById('".$instance_id."').selectedIndex].parentNode.getAttribute('data-type'));\" style='display: none; border-bottom: none; padding-top: 0 !important; padding-bottom: 0 !important;' align='left'><span class='playback_progress_bar' id='recording_progress_".$instance_id."'></span></td>\n";
+	echo "<td class='vtable playback_progress_bar_background' id='recording_progress_bar_".$instance_id."' onclick=\"recording_seek(event,'".$instance_id."');\" style='display: none; border-bottom: none; padding-top: 0 !important; padding-bottom: 0 !important;' align='left'><span class='playback_progress_bar' id='recording_progress_".$instance_id."'></span></td>\n";
 	echo "</tr>\n";
 	echo "<tr>\n";
 	echo "<td class='vtable' align='left'>\n";
@@ -940,6 +950,16 @@
 					if (!empty($instance_value) && $instance_value == $row["value"]) {
 						$selected = "selected='selected'";
 						$playable = '../switch/sounds.php?action=download&filename='.$row["value"];
+						$found = true;
+					}
+					else {
+						unset($selected);
+					}
+				}
+				else if ($key == 'phrases') {
+					if (!empty($instance_value) && $instance_value == $row["value"]) {
+						$selected = "selected='selected'";
+						$playable = '';
 						$found = true;
 					}
 					else {
@@ -1221,7 +1241,7 @@
 		echo "<td width='30%' class='vncell' rowspan='2' valign='top' align='left' nowrap='nowrap'>\n";
 		echo "	".$text['label-'.$instance_label]."\n";
 		echo "</td>\n";
-		echo "<td width='70%'class='vtable playback_progress_bar_background' id='recording_progress_bar_".$instance_id."' onclick=\"recording_play('".$instance_id."', document.getElementById('".$instance_id."').value, document.getElementById('".$instance_id."').options[document.getElementById('".$instance_id."').selectedIndex].parentNode.getAttribute('data-type'));\" style='display: none; border-bottom: none; padding-top: 0 !important; padding-bottom: 0 !important;' align='left'><span class='playback_progress_bar' id='recording_progress_".$instance_id."'></span></td>\n";
+		echo "<td width='70%'class='vtable playback_progress_bar_background' id='recording_progress_bar_".$instance_id."' onclick=\"recording_seek(event,'".$instance_id."');\" style='display: none; border-bottom: none; padding-top: 0 !important; padding-bottom: 0 !important;' align='left'><span class='playback_progress_bar' id='recording_progress_".$instance_id."'></span></td>\n";
 		echo "</tr>\n";
 		echo "<tr>\n";
 		echo "<td class='vtable' align='left'>\n";
@@ -1294,7 +1314,7 @@
 		echo "<td class='vncell' rowspan='2' valign='top' align='left' nowrap='nowrap'>\n";
 		echo "	".$text['label-'.$instance_label]."\n";
 		echo "</td>\n";
-		echo "<td class='vtable playback_progress_bar_background' id='recording_progress_bar_".$instance_id."' onclick=\"recording_play('".$instance_id."', document.getElementById('".$instance_id."').value, document.getElementById('".$instance_id."').options[document.getElementById('".$instance_id."').selectedIndex].parentNode.getAttribute('data-type'));\" style='display: none; border-bottom: none; padding-top: 0 !important; padding-bottom: 0 !important;' align='left'><span class='playback_progress_bar' id='recording_progress_".$instance_id."'></span></td>\n";
+		echo "<td class='vtable playback_progress_bar_background' id='recording_progress_bar_".$instance_id."' onclick=\"recording_seek(event,'".$instance_id."', document.getElementById('".$instance_id."').value, document.getElementById('".$instance_id."').options[document.getElementById('".$instance_id."').selectedIndex].parentNode.getAttribute('data-type'));\" style='display: none; border-bottom: none; padding-top: 0 !important; padding-bottom: 0 !important;' align='left'><span class='playback_progress_bar' id='recording_progress_".$instance_id."'></span></td>\n";
 		echo "</tr>\n";
 		echo "<tr>\n";
 		echo "<td class='vtable' align='left'>\n";

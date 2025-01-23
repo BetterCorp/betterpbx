@@ -261,7 +261,7 @@
 			$array['extension_users'][0]['user_uuid'] = $user_uuid;
 
 		//add temporary permission
-			$p = new permissions;
+			$p = permissions::new();
 			$p->add('extension_user_delete', 'temp');
 
 		//save the array
@@ -288,7 +288,7 @@
 				$array['device_lines'][0]['device_line_uuid'] = $device_line_uuid;
 
 			//add temporary permission
-				$p = new permissions;
+				$p = permissions::new();
 				$p->add('device_line_delete', 'temp');
 
 			//save the array
@@ -1061,6 +1061,9 @@
 	$object = new token;
 	$token = $object->create($_SERVER['PHP_SELF']);
 
+//set the back button
+	$_SESSION['call_forward_back'] = $_SERVER['PHP_SELF']  . "?id=$extension_uuid";
+
 //begin the page content
 	require_once "resources/header.php";
 	if ($action == "update") {
@@ -1766,7 +1769,7 @@
 		echo "    ".$text['label-voicemail_mail_to']."\n";
 		echo "</td>\n";
 		echo "<td class='vtable' align='left'>\n";
-		echo "    <input class='formfld' type='text' name='voicemail_mail_to' maxlength='255' value=\"".escape($voicemail_mail_to ?? '')."\">\n";
+		echo "    <input class='formfld' type='text' name='voicemail_mail_to' maxlength='1024' value=\"".escape($voicemail_mail_to ?? '')."\">\n";
 		echo "<br />\n";
 		echo $text['description-voicemail_mail_to']."\n";
 		echo "</td>\n";

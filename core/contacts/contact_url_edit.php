@@ -30,7 +30,7 @@
 	require_once "resources/check_auth.php";
 
 //check permissions
-	if (permission_exists('contact_email_edit') || permission_exists('contact_email_add')) {
+	if (permission_exists('contact_url_edit') || permission_exists('contact_url_add')) {
 		//access granted
 	}
 	else {
@@ -43,33 +43,36 @@
 	$text = $language->get();
 
 //set the defaults
-	$email_label = '';
-	$email_address = '';
-	$email_description = '';
+	$url_label = '';
+	$url_label_custom = '';
+	$url_address = '';
+	$url_primary = '';
+	$url_description = '';
 
 //action add or update
 	if (!empty($_REQUEST["id"]) && is_uuid($_REQUEST["id"])) {
 		$action = "update";
-		$contact_email_uuid = $_REQUEST["id"];
+		$contact_url_uuid = $_REQUEST["id"];
 	}
 	else {
 		$action = "add";
 	}
 
-if (!empty($_GET["contact_uuid"]) && is_uuid($_GET["contact_uuid"])) {
-	$contact_uuid = $_GET["contact_uuid"];
-}
+//get the contact uuid
+	if (!empty($_GET["contact_uuid"]) && is_uuid($_GET["contact_uuid"])) {
+		$contact_uuid = $_GET["contact_uuid"];
+	}
 
 //get http post variables and set them to php variables
 	if (!empty($_POST)) {
-		$email_label = $_POST["email_label"];
-		$email_label_custom = $_POST["email_label_custom"];
-		$email_address = $_POST["email_address"];
-		$email_primary = $_POST["email_primary"];
-		$email_description = $_POST["email_description"];
+		$url_label = $_POST["url_label"];
+		$url_label_custom = $_POST["url_label_custom"];
+		$url_address = $_POST["url_address"];
+		$url_primary = $_POST["url_primary"];
+		$url_description = $_POST["url_description"];
 
 		//use custom label if set
-		$email_label = !empty($email_label_custom) ? $email_label_custom : $email_label;
+		$url_label = !empty($url_label_custom) ? $url_label_custom : $url_label;
 	}
 
 //process the form data
@@ -77,7 +80,7 @@ if (!empty($_GET["contact_uuid"]) && is_uuid($_GET["contact_uuid"])) {
 
 		//set the uuid
 			if ($action == "update") {
-				$contact_email_uuid = $_POST["contact_email_uuid"];
+				$contact_url_uuid = $_POST["contact_url_uuid"];
 			}
 
 		//validate the token
@@ -107,54 +110,54 @@ if (!empty($_GET["contact_uuid"]) && is_uuid($_GET["contact_uuid"])) {
 			if (empty($_POST["persistformvar"])) {
 
 				//update last modified
-					$array['contacts'][0]['contact_uuid'] = $contact_uuid;
-					$array['contacts'][0]['domain_uuid'] = $domain_uuid;
-					$array['contacts'][0]['last_mod_date'] = 'now()';
-					$array['contacts'][0]['last_mod_user'] = $_SESSION['username'];
+				$array['contacts'][0]['contact_uuid'] = $contact_uuid;
+				$array['contacts'][0]['domain_uuid'] = $domain_uuid;
+				$array['contacts'][0]['last_mod_date'] = 'now()';
+				$array['contacts'][0]['last_mod_user'] = $_SESSION['username'];
 
-					$p = new permissions;
-					$p->add('contact_edit', 'temp');
+				$p = permissions::new();
+				$p->add('contact_edit', 'temp');
 
+				$database = new database;
+				$database->app_name = 'contacts';
+				$database->app_uuid = '04481e0e-a478-c559-adad-52bd4174574c';
+				$database->save($array);
+				unset($array);
+
+				$p->delete('contact_edit', 'temp');
+
+				//if primary, unmark other primary urls
+				if ($url_primary) {
+					$sql = "update v_contact_urls set url_primary = 0 ";
+					$sql .= "where domain_uuid = :domain_uuid ";
+					$sql .= "and contact_uuid = :contact_uuid ";
+					$parameters['domain_uuid'] = $domain_uuid;
+					$parameters['contact_uuid'] = $contact_uuid;
 					$database = new database;
-					$database->app_name = 'contacts';
-					$database->app_uuid = '04481e0e-a478-c559-adad-52bd4174574c';
-					$database->save($array);
-					unset($array);
+					$database->execute($sql, $parameters ?? null);
+					unset($sql, $parameters);
+				}
 
-					$p->delete('contact_edit', 'temp');
-
-				//if primary, unmark other primary emails
-					if ($email_primary) {
-						$sql = "update v_contact_emails set email_primary = 0 ";
-						$sql .= "where domain_uuid = :domain_uuid ";
-						$sql .= "and contact_uuid = :contact_uuid ";
-						$parameters['domain_uuid'] = $domain_uuid;
-						$parameters['contact_uuid'] = $contact_uuid;
-						$database = new database;
-						$database->execute($sql, $parameters);
-						unset($sql, $parameters);
-					}
-
-				if ($action == "add" && permission_exists('contact_email_add')) {
-					$contact_email_uuid = uuid();
-					$array['contact_emails'][0]['contact_email_uuid'] = $contact_email_uuid;
+				if ($action == "add" && permission_exists('contact_url_add')) {
+					$contact_url_uuid = uuid();
+					$array['contact_urls'][0]['contact_url_uuid'] = $contact_url_uuid;
 
 					message::add($text['message-add']);
 				}
 
-				if ($action == "update" && permission_exists('contact_email_edit')) {
-					$array['contact_emails'][0]['contact_email_uuid'] = $contact_email_uuid;
+				if ($action == "update" && permission_exists('contact_url_edit')) {
+					$array['contact_urls'][0]['contact_url_uuid'] = $contact_url_uuid;
 
 					message::add($text['message-update']);
 				}
 
 				if (!empty($array)) {
-					$array['contact_emails'][0]['domain_uuid'] = $_SESSION['domain_uuid'];
-					$array['contact_emails'][0]['contact_uuid'] = $contact_uuid;
-					$array['contact_emails'][0]['email_label'] = $email_label;
-					$array['contact_emails'][0]['email_address'] = $email_address;
-					$array['contact_emails'][0]['email_primary'] = $email_primary ? 1 : 0;
-					$array['contact_emails'][0]['email_description'] = $email_description;
+					$array['contact_urls'][0]['domain_uuid'] = $_SESSION['domain_uuid'];
+					$array['contact_urls'][0]['contact_uuid'] = $contact_uuid;
+					$array['contact_urls'][0]['url_label'] = $url_label;
+					$array['contact_urls'][0]['url_address'] = $url_address;
+					$array['contact_urls'][0]['url_primary'] = $url_primary ? 1 : 0;
+					$array['contact_urls'][0]['url_description'] = $url_description;
 
 					$database = new database;
 					$database->app_name = 'contacts';
@@ -171,19 +174,19 @@ if (!empty($_GET["contact_uuid"]) && is_uuid($_GET["contact_uuid"])) {
 
 //pre-populate the form
 	if (!empty($_GET) && empty($_POST["persistformvar"])) {
-		$contact_email_uuid = $_GET["id"] ?? '';
-		$sql = "select * from v_contact_emails ";
+		$contact_url_uuid = $_GET["id"] ?? '';
+		$sql = "select * from v_contact_urls ";
 		$sql .= "where domain_uuid = :domain_uuid ";
-		$sql .= "and contact_email_uuid = :contact_email_uuid ";
+		$sql .= "and contact_url_uuid = :contact_url_uuid ";
 		$parameters['domain_uuid'] = $_SESSION['domain_uuid'];
-		$parameters['contact_email_uuid'] = $contact_email_uuid;
+		$parameters['contact_url_uuid'] = $contact_url_uuid;
 		$database = new database;
-		$row = $database->select($sql, $parameters, 'row');;
+		$row = $database->select($sql, $parameters, 'row');
 		if (!empty($row)) {
-			$email_label = $row["email_label"];
-			$email_address = $row["email_address"];
-			$email_primary = $row["email_primary"];
-			$email_description = $row["email_description"];
+			$url_label = $row["url_label"];
+			$url_address = $row["url_address"];
+			$url_primary = $row["url_primary"];
+			$url_description = $row["url_description"];
 		}
 		unset($sql, $parameters, $row);
 	}
@@ -194,10 +197,10 @@ if (!empty($_GET["contact_uuid"]) && is_uuid($_GET["contact_uuid"])) {
 
 //show the header
 	if ($action == "update") {
-		$document['title'] = $text['title-contact_email-edit'];
+		$document['title'] = $text['title-contact_url-edit'];
 	}
 	else if ($action == "add") {
-		$document['title'] = $text['title-contact_email-add'];
+		$document['title'] = $text['title-contact_url-add'];
 	}
 	require_once "resources/header.php";
 
@@ -218,10 +221,10 @@ if (!empty($_GET["contact_uuid"]) && is_uuid($_GET["contact_uuid"])) {
 	echo "<div class='action_bar' id='action_bar'>\n";
 	echo "	<div class='heading'>";
 	if ($action == "update") {
-		echo "<b>".$text['header-contact_email-edit']."</b>";
+		echo "<b>".$text['header-contact_url-edit']."</b>";
 	}
 	else if ($action == "add") {
-		echo "<b>".$text['header-contact_email-add']."</b>";
+		echo "<b>".$text['header-contact_url-add']."</b>";
 	}
 	echo "	</div>\n";
 	echo "	<div class='actions'>\n";
@@ -232,56 +235,57 @@ if (!empty($_GET["contact_uuid"]) && is_uuid($_GET["contact_uuid"])) {
 	echo "</div>\n";
 
 	if ($action == "update") {
-		echo $text['description-contact_email-edit'];
+		echo $text['description-contact_url-edit'];
 	}
 	else if ($action == "add") {
-		echo $text['description-contact_email-add'];
+		echo $text['description-contact_url-add'];
 	}
 	echo "<br /><br />\n";
 
+	echo "<div class='card'>\n";
 	echo "<table width='100%' border='0' cellpadding='0' cellspacing='0'>\n";
 
 	echo "<tr>\n";
 	echo "<td width='30%' class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
-	echo "	".$text['label-email_label']."\n";
+	echo "	".$text['label-url_label']."\n";
 	echo "</td>\n";
 	echo "<td width='70%' class='vtable' align='left'>\n";
-	if (!empty($_SESSION["contact"]["email_label"])) {
-		sort($_SESSION["contact"]["email_label"]);
-		foreach($_SESSION["contact"]["email_label"] as $row) {
-			$email_label_options[] = "<option value='".$row."' ".(($row == $email_label) ? "selected='selected'" : null).">".$row."</option>";
+	if (!empty($_SESSION["contact"]["url_label"])) {
+		sort($_SESSION["contact"]["url_label"]);
+		foreach($_SESSION["contact"]["url_label"] as $row) {
+			$url_label_options[] = "<option value='".$row."' ".(($row == $url_label) ? "selected='selected'" : null).">".$row."</option>";
 		}
-		$email_label_found = (in_array($email_label, $_SESSION["contact"]["email_label"])) ? true : false;
+		$url_label_found = (in_array($url_label, $_SESSION["contact"]["url_label"])) ? true : false;
 	}
 	else {
-		$selected[$email_label] = "selected";
+		$selected[$url_label] = "selected";
 		$default_labels[] = $text['option-work'];
-		$default_labels[] = $text['option-home'];
+		$default_labels[] = $text['option-personal'];
 		$default_labels[] = $text['option-other'];
 		foreach ($default_labels as $default_label) {
-			$email_label_options[] = "<option value='".$default_label."' ".!empty($selected[$default_label]).">".$default_label."</option>";
+			$url_label_options[] = "<option value='".$default_label."' ".!empty($selected[$default_label]).">".$default_label."</option>";
 		}
-		$email_label_found = (in_array($email_label, $default_labels)) ? true : false;
+		$url_label_found = (in_array($url_label, $default_labels)) ? true : false;
 	}
-	echo "	<select class='formfld' ".((!empty($email_label) && !$email_label_found) ? "style='display: none;'" : null)." name='email_label' id='email_label' onchange=\"getElementById('email_label_custom').value='';\">\n";
+	echo "	<select class='formfld' ".((!empty($url_label) && !$url_label_found) ? "style='display: none;'" : null)." name='url_label' id='url_label' onchange=\"getElementById('url_label_custom').value='';\">\n";
 	echo "		<option value=''></option>\n";
-	echo 		(!empty($email_label_options)) ? implode("\n", $email_label_options) : null;
+	echo 		(!empty($url_label_options)) ? implode("\n", $url_label_options) : null;
 	echo "	</select>\n";
-	echo "	<input type='text' class='formfld' ".((empty($email_label) || $email_label_found) ? "style='display: none;'" : null)." name='email_label_custom' id='email_label_custom' value=\"".((!$email_label_found) ? htmlentities($email_label ?? '') : null)."\">\n";
-	echo "	<input type='button' id='btn_toggle_label' class='btn' alt='".$text['button-back']."' value='&#9665;' onclick=\"toggle_custom('email_label');\">\n";
+	echo "	<input type='text' class='formfld' ".((empty($url_label) || $url_label_found) ? "style='display: none;'" : null)." name='url_label_custom' id='url_label_custom' value=\"".((!$url_label_found) ? htmlentities($url_label ?? '') : null)."\">\n";
+	echo "	<input type='button' id='btn_toggle_label' class='btn' alt='".$text['button-back']."' value='&#9665;' onclick=\"toggle_custom('url_label');\">\n";
 	echo "<br />\n";
-	echo !empty($text['description-email_label'])."\n";
+	echo !empty($text['description-url_label'])."\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 
 	echo "<tr>\n";
 	echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
-	echo "	".$text['label-email_address']."\n";
+	echo "	".$text['label-url_address']."\n";
 	echo "</td>\n";
 	echo "<td class='vtable' align='left'>\n";
-	echo "	<input class='formfld' type='text' name='email_address' maxlength='255' value=\"".escape($email_address)."\">\n";
+	echo "	<input class='formfld' type='url' name='url_address' maxlength='255' value=\"".escape($url_address)."\" placeholder='http://...'>\n";
 	echo "<br />\n";
-	echo !empty($text['description-email_address'])."\n";
+	echo !empty($text['description-url_address'])."\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 
@@ -290,32 +294,33 @@ if (!empty($_GET["contact_uuid"]) && is_uuid($_GET["contact_uuid"])) {
 	echo "	".$text['label-primary']."\n";
 	echo "</td>\n";
 	echo "<td class='vtable' align='left'>\n";
-	echo "	<select class='formfld' name='email_primary' id='email_primary'>\n";
+	echo "	<select class='formfld' name='url_primary' id='url_primary'>\n";
 	echo "		<option value='0'>".$text['option-false']."</option>\n";
-	echo "		<option value='1' ".(!empty($email_primary) && $email_primary ? "selected" : null).">".$text['option-true']."</option>\n";
+	echo "		<option value='1' ".(($url_primary) ? "selected" : null).">".$text['option-true']."</option>\n";
 	echo "	</select>\n";
 	echo "<br />\n";
-	echo $text['description-email_primary']."\n";
+	echo $text['description-url_primary']."\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 
 	echo "<tr>\n";
 	echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
-	echo "	".$text['label-email_description']."\n";
+	echo "	".$text['label-url_description']."\n";
 	echo "</td>\n";
 	echo "<td class='vtable' align='left'>\n";
-	echo "	<input class='formfld' type='text' name='email_description' maxlength='255' value=\"".escape($email_description)."\">\n";
+	echo "	<input class='formfld' type='text' name='url_description' maxlength='255' value=\"".escape($url_description)."\">\n";
 	echo "<br />\n";
-	echo !empty($text['description-email_description'])."\n";
+	echo !empty($text['description-url_description'])."\n";
 	echo "</td>\n";
 	echo "</tr>\n";
 
 	echo "</table>";
+	echo "</div>\n";
 	echo "<br><br>";
 
 	echo "<input type='hidden' name='contact_uuid' value='".escape($contact_uuid ?? '')."'>\n";
 	if ($action == "update") {
-		echo "<input type='hidden' name='contact_email_uuid' value='".escape($contact_email_uuid)."'>\n";
+		echo "<input type='hidden' name='contact_url_uuid' value='".escape($contact_url_uuid)."'>\n";
 	}
 	echo "<input type='hidden' name='".$token['name']."' value='".$token['hash']."'>\n";
 
