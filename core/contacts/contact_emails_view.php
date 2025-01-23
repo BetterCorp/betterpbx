@@ -51,6 +51,19 @@
 //show if exists
 	if (!empty($contact_emails)) {
 
+		if ($show == 'qdetails') {
+			echo "<div>";
+			$x = 0;
+			foreach ($contact_emails as $row) {
+				echo "<div>";
+				echo "<div class='box contact-details-label'>".($row['email_label'] == strtolower($row['email_label'] ?? '') ? ucwords($row['email_label'] ?? '') : $row['email_label'])."</div>\n";
+				echo "<div class='box'><a href='mailto:".escape($row['email_address'])."'>".escape($row['email_address'])."</a></div>\n";
+				echo "</div>";
+				$x++;
+			}
+			echo "</div>";
+		}
+
 		//show the content
 			echo "<div class='grid' style='grid-template-columns: 70px auto;'>\n";
 			$x = 0;

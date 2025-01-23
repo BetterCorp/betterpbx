@@ -341,9 +341,12 @@
 		if ($show == 'all') {
 			echo "		<input type='hidden' name='show' value='all'>";
 		}
-		else {
+		else if ($show != 'qdetails') {
 			echo button::create(['type'=>'button','label'=>$text['button-show_all'],'icon'=>$_SESSION['theme']['button_icon_all'],'link'=>'?type=&show=all'.(!empty($search) ? "&search=".urlencode($search) : null)]);
 		}
+	}
+	if ($show != 'qdetails' && $show != 'all') {
+		echo button::create(['type'=>'button','label'=>$text['button-show_qdetails'],'icon'=>$_SESSION['theme']['button_icon_all'],'link'=>'?type=&show=qdetails'.(!empty($search) ? "&search=".urlencode($search) : null)]);	
 	}
 	echo 		"<input type='text' class='txt list-search' name='search' id='search' value=\"".escape($search)."\" placeholder=\"".$text['label-search']."\" onkeydown=''>";
 	echo button::create(['label'=>$text['button-search'],'icon'=>$_SESSION['theme']['button_icon_search'],'type'=>'submit','id'=>'btn_search','collapse'=>'hide-sm-dn']);
@@ -378,71 +381,97 @@
 	if ($show == "all" && permission_exists('contact_all')) {
 		echo th_order_by('domain_name', $text['label-domain'], $order_by, $order, $param, "class='shrink'");
 	}
-	echo th_order_by('contact_type', $text['label-contact_type'], $order_by, $order);
-	echo th_order_by('contact_organization', $text['label-contact_organization'], $order_by, $order);
-	echo "<th class='shrink hide-xs'>&nbsp;</th>\n";
-	echo th_order_by('contact_name_given', $text['label-contact_name_given'], $order_by, $order);
-	echo th_order_by('contact_name_family', $text['label-contact_name_family'], $order_by, $order);
-	echo th_order_by('contact_nickname', $text['label-contact_nickname'], $order_by, $order, null, "class='hide-xs'");
-	echo th_order_by('contact_title', $text['label-contact_title'], $order_by, $order, null, "class='hide-sm-dn'");
-	echo th_order_by('contact_role', $text['label-contact_role'], $order_by, $order, null, "class='hide-sm-dn'");
-	echo "<th class='shrink hide-sm-dn'>&nbsp;</th>\n";
-	if ($list_row_edit_button == 'true') {
-		echo "	<td class='action-button'>&nbsp;</td>\n";
+	if ($show == 'qdetails') {
+		echo "<th class='shrink hide-xs'>Names</th>\n";
+		echo "<th class='shrink hide-xs'>Phones</th>\n";
+		echo "<th class='shrink hide-xs'>Emails</th>\n";
+	} else {
+		echo th_order_by('contact_type', $text['label-contact_type'], $order_by, $order);
+		echo th_order_by('contact_organization', $text['label-contact_organization'], $order_by, $order);
+		echo "<th class='shrink hide-xs'>&nbsp;</th>\n";
+		echo th_order_by('contact_name_given', $text['label-contact_name_given'], $order_by, $order);
+		echo th_order_by('contact_name_family', $text['label-contact_name_family'], $order_by, $order);
+		echo th_order_by('contact_nickname', $text['label-contact_nickname'], $order_by, $order, null, "class='hide-xs'");
+		echo th_order_by('contact_title', $text['label-contact_title'], $order_by, $order, null, "class='hide-sm-dn'");
+		echo th_order_by('contact_role', $text['label-contact_role'], $order_by, $order, null, "class='hide-sm-dn'");
+		echo "<th class='shrink hide-sm-dn'>&nbsp;</th>\n";
+		if ($list_row_edit_button == 'true') {
+			echo "	<td class='action-button'>&nbsp;</td>\n";
+		}
 	}
 	echo "</tr>\n";
 
 	if (!empty($contacts)) {
 		$x = 0;
-		foreach($contacts as $row) {
-			$list_row_url = "contact_view.php?id=".urlencode($row['contact_uuid'])."&query_string=".urlencode($_SERVER["QUERY_STRING"]);
-			echo "<tr class='list-row' href='".$list_row_url."'>\n";
-			if (permission_exists('contact_delete')) {
-				echo "	<td class='checkbox'>\n";
-				echo "		<input type='checkbox' name='contacts[$x][checked]' id='checkbox_".$x."' value='true' onclick=\"checkbox_on_change(this); if (!this.checked) { document.getElementById('checkbox_all').checked = false; }\">\n";
-				echo "		<input type='hidden' name='contacts[$x][uuid]' value='".escape($row['contact_uuid'])."' />\n";
+		if ($show == 'qdetails') {
+			foreach($contacts as $contactRow) {
+				$list_row_url = "contact_view.php?id=".urlencode($contactRow['contact_uuid'])."&query_string=".urlencode($_SERVER["QUERY_STRING"]);
+				echo "<tr class='list-row' href='".$list_row_url."'>\n";
+				echo "	<td class='no-wrap'><a href='".$list_row_url."'>".escape($contactRow['contact_name_given'])." ".escape($contactRow['contact_name_family'])." (".escape($contactRow['contact_nickname']).")</a>&nbsp;</td>\n";
+				
+				$contact_uuid = $contactRow['contact_uuid'];
+				echo "	<td>";
+				require "contact_phones_view.php";
+				echo "</td>";
+				echo "	<td>";
+				require "contact_emails_view.php";
+				echo "</td>";
+
+				echo "</tr>\n";
+				$x++;
+			}
+		}
+		else {
+			foreach($contacts as $row) {
+				$list_row_url = "contact_view.php?id=".urlencode($row['contact_uuid'])."&query_string=".urlencode($_SERVER["QUERY_STRING"]);
+				echo "<tr class='list-row' href='".$list_row_url."'>\n";
+				if (permission_exists('contact_delete')) {
+					echo "	<td class='checkbox'>\n";
+					echo "		<input type='checkbox' name='contacts[$x][checked]' id='checkbox_".$x."' value='true' onclick=\"checkbox_on_change(this); if (!this.checked) { document.getElementById('checkbox_all').checked = false; }\">\n";
+					echo "		<input type='hidden' name='contacts[$x][uuid]' value='".escape($row['contact_uuid'])."' />\n";
+					echo "	</td>\n";
+				}
+				if ($show == "all" && permission_exists('contact_all')) {
+					if (!empty($_SESSION['domains'][$row['domain_uuid']]['domain_name'])) {
+						$domain = $_SESSION['domains'][$row['domain_uuid']]['domain_name'];
+					}
+					else {
+						$domain = $text['label-global'];
+					}
+					echo "	<td>".escape($domain)."</td>\n";
+				}
+				echo "	<td>".ucwords(escape($row['contact_type']))."&nbsp;</td>\n";
+				echo "	<td class='overflow'><a href='".$list_row_url."'>".escape($row['contact_organization'])."</a>&nbsp;</td>\n";
+				echo "	<td class='shrink no-link hide-xs center'>";
+				if (is_uuid($row['contact_attachment_uuid'])) {
+					echo "<i class='fas fa-portrait' style='cursor: pointer;' onclick=\"display_attachment('".escape($row['contact_attachment_uuid'])."');\"></i>";
+				}
 				echo "	</td>\n";
-			}
-			if ($show == "all" && permission_exists('contact_all')) {
-				if (!empty($_SESSION['domains'][$row['domain_uuid']]['domain_name'])) {
-					$domain = $_SESSION['domains'][$row['domain_uuid']]['domain_name'];
-				}
-				else {
-					$domain = $text['label-global'];
-				}
-				echo "	<td>".escape($domain)."</td>\n";
-			}
-			echo "	<td>".ucwords(escape($row['contact_type']))."&nbsp;</td>\n";
-			echo "	<td class='overflow'><a href='".$list_row_url."'>".escape($row['contact_organization'])."</a>&nbsp;</td>\n";
-			echo "	<td class='shrink no-link hide-xs center'>";
-			if (is_uuid($row['contact_attachment_uuid'])) {
-				echo "<i class='fas fa-portrait' style='cursor: pointer;' onclick=\"display_attachment('".escape($row['contact_attachment_uuid'])."');\"></i>";
-			}
-			echo "	</td>\n";
-			echo "	<td class='no-wrap'><a href='".$list_row_url."'>".escape($row['contact_name_given'])."</a>&nbsp;</td>\n";
-			echo "	<td class='no-wrap'><a href='".$list_row_url."'>".escape($row['contact_name_family'])."</a>&nbsp;</td>\n";
-			echo "	<td class='no-wrap hide-xs'>".escape($row['contact_nickname'])."&nbsp;</td>\n";
-			echo "	<td class='overflow hide-sm-dn'>".escape($row['contact_title'])."&nbsp;</td>\n";
-			echo "	<td class='overflow hide-sm-dn'>".escape($row['contact_role'])."&nbsp;</td>\n";
-			echo "	<td class='hide-sm-dn'>";
-			if (!empty($contact_sync_sources[$row['contact_uuid']])) {
-				foreach ($contact_sync_sources[$row['contact_uuid']] as $contact_sync_source) {
-					switch ($contact_sync_source) {
-						case 'google': echo "<img src='resources/images/icon_gcontacts.png' style='width: 21px; height: 21px; border: none; padding-left: 2px;' alt='".$text['label-contact_google']."'>"; break;
+				echo "	<td class='no-wrap'><a href='".$list_row_url."'>".escape($row['contact_name_given'])."</a>&nbsp;</td>\n";
+				echo "	<td class='no-wrap'><a href='".$list_row_url."'>".escape($row['contact_name_family'])."</a>&nbsp;</td>\n";
+				echo "	<td class='no-wrap hide-xs'>".escape($row['contact_nickname'])."&nbsp;</td>\n";
+				echo "	<td class='overflow hide-sm-dn'>".escape($row['contact_title'])."&nbsp;</td>\n";
+				echo "	<td class='overflow hide-sm-dn'>".escape($row['contact_role'])."&nbsp;</td>\n";
+				echo "	<td class='hide-sm-dn'>";
+				if (!empty($contact_sync_sources[$row['contact_uuid']])) {
+					foreach ($contact_sync_sources[$row['contact_uuid']] as $contact_sync_source) {
+						switch ($contact_sync_source) {
+							case 'google': echo "<img src='resources/images/icon_gcontacts.png' style='width: 21px; height: 21px; border: none; padding-left: 2px;' alt='".$text['label-contact_google']."'>"; break;
+						}
 					}
 				}
-			}
-			else {
-				echo "&nbsp;";
-			}
-			echo "	</td>\n";
-			if ($list_row_edit_button == 'true') {
-				echo "	<td class='action-button'>";
-				echo button::create(['type'=>'button','title'=>$text['button-view'],'icon'=>$_SESSION['theme']['button_icon_view'],'link'=>$list_row_url]);
+				else {
+					echo "&nbsp;";
+				}
 				echo "	</td>\n";
+				if ($list_row_edit_button == 'true') {
+					echo "	<td class='action-button'>";
+					echo button::create(['type'=>'button','title'=>$text['button-view'],'icon'=>$_SESSION['theme']['button_icon_view'],'link'=>$list_row_url]);
+					echo "	</td>\n";
+				}
+				echo "</tr>\n";
+				$x++;
 			}
-			echo "</tr>\n";
-			$x++;
 		}
 		unset($contacts);
 	}

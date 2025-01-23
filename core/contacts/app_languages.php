@@ -7461,6 +7461,13 @@ $text['button-user']['zh-cn'] = "用户";
 $text['button-user']['ja-jp'] = "ユーザー";
 $text['button-user']['ko-kr'] = "사용자";
 
+$text['button-show_qdetails']['en-us'] = "More/Quick Details";
+$text['button-show_qdetails']['en-gb'] = "More/Quick Details";
+$text['button-show_qdetails']['ar-eg'] = "المزيد/التفاصيل السريعة";
+$text['button-show_qdetails']['de-at'] = "Mehr/Schnelle Details";
+$text['button-show_qdetails']['de-ch'] = "Mehr/Schnelle Details";
+$text['button-show_qdetails']['de-de'] = "Mehr/Schnelle Details";
+
 $text['label-click_to_call']['en-us'] = "Click to Call";
 $text['label-click_to_call']['en-gb'] = "Click to Call";
 $text['label-click_to_call']['ar-eg'] = "اضغط للاتصال";
