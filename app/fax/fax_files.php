@@ -323,13 +323,13 @@
 	echo "<style>\n";
 	echo "	div#pdf-container {\n";
 	echo "		z-index: -1;\n";
-	echo "		position: absolute;\n";
+	echo "		position: fixed;\n";
 	echo "		top: 0;\n";
 	echo "		left: 0;\n";
 	echo "		width: 100%;\n";
 	echo "		height: 100%;\n";
 	echo "		opacity: 0;\n";
-	echo "		transition: opacity 1s;\n";
+	echo "		transition: opacity .5s;\n";
 	echo "		padding: 20px;\n";
 	echo "	}\n";
 	echo "	div#pdf-div {\n";
@@ -521,7 +521,7 @@
 			}
 
 			echo "<tr class='list-row' href='".$list_row_url."'>\n";
-			if (permission_exists('fax_file_delete') || permission_exists['fax_file_edit']) {
+			if (permission_exists('fax_file_delete') || permission_exists('fax_file_edit')) {
 				echo "	<td class='checkbox'>\n";
 				echo "		<input type='checkbox' name='fax_files[$x][checked]' id='checkbox_".$x."' value='true' onclick=\"if (!this.checked) { document.getElementById('checkbox_all').checked = false; } checkbox_on_change(this);\">\n";
 				echo "		<input type='hidden' name='fax_files[$x][uuid]' value='".escape($row['fax_file_uuid'])."' />\n";

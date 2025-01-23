@@ -120,6 +120,7 @@
 		$fax_prefix = $_POST["fax_prefix"];
 		$fax_email = implode(',',array_filter($_POST["fax_email"] ?? []));
 		$fax_file = $_POST["fax_file"];
+		$fax_email_confirmation = implode(',',array_filter($_POST["fax_email_confirmation"] ?? []));
 		$fax_email_connection_type = $_POST["fax_email_connection_type"];
 		$fax_email_connection_host = $_POST["fax_email_connection_host"];
 		$fax_email_connection_port = $_POST["fax_email_connection_port"];
@@ -264,6 +265,9 @@
 		//escape the commas with a backslash and remove the spaces
 			$fax_email = str_replace(" ", "", $fax_email);
 
+		//escape the commas with a backslash and remove the spaces
+			$fax_email_confirmation = str_replace(" ", "", $fax_email_confirmation);
+
 		//set the $php_bin
 			//if (file_exists(PHP_BINDIR."/php")) { $php_bin = 'php'; }
 			if (substr(strtoupper(PHP_OS), 0, 3) == "WIN") {
@@ -334,6 +338,9 @@
 						if (permission_exists('fax_email')) {
 							$array['fax'][0]['fax_email'] = $fax_email;
 							$array['fax'][0]['fax_file'] = $fax_file;
+						}
+						if (permission_exists('fax_email_confirmation')) {
+							$array['fax'][0]['fax_email_confirmation'] = $fax_email_confirmation;
 						}
 						if (permission_exists('fax_caller_id_name')) {
 							$array['fax'][0]['fax_caller_id_name'] = $fax_caller_id_name;
@@ -429,6 +436,7 @@
 			$fax_name = $row["fax_name"];
 			$fax_email = $row["fax_email"];
 			$fax_file = $row["fax_file"];
+			$fax_email_confirmation = $row["fax_email_confirmation"];
 			$fax_caller_id_name = $row["fax_caller_id_name"];
 			$fax_caller_id_number = $row["fax_caller_id_number"];
 			$fax_toll_allow = $row["fax_toll_allow"];
@@ -477,6 +485,9 @@
 
 //build the fax_emails array
 	$fax_emails = explode(',', $fax_email ?? '');
+
+//build the fax_email_confirmations array
+	$fax_email_confirmations = explode(',', $fax_email_confirmation ?? '');
 
 //set the dialplan_uuid
 	if (empty($dialplan_uuid) || !is_uuid($dialplan_uuid)) {
@@ -575,12 +586,12 @@
 	if (permission_exists('fax_destination_number')) {
 		echo "<tr>\n";
 		echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
-		echo "	".$text['label-destination-number']."\n";
+		echo "	".$text['label-destination_number']."\n";
 		echo "</td>\n";
 		echo "<td class='vtable' align='left'>\n";
 		echo "	<input class='formfld' type='text' name='fax_destination_number' maxlength='255' value=\"".escape($fax_destination_number ?? '')."\">\n";
 		echo "<br />\n";
-		echo " ".$text['description-destination-number']."\n";
+		echo " ".$text['description-destination_number']."\n";
 		echo "</td>\n";
 		echo "</tr>\n";
 	}
@@ -604,20 +615,12 @@
 		echo "	".$text['label-email']."\n";
 		echo "</td>\n";
 		echo "<td class='vtable' align='left'>\n";
-		echo "<table border='0' cellpadding='2' cellspacing='0'>\n";
 		$x = 0;
 		foreach ($fax_emails as $email) {
-			echo "<tr>\n";
-			echo "<td>\n";
-			echo "	<input class='formfld' type=\"text\" name=\"fax_email[".$x."]\" maxlength='255' style=\"width: 90%;\"value=\"".escape($email)."\">\n";
-			echo "</td>\n";
+			echo "	<input class='formfld' type='email' name='fax_email[".$x."]' maxlength='255' value=\"".escape($email)."\"><br>\n";
 			$x++;
 		}
-		echo "<tr>\n";
-		echo "	<td>\n";
-		echo "		<input class='formfld' type=\"text\" name=\"fax_email[".$x++."]\" maxlength='255' style=\"width: 90%;\"value=\"\">\n";
-		echo "	</td>\n";
-		echo "</table>\n";
+		echo "	<input class='formfld' type='email' name='fax_email[".$x++."]' maxlength='255' value=''>\n";
 		echo "<br />\n";
 		echo "	".$text['description-email']."\n";
 		echo "</td>\n";
@@ -638,15 +641,33 @@
 		echo "</tr>\n";
 	}
 
+	if (permission_exists('fax_email_confirmation')) {
+		echo "<tr>\n";
+		echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
+		echo "	".$text['label-email_confirmation']."\n";
+		echo "</td>\n";
+		echo "<td class='vtable' align='left'>\n";
+		$x = 0;
+		foreach ($fax_email_confirmations as $email) {
+			echo "	<input class='formfld' type='email' name='fax_email_confirmation[".$x."]' maxlength='255' value=\"".escape($email)."\"><br>\n";
+			$x++;
+		}
+		echo "	<input class='formfld' type='email' name='fax_email_confirmation[".$x++."]' maxlength='255' value=''>\n";
+		echo "<br />\n";
+		echo "	".$text['description-email_confirmation']."\n";
+		echo "</td>\n";
+		echo "</tr>\n";
+	}
+
 	if (permission_exists('fax_caller_id_name')) {
 		echo "<tr>\n";
 		echo "<td width='30%' class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
-		echo "	".$text['label-caller-id-name']."\n";
+		echo "	".$text['label-caller_id_name']."\n";
 		echo "</td>\n";
 		echo "<td width='70%' class='vtable' align='left'>\n";
 		echo "	<input class='formfld' type='text' name='fax_caller_id_name' maxlength='40' value=\"".escape($fax_caller_id_name ?? '')."\">\n";
 		echo "<br />\n";
-		echo "".$text['description-caller-id-name']."\n";
+		echo "".$text['description-caller_id_name']."\n";
 		echo "</td>\n";
 		echo "</tr>\n";
 	}
@@ -654,12 +675,12 @@
 	if (permission_exists('fax_caller_id_number')) {
 		echo "<tr>\n";
 		echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
-		echo "	".$text['label-caller-id-number']."\n";
+		echo "	".$text['label-caller_id_number']."\n";
 		echo "</td>\n";
 		echo "<td class='vtable' align='left'>\n";
 		echo "	<input class='formfld' type='text' name='fax_caller_id_number' maxlength='20' min='0' step='1' value=\"".escape($fax_caller_id_number ?? '')."\">\n";
 		echo "<br />\n";
-		echo "".$text['description-caller-id-number']."\n";
+		echo "".$text['description-caller_id_number']."\n";
 		echo "</td>\n";
 		echo "</tr>\n";
 	}
@@ -697,7 +718,7 @@
 			echo "		<td class='vtable'>";
 
 			if (!empty($fax_users) && is_array($fax_users) && @sizeof($fax_users) != 0) {
-				echo "		<table style='width: 50%; min-width: 200px; max-width: 450px;'>\n";
+				echo "		<table style='width: 50%; min-width: 150px; max-width: 450px;'>\n";
 				foreach ($fax_users as $field) {
 					echo "		<tr>\n";
 					echo "			<td class='vtable'>".escape($field['username'])."</td>\n";

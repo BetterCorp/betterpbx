@@ -33,6 +33,8 @@
 	$apps[$x]['menu'][$y]['icon'] = "";
 	$apps[$x]['menu'][$y]['path'] = "/app/pin_numbers/pin_numbers.php";
 	$apps[$x]['menu'][$y]['order'] = "";
+	$apps[$x]['menu'][$y]['groups'][] = "admin";
+	$apps[$x]['menu'][$y]['groups'][] = "superadmin";
 	$y++;
 
 ?>
