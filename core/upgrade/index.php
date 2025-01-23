@@ -271,7 +271,7 @@
 	}
 	echo "<form name='frm' id='upgrade_form' method='post' action='index.php'";
 	if ($getAction == 'upgrade_full') {
-		echo "style='display: none;'";
+		echo " style='display: none;'";
 	}
 	echo ">\n";
 
