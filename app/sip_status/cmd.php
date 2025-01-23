@@ -95,17 +95,21 @@
 		case "flush_inbound_reg":
 			$command = "sofia profile '".$profile_name."' flush_inbound_reg";
 			break;
+		case "reflush_all4":
 		case "rescan":
 			$command = "sofia profile '".$profile_name."' rescan";
 			break;
+		case "reflush_all":
 		case "cache-flush":
 			$cache = new cache;
 			$response = $cache->flush();
 			message::add($response, 'alert');
 			break;
+		case "reflush_all2":
 		case "reloadxml":
 			$command = "reloadxml";
 			break;
+		case "reflush_all3":
 		case "reloadacl":
 			$command = "reloadacl";
 			break;
@@ -135,6 +139,20 @@
 	}
 
 //redirect the user
+	switch ($action) {
+		case "reflush_all":
+			header("Location: cmd.php?action=reflush_all2");
+			exit;
+		case "reflush_all2":
+			header("Location: cmd.php?action=reflush_all3");
+			exit;
+		case "reflush_all3":
+			header("Location: cmd.php?action=reflush_all4");
+			exit;
+		case "reflush_all4":
+			message::add('Flushed and Reloaded', 'alert');
+			break;
+	}
 	header("Location: sip_status.php");
 
 ?>

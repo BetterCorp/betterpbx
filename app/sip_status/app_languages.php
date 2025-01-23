@@ -486,4 +486,32 @@ $text['button-flush_cache']['zh-cn'] = "刷新缓存";
 $text['button-flush_cache']['ja-jp'] = "キャッシュのフラッシュ";
 $text['button-flush_cache']['ko-kr'] = "플러시 캐시";
 
+$text['button-reflush_all']['en-us'] = "Flush And Reload";
+$text['button-reflush_all']['en-gb'] = "Flush And Reload";
+$text['button-reflush_all']['ar-eg'] = "تحديث وإعادة تحميل";
+$text['button-reflush_all']['de-at'] = "Aktualisieren und neu laden";
+$text['button-reflush_all']['de-ch'] = "Aktualisieren und neu laden";
+$text['button-reflush_all']['de-de'] = "Aktualisieren und neu laden";
+$text['button-reflush_all']['el-gr'] = "Εκκαθάριση και επαναφόρτωση";
+$text['button-reflush_all']['es-cl'] = "Actualizar y recargar";
+$text['button-reflush_all']['es-mx'] = "Actualizar y recargar";
+$text['button-reflush_all']['fr-ca'] = "Actualiser et recharger";
+$text['button-reflush_all']['fr-fr'] = "Actualiser et recharger";
+$text['button-reflush_all']['he-il'] = "רענן וטען מחדש";
+$text['button-reflush_all']['it-it'] = "Aggiorna e ricarica";
+$text['button-reflush_all']['ka-ge'] = "განაახლეთ და გადმოწერეთ";
+$text['button-reflush_all']['nl-nl'] = "Vernieuwen en herladen";
+$text['button-reflush_all']['pl-pl'] = "Odśwież i załaduj ponownie";
+$text['button-reflush_all']['pt-br'] = "Atualizar e recarregar";
+$text['button-reflush_all']['pt-pt'] = "Atualizar e recarregar";
+$text['button-reflush_all']['ro-ro'] = "Actualizați și reîncărcați";
+$text['button-reflush_all']['ru-ru'] = "Обновить и перезагрузить";
+$text['button-reflush_all']['sv-se'] = "Uppdatera och ladda om";
+$text['button-reflush_all']['uk-ua'] = "Оновити та перезавантажити";
+$text['button-reflush_all']['tr-tr'] = "Yenile ve yeniden yükle";
+$text['button-reflush_all']['zh-cn'] = "刷新并重新加载";
+$text['button-reflush_all']['ja-jp'] = "更新して再読み込み";
+$text['button-reflush_all']['ko-kr'] = "새로 고치고 다시 로드";
+
+
 ?>

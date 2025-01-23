@@ -116,6 +116,7 @@
 	echo "	<div class='heading'><b>".$text['title-sip_status']."</b></div>\n";
 	echo "	<div class='actions'>\n";
 	if (permission_exists('system_status_sofia_status')) {
+		echo button::create(['type'=>'button','label'=>$text['button-reflush_all'],'icon'=>'eraser','collapse'=>'hide-xs','link'=>'cmd.php?action=reflush_all','style'=>'margin-right: 15px;']);
 		echo button::create(['type'=>'button','label'=>$text['button-flush_cache'],'icon'=>'eraser','collapse'=>'hide-xs','link'=>'cmd.php?action=cache-flush']);
 		echo button::create(['type'=>'button','label'=>$text['button-reload_acl'],'icon'=>'shield-alt','collapse'=>'hide-xs','link'=>'cmd.php?action=reloadacl']);
 		echo button::create(['type'=>'button','label'=>$text['button-reload_xml'],'icon'=>'code','collapse'=>'hide-xs','link'=>'cmd.php?action=reloadxml']);
