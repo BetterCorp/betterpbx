@@ -802,9 +802,9 @@
 			if (recording_progress) {
 				recording_progress.style.marginLeft = value + '%';
 			}
-			if (recording_audio != null && parseInt(recording_audio.duration) > 30) { //seconds
-				clearInterval(audio_clock);
-			}
+			// if (recording_audio != null && parseInt(recording_audio.duration) > 30) { //seconds
+			// 	clearInterval(audio_clock);
+			// }
 		}
 
 		function recording_fast_forward() {
@@ -818,6 +818,20 @@
 			if (recording_audio) {
 				recording_audio.currentTime -= {/literal}{if !empty($settings.theme.audio_player_scrub_seconds) }{$settings.theme.audio_player_scrub_seconds}{else}2{/if}{literal};
 				update_progress(recording_id_playing);
+			}
+		}
+
+		function recording_seek(event, player_id) {
+			if (recording_audio) {
+				if (document.getElementById('playback_progress_bar_background_' + player_id)) {
+					audio_player = document.getElementById('playback_progress_bar_background_' + player_id);
+				}
+				else if (document.getElementById('recording_progress_bar_' + player_id)) {
+					audio_player = document.getElementById('recording_progress_bar_' + player_id);
+				}
+				recording_audio.currentTime = (event.offsetX / audio_player.offsetWidth) * recording_audio.duration;
+				update_progress(recording_id_playing);
+				document.getElementById('recording_button_' + player_id).focus();
 			}
 		}
 
