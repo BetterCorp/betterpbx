@@ -1416,6 +1416,9 @@ $text['button-upgrade_full']['es-mx'] = "Actualización Completa";
 $text['button-upgrade_full']['fr-ca'] = "Mise à niveau complète";
 $text['button-upgrade_full']['fr-fr'] = "Mise à niveau complète";
 
+$text['description-upgrade_full']['en-us'] = "Upgrade in process, please wait...";
+$text['description-upgrade_full']['en-gb'] = "Upgrade in process, please wait...";
+
 $text['label-all_of_the_above']['en-us'] = "All of the Above";
 $text['label-all_of_the_above']['en-gb'] = "All of the Above";
 $text['label-all_of_the_above']['ar-eg'] = "كل ما ورداعلاه";
