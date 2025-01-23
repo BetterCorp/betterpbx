@@ -200,7 +200,7 @@
 	}
 	echo "		<th class='hide-small'>".$text['label-profile']."</th>\n";
 	//echo"		<th>".$text['label-created']."</th>\n";
-	echo "		<th>".$text['label-duration']."</th>\n";
+	echo "		<th class='text-center'>".$text['label-duration']."</th>\n";
 	if ($show == 'all') {
 		echo "		<th>".$text['label-domain']."</th>\n";
 	}
@@ -271,7 +271,16 @@
 				}
 				echo "		<td class='hide-small'>".escape($sip_profile)."&nbsp;</td>\n";
 				//echo "		<td>".escape($created)."&nbsp;</td>\n";
-				echo "		<td>".escape($elapsed_time)."</td>\n";
+				echo '		<td class="text-center" >';
+				echo '<div>'.escape($elapsed_time).'</div>';
+				if ($elapsed_seconds > (3600 * 12)) {
+					echo '<span class="badge badge-pill badge-danger">LONG RUNNING</span>';
+				} else if ($elapsed_seconds > (3600 * 6)) {
+					echo '<span class="badge badge-pill badge-warning">LONG RUNNING</span>';
+				} else if ($elapsed_seconds > 3600) {
+					echo '<span class="badge badge-pill badge-info">LONG RUNNING</span>';
+				}
+				echo "</td>\n";
 				if ($show == 'all') {
 					echo "		<td>".escape($domain_name)."&nbsp;</td>\n";
 				}
