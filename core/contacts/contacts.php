@@ -373,19 +373,19 @@
 	echo "<div class='card'>\n";
 	echo "<table class='list'>\n";
 	echo "<tr class='list-header'>\n";
-	if (permission_exists('contact_delete')) {
-		echo "	<th class='checkbox'>\n";
-		echo "		<input type='checkbox' id='checkbox_all' name='checkbox_all' onclick='list_all_toggle(); checkbox_on_change(this);' ".(!empty($contacts) ?: "style='visibility: hidden;'").">\n";
-		echo "	</th>\n";
-	}
-	if ($show == "all" && permission_exists('contact_all')) {
-		echo th_order_by('domain_name', $text['label-domain'], $order_by, $order, $param, "class='shrink'");
-	}
 	if ($show == 'qdetails') {
 		echo "<th class='shrink hide-xs'>Names</th>\n";
 		echo "<th class='shrink hide-xs'>Phones</th>\n";
 		echo "<th class='shrink hide-xs'>Emails</th>\n";
 	} else {
+		if (permission_exists('contact_delete')) {
+			echo "	<th class='checkbox'>\n";
+			echo "		<input type='checkbox' id='checkbox_all' name='checkbox_all' onclick='list_all_toggle(); checkbox_on_change(this);' ".(!empty($contacts) ?: "style='visibility: hidden;'").">\n";
+			echo "	</th>\n";
+		}
+		if ($show == "all" && permission_exists('contact_all')) {
+			echo th_order_by('domain_name', $text['label-domain'], $order_by, $order, $param, "class='shrink'");
+		}
 		echo th_order_by('contact_type', $text['label-contact_type'], $order_by, $order);
 		echo th_order_by('contact_organization', $text['label-contact_organization'], $order_by, $order);
 		echo "<th class='shrink hide-xs'>&nbsp;</th>\n";

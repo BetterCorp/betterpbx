@@ -73,6 +73,7 @@
 				$x++;
 			}			
 			echo "</div>";
+			return;
 		}
 
 		//javascript function: send_cmd

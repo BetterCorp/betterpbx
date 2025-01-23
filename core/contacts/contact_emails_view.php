@@ -62,6 +62,7 @@
 				$x++;
 			}
 			echo "</div>";
+			return;
 		}
 
 		//show the content
