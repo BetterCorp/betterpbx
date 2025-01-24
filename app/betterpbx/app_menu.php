@@ -1,8 +1,8 @@
 <?php
 
 	$y=0;
-	$apps[$x]['menu'][$y]['title']['en-us'] = "Quick Setup";
-	$apps[$x]['menu'][$y]['title']['en-gb'] = "Quick Setup";
+	$apps[$x]['menu'][$y]['title']['en-us'] = "Quick Setup Tenant";
+	$apps[$x]['menu'][$y]['title']['en-gb'] = "Quick Setup Tenant";
 	$apps[$x]['menu'][$y]['title']['ar-eg'] = "";
 	$apps[$x]['menu'][$y]['title']['de-at'] = "";
 	$apps[$x]['menu'][$y]['title']['de-ch'] = "";

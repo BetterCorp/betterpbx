@@ -45,7 +45,7 @@ $document['title'] = $text['title-bpbx-quick-setup'];
 require_once "resources/header.php";
 
 //display the page
-BPPBX_UI::actionBar('title-bpbx-quick-setup', [
+echo BPPBX_UI::actionBar('title-bpbx-quick-setup', [
   //button::create(['type'=>'button','label'=>$text['button-back'],'icon'=>$_SESSION['theme']['button_icon_back'],'id'=>'btn_back','link'=>'gateways.php']),
 ]);
 
@@ -53,7 +53,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save') {
   //save the settings
 }
 
-BPPBX_UI::form('frm', 'quick_setup.php', [
+echo BPPBX_UI::form('frm', 'quick_setup.php', [
   BPPBX_UI::card([
     '<h3>Domain</h3>',
   ],[
@@ -72,7 +72,7 @@ BPPBX_UI::form('frm', 'quick_setup.php', [
       ['value'=>'tls','label'=>'TLS'],
     ]),
   ]),
-  BPPBX_UI::button('submit', 'Save', 'check', 'btn_save', '', ''),
+  BPPBX_UI::button('submit', 'Create Tenant', '', 'btn_save', '', ''),
 ]);
 
 

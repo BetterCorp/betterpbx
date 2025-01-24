@@ -33,74 +33,93 @@ if (!class_exists('BPPBX_UI')) {
         $language = new text;
       }
       $text = $language->get();
-      echo "<div class='action_bar' id='action_bar'>";
-      echo "	<div class='heading'><b>".$text[$titleKey]."</b></div>";
-      echo "	<div class='actions'>";
+      $output = "<div class='action_bar' id='action_bar'>";
+      $output .= "	<div class='heading'><b>".$text[$titleKey]."</b></div>";
+      $output .= "	<div class='actions'>";
       foreach ($actions as $action) {
-        echo $action;
+        $output .= $action;
       }
-      echo "	</div>";
-      echo "	<div style='clear: both;'></div>";
-      echo "</div>";
+      $output .= "	</div>";
+      $output .= "	<div style='clear: both;'></div>";
+      $output .= "</div>";
+      return $output;
     }
 
     public static function form($id = "myform", $path = "myform.php", $fields = []) {
-      echo "<form id='".$id."' method='post' action='".$path."'>";
-      echo "<input type='hidden' name='action' value='save'>";
+      $output = "<form id='".$id."' method='post' action='".$path."'>";
+      $output .= "<input type='hidden' name='action' value='save'>";
       foreach ($fields as $field) {
-        echo $field;
+        $output .= $field;
       }
-      echo "</form>";
+      $output .= "</form>";
+      return $output;
     }
 
     public static function card($header = [], $content = [], $footer = []) {
-      echo "<div class='card'>";
+      $output = "<div class='card'>";
       if ($header && is_array($header) && count($header) > 0) {
-        echo "<div class='card-header'>";
+        $output .= "<div class='card-header'>";
         foreach ($header as $h) {
-          echo $h;
+          $output .= $h;
         }
-        echo "</div>";
+        $output .= "</div>";
       }
       if ($content && is_array($content) && count($content) > 0) {
-        echo "<div class='card-content'>";
+        $output .= "<div class='card-content'>";
         foreach ($content as $c) {
-          echo $c;
+          $output .= $c;
         }
-        echo "</div>";
+        $output .= "</div>";
       }
       if ($footer && is_array($footer) && count($footer) > 0) {
-        echo "<div class='card-footer'>";
+        $output .= "<div class='card-footer'>";
         foreach ($footer as $f) {
-          echo $f;
+          $output .= $f;
         }
-        echo "</div>";
+        $output .= "</div>";
       }
-      echo "</div>";
+      $output .= "</div>";
+      return $output;
     }
     public static function field($type, $name, $label, $value, $description, $opts = []) {
-      echo "<div class='form-group'>";
-      echo "	<label for='".$name."' class='form-label'>".escape($label)."</label>";
+      $output = "<div class='form-group'>";
+      $output .= "	<label for='".$name."' class='form-label'>".escape($label)."</label>";
       if ($type == 'select') {
-        echo "	<select class='form-control' id='".$name."' name='".$name."'>";
+        $output .= "	<select class='form-control' id='".$name."' name='".$name."'>";
         foreach ($opts as $opt) {
-          echo "	<option value='".$opt['value']."'";
+          $output .= "	<option value='".$opt['value']."'";
           if ($value == $opt['value']) {
-            echo " selected='selected'";
+            $output .= " selected='selected'";
           }
-          echo ">".escape($opt['label'])."</option>";
+          $output .= ">".escape($opt['label'])."</option>";
         }
-        echo "</select>";
+        $output .= "</select>";
       } else {
-        echo "	<input type='".$type."' class='form-control' id='".$name."' name='".$name."' value='".escape($value)."' aria-describedby='".$name."-help'>";
+        $output .= "	<input type='".$type."' class='form-control' id='".$name."' name='".$name."' value='".escape($value)."' aria-describedby='".$name."-help'>";
       }
       if (isset($description) && $description != "") {
-        echo "	<div id='".$name."-help' class='form-text'>".escape($description)."</div>";
+        $output .= "	<div id='".$name."-help' class='form-text'>".escape($description)."</div>";
       }
-      echo "</div>";
+      $output .= "</div>";
+      return $output;
     }
     public static function button($type, $label, $icon = '', $id = '', $link = '', $onclick = '', $collapse = 'never') {
-      echo "<button type='".$type."' class='btn btn-primary' id='".$id."' onclick='".$onclick."' data-bs-toggle='collapse' data-bs-target='#".$collapse."'>".$icon." ".$label."</button>";
+      $output = "<button type='".$type."' class='btn btn-primary' id='".$id."'";
+      if (isset($onclick) && $onclick != '') {
+        $output .= " onclick='".$onclick."'";
+      }
+      if (isset($link) && $link != '') {
+        $output .= " href='".$link."'";
+      }
+      if (isset($collapse) && $collapse != '') {
+        $output .= " data-bs-toggle='collapse' data-bs-target='#".$collapse."'";
+      }
+      $output .= ">";
+      if (isset($icon) && $icon != '') {
+        $output .= "<i class='fa ".$icon."'></i>";
+      }
+      $output .= $label."</button>";
+      return $output;
     }
   }
 }
