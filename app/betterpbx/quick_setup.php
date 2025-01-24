@@ -28,6 +28,7 @@
 require_once dirname(__DIR__, 2) . "/resources/require.php";
 require_once "resources/check_auth.php";
 require_once "resources/classes/ui.php";
+require_once "resources/functions/quick_setup.php";
 
 //check permissions
 if (permission_exists('betterpbx_quick_setup')) {
@@ -49,32 +50,58 @@ echo BPPBX_UI::actionBar('title-bpbx-quick-setup', [
   //button::create(['type'=>'button','label'=>$text['button-back'],'icon'=>$_SESSION['theme']['button_icon_back'],'id'=>'btn_back','link'=>'gateways.php']),
 ]);
 
+function reset_data()
+{
+  return [
+    'domain' => '',
+    'server' => '',
+    'username' => '',
+    'password' => '',
+    'protocol' => 'udp',
+    'phone_number' => '',
+    'phone_number_local' => '',
+    'extension' => '1',
+    'extension_start' => '1000',
+  ];
+}
+$data = reset_data();
+
 if (isset($_POST['action']) && $_POST['action'] == 'save') {
-  //save the settings
+  $result = quick_setup($data);
+  if ($result == true) {
+    $data = reset_data();
+  }
 }
 
 echo BPPBX_UI::form('frm', 'quick_setup.php', [
   BPPBX_UI::row('col-12 col-md-6', [
     BPPBX_UI::card([
       '<h3>Domain</h3>',
-    ],[
-      BPPBX_UI::field('text', 'domain', 'Domain', '', 'The domain to use for the quick setup.'),
-      BPPBX_UI::field('text', 'username', 'Username', '', 'The username to use for the quick setup.'),
+    ], [
+      BPPBX_UI::field('text', 'domain', 'Domain', $data['domain'], 'The domain to use for the quick setup.', [], ['required' => 'required']),
     ]),
     BPPBX_UI::card([
       '<h3>Gateway</h3>',
-    ],[
-      BPPBX_UI::field('text', 'server', 'Server', '', 'SIP Server ip/hostname'),
-      BPPBX_UI::field('text', 'username', 'Username', '', 'Account Username'),
-      BPPBX_UI::field('text', 'password', 'Password', '', 'Account Password'),
-      BPPBX_UI::field('select', 'protocol', 'Protocol', '', 'The protocol to use', [
-        ['value'=>'udp','label'=>'UDP'],
-        ['value'=>'tcp','label'=>'TCP'],
-        ['value'=>'tls','label'=>'TLS'],
-      ]),
+    ], [
+      BPPBX_UI::field('text', 'server', 'Server', $data['server'], 'SIP Server ip/hostname', [], ['required' => 'required']),
+      BPPBX_UI::field('text', 'username', 'Username', $data['username'], 'Account Username', [], ['required' => 'required']),
+      BPPBX_UI::field('password', 'password', 'Password', $data['password'], 'Account Password', [], ['required' => 'required']),
+      BPPBX_UI::field('select', 'protocol', 'Protocol', $data['protocol'], 'The protocol to use', [
+        ['value' => 'udp', 'label' => 'UDP'],
+        ['value' => 'tcp', 'label' => 'TCP'],
+        ['value' => 'tls', 'label' => 'TLS'],
+      ], ['required' => 'required']),
+      BPPBX_UI::field('text', 'phone_number', 'Phone Number', $data['phone_number'], 'Phone Number (Intl Format)', [], ['required' => 'required']),
+      BPPBX_UI::field('text', 'phone_number_local', 'Phone Number Local', $data['phone_number_local'], 'Phone Number (Local Format)', [], ['required' => 'required']),
+    ]),
+    BPPBX_UI::card([
+      '<h3>Extensions</h3>',
+    ], [
+      BPPBX_UI::field('number', 'extension', 'Extension Count', $data['extension'], 'Extension Number', [], ['required' => 'required']),
+      BPPBX_UI::field('number', 'extension_start', 'Extension Start', $data['extension_start'], 'Extension Start Number', [], ['required' => 'required']),
     ]),
   ]),
-  BPPBX_UI::button('submit', 'Create Tenant', '', 'btn_save', '', '') 
+  BPPBX_UI::button('submit', 'Create Tenant', '', 'btn_save', '', '')
 ]);
 
 

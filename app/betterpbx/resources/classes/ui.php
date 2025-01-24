@@ -81,11 +81,19 @@ if (!class_exists('BPPBX_UI')) {
       $output .= "</div>";
       return $output;
     }
-    public static function field($type, $name, $label, $value, $description, $opts = []) {
+    public static function field($type, $name, $label, $value, $description, $opts = [], $attrs = []) {
       $output = "<div class='form-group'>";
-      $output .= "	<label for='".$name."' class='form-label'>".escape($label)."</label>";
+      $output .= "	<label for='".$name."' class='form-label'>".escape($label);
+      if (isset($attrs['required']) && $attrs['required'] == true) {
+        $output .= " <span class='text-danger'>*</span>";
+      }
+      $output .= "</label>";
       if ($type == 'select') {
-        $output .= "	<select class='form-control' id='".$name."' name='".$name."'>";
+        $output .= "	<select class='form-control' id='".$name."' name='".$name."'";
+        foreach ($attrs as $attr) {
+          $output .= " ".$attr;
+        }
+        $output .= ">";
         foreach ($opts as $opt) {
           $output .= "	<option value='".$opt['value']."'";
           if ($value == $opt['value']) {
@@ -95,7 +103,11 @@ if (!class_exists('BPPBX_UI')) {
         }
         $output .= "</select>";
       } else {
-        $output .= "	<input type='".$type."' class='form-control' id='".$name."' name='".$name."' value='".escape($value)."' aria-describedby='".$name."-help'>";
+        $output .= "	<input type='".$type."' class='form-control' id='".$name."' name='".$name."' value='".escape($value)."' aria-describedby='".$name."-help'";
+        foreach ($attrs as $attr) {
+          $output .= " ".$attr;
+        }
+        $output .= ">";
       }
       if (isset($description) && $description != "") {
         $output .= "	<div id='".$name."-help' class='form-text'>".escape($description)."</div>";
@@ -129,5 +141,12 @@ if (!class_exists('BPPBX_UI')) {
       $output .= "</div>";
       return $output;
     }
+    public static function error($message) {
+      if (isset($message) && $message != '') {
+        return "<div class='alert alert-danger'>".$message."</div>";
+      }
+      return '';
+    }
   }
 }
+?>
