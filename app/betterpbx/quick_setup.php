@@ -60,13 +60,19 @@ function reset_data()
     'protocol' => 'udp',
     'phone_number' => '',
     'phone_number_local' => '',
-    'extension' => '1',
     'extension_start' => '1000',
+    'extension_count' => '1',
+    'ring_group_name' => 'DEFAULT RG 5000',
+    'ring_group_number' => '5000',
   ];
 }
 $data = reset_data();
 
 if (isset($_POST['action']) && $_POST['action'] == 'save') {
+	if (!BPPBX_UI::token_validate()) {
+		message::add($text['message-invalid_token'],'negative');
+		exit;
+	}
   $data = $_POST;
   $result = quick_setup($data);
   if ($result == true) {
@@ -75,6 +81,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save') {
 }
 
 echo BPPBX_UI::form('frm', 'quick_setup.php', [
+  BPPBX_UI::token_input(),
   BPPBX_UI::row('col-12 col-md-3', [
     BPPBX_UI::card([
       '<h3>Domain</h3>',
@@ -98,8 +105,14 @@ echo BPPBX_UI::form('frm', 'quick_setup.php', [
     BPPBX_UI::card([
       '<h3>Extensions</h3>',
     ], [
-      BPPBX_UI::field('number', 'extension', 'Extension Count', $data['extension'], 'Extension Number', [], ['required' => 'required']),
+      BPPBX_UI::field('number', 'extension_count', 'Extension Count', $data['extension'], 'Extension Number', [], ['required' => 'required']),
       BPPBX_UI::field('number', 'extension_start', 'Extension Start', $data['extension_start'], 'Extension Start Number', [], ['required' => 'required']),
+    ]),
+    BPPBX_UI::card([
+      '<h3>Ring Group</h3>',
+    ], [
+      BPPBX_UI::field('text', 'ring_group_name', 'Ring Group Name', $data['ring_group_name'], 'Ring Group Name', [], ['required' => 'required']),
+      BPPBX_UI::field('number', 'ring_group_number', 'Ring Group Number', $data['ring_group_number'], 'Ring Group Number', [], ['required' => 'required']),
     ]),
   ]),
   BPPBX_UI::button('submit', 'Create Tenant', '', 'btn_save', '', '')
