@@ -67,6 +67,7 @@ function reset_data()
 $data = reset_data();
 
 if (isset($_POST['action']) && $_POST['action'] == 'save') {
+  $data = $_POST;
   $result = quick_setup($data);
   if ($result == true) {
     $data = reset_data();
@@ -74,7 +75,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save') {
 }
 
 echo BPPBX_UI::form('frm', 'quick_setup.php', [
-  BPPBX_UI::row('col-12 col-md-6', [
+  BPPBX_UI::row('col-12 col-md-3', [
     BPPBX_UI::card([
       '<h3>Domain</h3>',
     ], [
