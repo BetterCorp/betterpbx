@@ -105,7 +105,7 @@ echo BPPBX_UI::form('frm', 'quick_setup.php', [
     BPPBX_UI::card([
       '<h3>Extensions</h3>',
     ], [
-      BPPBX_UI::field('number', 'extension_count', 'Extension Count', $data['extension'], 'Extension Number', [], ['required' => 'required']),
+      BPPBX_UI::field('number', 'extension_count', 'Extension Count', $data['extension_count'], 'Extension Number', [], ['required' => 'required']),
       BPPBX_UI::field('number', 'extension_start', 'Extension Start', $data['extension_start'], 'Extension Start Number', [], ['required' => 'required']),
     ]),
     BPPBX_UI::card([
