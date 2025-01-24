@@ -54,25 +54,27 @@ if (isset($_POST['action']) && $_POST['action'] == 'save') {
 }
 
 echo BPPBX_UI::form('frm', 'quick_setup.php', [
-  BPPBX_UI::card([
-    '<h3>Domain</h3>',
-  ],[
-    BPPBX_UI::field('text', 'domain', 'Domain', '', 'The domain to use for the quick setup.'),
-    BPPBX_UI::field('text', 'username', 'Username', '', 'The username to use for the quick setup.'),
-  ]),
-  BPPBX_UI::card([
-    '<h3>Gateway</h3>',
-  ],[
-    BPPBX_UI::field('text', 'server', 'Server', '', 'SIP Server ip/hostname'),
-    BPPBX_UI::field('text', 'username', 'Username', '', 'Account Username'),
-    BPPBX_UI::field('text', 'password', 'Password', '', 'Account Password'),
-    BPPBX_UI::field('select', 'protocol', 'Protocol', '', 'The protocol to use', [
-      ['value'=>'udp','label'=>'UDP'],
-      ['value'=>'tcp','label'=>'TCP'],
-      ['value'=>'tls','label'=>'TLS'],
+  BPPBX_UI::row('col-12 col-md-6', [
+    BPPBX_UI::card([
+      '<h3>Domain</h3>',
+    ],[
+      BPPBX_UI::field('text', 'domain', 'Domain', '', 'The domain to use for the quick setup.'),
+      BPPBX_UI::field('text', 'username', 'Username', '', 'The username to use for the quick setup.'),
+    ]),
+    BPPBX_UI::card([
+      '<h3>Gateway</h3>',
+    ],[
+      BPPBX_UI::field('text', 'server', 'Server', '', 'SIP Server ip/hostname'),
+      BPPBX_UI::field('text', 'username', 'Username', '', 'Account Username'),
+      BPPBX_UI::field('text', 'password', 'Password', '', 'Account Password'),
+      BPPBX_UI::field('select', 'protocol', 'Protocol', '', 'The protocol to use', [
+        ['value'=>'udp','label'=>'UDP'],
+        ['value'=>'tcp','label'=>'TCP'],
+        ['value'=>'tls','label'=>'TLS'],
+      ]),
     ]),
   ]),
-  BPPBX_UI::button('submit', 'Create Tenant', '', 'btn_save', '', ''),
+  BPPBX_UI::button('submit', 'Create Tenant', '', 'btn_save', '', '') 
 ]);
 
 

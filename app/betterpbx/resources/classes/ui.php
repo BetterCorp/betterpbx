@@ -56,7 +56,7 @@ if (!class_exists('BPPBX_UI')) {
     }
 
     public static function card($header = [], $content = [], $footer = []) {
-      $output = "<div class='card'>";
+      $output = "<div class='card' style='padding:0;'>";
       if ($header && is_array($header) && count($header) > 0) {
         $output .= "<div class='card-header'>";
         foreach ($header as $h) {
@@ -65,7 +65,7 @@ if (!class_exists('BPPBX_UI')) {
         $output .= "</div>";
       }
       if ($content && is_array($content) && count($content) > 0) {
-        $output .= "<div class='card-content'>";
+        $output .= "<div class='card-body'>";
         foreach ($content as $c) {
           $output .= $c;
         }
@@ -119,6 +119,14 @@ if (!class_exists('BPPBX_UI')) {
         $output .= "<i class='fa ".$icon."'></i>";
       }
       $output .= $label."</button>";
+      return $output;
+    }
+    public static function row($opts = 'col-12 col-md-6', $cols = []) {
+      $output = "<div class='row'>";
+      foreach ($cols as $col) {
+        $output .= '<div class="'.$opts.'">'.$col.'</div>';
+      }
+      $output .= "</div>";
       return $output;
     }
   }
