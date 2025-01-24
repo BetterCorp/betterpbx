@@ -384,6 +384,8 @@ function quick_setup($data)
   message::add("Domain created successfully.", 'positive', 5000);
 
   $extensions = [];
+  $data['extension_start'] = intval($data['extension_start']);
+  $data['extension_count'] = intval($data['extension_count']);
   for ($i = 0; $i < $data['extension_count']; $i++) {
     $extension_number = $data['extension_start'] + $i;
     $extensions[] = [
@@ -399,6 +401,7 @@ function quick_setup($data)
   }
   message::add("Gateway created successfully.", 'positive', 5000);
 
+  $data['ring_group_number'] = intval($data['ring_group_number']);
   $ring_group_uuid = create_ring_group($domain_uuid, $data['ring_group_name'], $data['ring_group_number'], $extensions);
   if (!$ring_group_uuid) {
     message::add("Failed to create the ring group.", 'negative', 5000);
