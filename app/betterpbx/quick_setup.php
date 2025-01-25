@@ -92,6 +92,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save') {
 
 echo BPPBX_UI::form('quick_tenant_form', 'quick_setup.php', [
   BPPBX_UI::token_input(),
+  BPPBX_UI::hidden_input('action', 'save'),
   (count($fields) > 0 
   ? BPPBX_UI::card([], array_merge([
     "<div class='alert alert-info'>Busy: ".$fieldStage."</div>"
