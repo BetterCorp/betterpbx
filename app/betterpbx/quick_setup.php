@@ -80,7 +80,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'save') {
   $result = quick_setup($data);
   if ($result == true) {
     $data = reset_data();
-  } else if ($result != false) {
+  } else if ($result !== false) {
     $fieldStage = $result['stage'];
     foreach ($result as $field => $value) {
       $fields[] = [ BPPBX_UI::hidden_input($field, $value) ];
