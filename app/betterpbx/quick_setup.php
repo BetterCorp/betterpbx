@@ -86,6 +86,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'save') {
       $fields[] = [ BPPBX_UI::hidden_input($field, $value) ];
     }
     $fields[] = [ '<script>setTimeout(() => { document.getElementById("quick_tenant_form").submit(); }, 0);</script>' ];
+  } else {
+    message::add("Failed to create tenant.", 'negative', 5000);
   }
 }
 
