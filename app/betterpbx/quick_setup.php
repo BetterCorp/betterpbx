@@ -133,6 +133,7 @@ echo BPPBX_UI::form('quick_tenant_form', 'quick_setup.php', [
   BPPBX_UI::button('submit', 'Create Tenant', '', 'btn_save', '', '')
 ]);
 
-
+if (count($fields) === 0) {
 //include the footer
 require_once "resources/footer.php";
+}
