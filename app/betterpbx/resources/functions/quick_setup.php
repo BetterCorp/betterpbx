@@ -108,7 +108,7 @@ function create_gateway($database, $domain_uuid, $gateway_name, $gateway_server,
   return $gateway_uuid;
 }
 
-function create_destination($database, $domain_uuid, $type, $destination_number, $destination_uuid, $context, $order)
+function create_destination($database, $domain_uuid, $type, $destination_number, $destination_uuid, $context, $destination_context, $order)
 {
   $dialplan_uuid = uuid();
 
@@ -133,7 +133,7 @@ function create_destination($database, $domain_uuid, $type, $destination_number,
   $array['dialplans'][0]['domain_uuid'] = $domain_uuid;
   $array['dialplans'][0]['dialplan_name'] = $destination_number;
   $array['dialplans'][0]['dialplan_number'] = $destination_number;
-  $array['dialplans'][0]['dialplan_context'] = $context;
+  $array['dialplans'][0]['dialplan_context'] = $destination_context;
   $array['dialplans'][0]['dialplan_continue'] = 'false';
   $array['dialplans'][0]['dialplan_order'] = $order;
   $array['dialplans'][0]['dialplan_enabled'] = 'true';
@@ -339,26 +339,31 @@ function create_ring_group($database, $domain_uuid, $ring_group_name, $ring_grou
   return $ring_group_uuid;
 }
 
-function quick_setup($data)
-{
-  $domain = $data['domain'];
-  $ip = gethostbyname($domain);
-  $output = shell_exec('ip a');
-  $lines = explode("\n", $output);
-  $ipsOnServer = [];
+function quick_setup($data){
+  if (!isset($data['stage']) || empty($data['stage'])) {
+    $data['stage'] = 'domain';
+  }
 
-  foreach ($lines as $line) {
-    if (preg_match('/inet\s+([0-9.]+)/', $line, $matches)) {
-      $ipsOnServer[] = $matches[1];
+  if ($data['stage'] == 'domain') {
+    $domain = $data['domain'];
+    $ip = gethostbyname($domain);
+    $output = shell_exec('ip a');
+    $lines = explode("\n", $output);
+    $ipsOnServer = [];
+
+    foreach ($lines as $line) {
+      if (preg_match('/inet\s+([0-9.]+)/', $line, $matches)) {
+        $ipsOnServer[] = $matches[1];
+      }
     }
-  }
 
-  if (!in_array($ip, $ipsOnServer)) {
-    $message = "The domain does not point to the server (current points to " . $ip . "). \nCheck the domain is pointing to one of the following IPs: \n" . implode("\n", $ipsOnServer);
-    message::add($message, 'negative', 5000);
-    return false;
+    if (!in_array($ip, $ipsOnServer)) {
+      $message = "The domain does not point to the server (current points to " . $ip . "). \nCheck the domain is pointing to one of the following IPs: \n" . implode("\n", $ipsOnServer);
+      message::add($message, 'negative', 5000);
+      return false;
+    }
+    unset($ipsOnServer);
   }
-  unset($ipsOnServer);
 
   $database = database::new();
   
@@ -366,57 +371,124 @@ function quick_setup($data)
     // Start transaction
     $database->db->beginTransaction();
 
-    $sql = "select COUNT(*) from v_domains where lower(domain_name) = :domain_name";
-    $existingDomains = $database->select($sql, ['domain_name' => $domain], 'column');
-    unset($sql);
-    if ($existingDomains > 0) {
-      $message = "The domain already exists.";
-      message::add($message, 'negative', 5000);
-      return false;
-    }
-    unset($existingDomains);
+    if ($data['stage'] == 'domain') {
+      $sql = "select COUNT(*) from v_domains where lower(domain_name) = :domain_name";
+      $existingDomains = $database->select($sql, ['domain_name' => $domain], 'column');
+      unset($sql);
+      if ($existingDomains > 0) {
+        $message = "The domain already exists.";
+        message::add($message, 'negative', 5000);
+        return false;
+      }
+      unset($existingDomains);
 
-    $domain_uuid = create_domain($database, $domain);
-    if (!$domain_uuid) {
-      throw new Exception("Failed to create the domain.");
-    }
-    message::add("Domain created successfully.", 'positive', 5000);
-
-    $extensions = [];
-    $data['extension_start'] = intval($data['extension_start']);
-    $data['extension_count'] = intval($data['extension_count']);
-    for ($i = 0; $i < $data['extension_count']; $i++) {
-      $extension_number = $data['extension_start'] + $i;
-      $extensions[] = [
-        $extension_number => create_extension($database, $domain_uuid, $data['extension_name'], $extension_number, $data['extension_context'], 'true', '100', ''),
+      $domain_uuid = create_domain($database, $domain);
+      if (!$domain_uuid) {
+        throw new Exception("Failed to create the domain.");
+      }
+      message::add("Domain created successfully.", 'positive', 5000);
+      $database->db->commit();
+      return [
+        'stage' => 'extension',
+        'domain_uuid' => $domain_uuid,
       ];
     }
-    message::add("Extensions created successfully.", 'positive', 5000);
 
-    $gateway_uuid = create_gateway($database, $domain_uuid, $data['phone_number'], $data['server'], $data['username'], $data['password'], $data['protocol']);
-    if (!$gateway_uuid) {
-      throw new Exception("Failed to create the gateway.");
-    }
-    message::add("Gateway created successfully.", 'positive', 5000);
+    $domain_uuid = $data['domain_uuid'];
 
-    $data['ring_group_number'] = intval($data['ring_group_number']);
-    $ring_group_uuid = create_ring_group($database, $domain_uuid, $data['ring_group_name'], $data['ring_group_number'], $extensions);
-    if (!$ring_group_uuid) {
-      throw new Exception("Failed to create the ring group.");
+    if ($data['stage'] == 'extension') {
+      $extensions = [];
+      $data['extension_start'] = intval($data['extension_start']);
+      $data['extension_count'] = intval($data['extension_count']);
+      for ($i = 0; $i < $data['extension_count']; $i++) {
+        $extension_number = $data['extension_start'] + $i;
+        $extensions[] = [
+          $extension_number => create_extension($database, $domain_uuid, $data['extension_name'], $extension_number, $data['extension_context'], 'true', '100', ''),
+        ];
+      }
+      message::add("Extensions created successfully.", 'positive', 5000);
+      $database->db->commit();
+      return [
+        'stage' => 'gateway',
+        'domain_uuid' => $domain_uuid,
+        'extensions' => json_encode($extensions),
+      ];
     }
-    message::add("Ring group created successfully.", 'positive', 5000);
 
-    $destinationIntl_uuid = create_destination($database, $domain_uuid, 'inbound', $data['phone_number'], $ring_group_uuid, 'public', $data['domain'], '100');
-    if (!$destinationIntl_uuid) {
-      throw new Exception("Failed to create the international destination.");
-    }
-    message::add("International destination created successfully.", 'positive', 5000);
+    $extensions = json_decode($data['extensions'], true);
 
-    $destinationLocal_uuid = create_destination($database, $domain_uuid, 'inbound', $data['phone_number_local'], $ring_group_uuid, 'public', $data['domain'], '100');
-    if (!$destinationLocal_uuid) {
-      throw new Exception("Failed to create the local destination.");
+    if ($data['stage'] == 'gateway') {
+      $gateway_uuid = create_gateway($database, $domain_uuid, $data['phone_number'], $data['server'], $data['username'], $data['password'], $data['protocol']);
+      if (!$gateway_uuid) {
+        throw new Exception("Failed to create the gateway.");
+      }
+      message::add("Gateway created successfully.", 'positive', 5000);
+      $database->db->commit();
+      return [
+        'stage' => 'ring_group',
+        'domain_uuid' => $domain_uuid,
+        'extensions' => json_encode($extensions),
+        'gateway_uuid' => $gateway_uuid,
+      ];
     }
-    message::add("Local destination created successfully.", 'positive', 5000);
+
+    $gateway_uuid = $data['gateway_uuid'];
+
+    if ($data['stage'] == 'ring_group') {
+      $data['ring_group_number'] = intval($data['ring_group_number']);
+      $ring_group_uuid = create_ring_group($database, $domain_uuid, $data['ring_group_name'], $data['ring_group_number'], $extensions);
+      if (!$ring_group_uuid) {
+        throw new Exception("Failed to create the ring group.");
+      }
+      message::add("Ring group created successfully.", 'positive', 5000);
+      $database->db->commit();
+      return [
+        'stage' => 'destination_intl',
+        'domain_uuid' => $domain_uuid,
+        'extensions' => json_encode($extensions),
+        'gateway_uuid' => $gateway_uuid,
+        'ring_group_uuid' => $ring_group_uuid,
+      ];
+    }
+
+    $ring_group_uuid = $data['ring_group_uuid'];
+
+    if ($data['stage'] == 'destination_intl') {
+      $destinationIntl_uuid = create_destination($database, $domain_uuid, 'inbound', $data['phone_number'], $ring_group_uuid, 'public', $data['domain'], '100');
+      if (!$destinationIntl_uuid) {
+        throw new Exception("Failed to create the international destination.");
+      }
+      message::add("International destination created successfully.", 'positive', 5000);
+      $database->db->commit();
+      return [
+        'stage' => 'destination_local',
+        'domain_uuid' => $domain_uuid,
+        'extensions' => json_encode($extensions),
+        'gateway_uuid' => $gateway_uuid,
+        'ring_group_uuid' => $ring_group_uuid,
+        'destination_intl_uuid' => $destinationIntl_uuid,
+      ];
+    }
+
+    $destinationIntl_uuid = $data['destination_intl_uuid'];
+
+    if ($data['stage'] == 'destination_local') {
+      $destinationLocal_uuid = create_destination($database, $domain_uuid, 'inbound', $data['phone_number_local'], $ring_group_uuid, 'public', $data['domain'], '100');
+      if (!$destinationLocal_uuid) {
+        throw new Exception("Failed to create the local destination.");
+      }
+      message::add("Local destination created successfully.", 'positive', 5000);
+      $database->db->commit();
+      return [
+        'stage' => 'dialplan',
+        'domain_uuid' => $domain_uuid,
+        'extensions' => json_encode($extensions),
+        'gateway_uuid' => $gateway_uuid,
+        'ring_group_uuid' => $ring_group_uuid,
+        'destination_intl_uuid' => $destinationIntl_uuid,
+        'destination_local_uuid' => $destinationLocal_uuid,
+      ];
+    }
 
     // Commit transaction
     $database->db->commit();
@@ -424,7 +496,6 @@ function quick_setup($data)
     unset($database);
     message::add("Successfully created the tenant.", 'positive', 5000);
     return true;
-
   } catch (Exception $e) {
     // Rollback transaction on error
     if ($database->db && $database->db->inTransaction()) {

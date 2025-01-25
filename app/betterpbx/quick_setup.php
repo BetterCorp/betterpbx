@@ -68,6 +68,9 @@ function reset_data()
 }
 $data = reset_data();
 
+$fields = [];
+$fieldStage = '';
+
 if (isset($_POST['action']) && $_POST['action'] == 'save') {
 	if (!BPPBX_UI::token_validate()) {
 		message::add($text['message-invalid_token'],'negative');
@@ -77,12 +80,24 @@ if (isset($_POST['action']) && $_POST['action'] == 'save') {
   $result = quick_setup($data);
   if ($result == true) {
     $data = reset_data();
+  } else if ($result != false) {
+    $fieldStage = $result['stage'];
+    foreach ($result as $field => $value) {
+      $fields[] = [ BPPBX_UI::hidden_input($field, $value) ];
+    }
+    $fields[] = [ '<script>setTimeout(() => { document.getElementById("quick_tenant_form").submit(); }, 0);</script>' ];
   }
 }
 
-echo BPPBX_UI::form('frm', 'quick_setup.php', [
+
+echo BPPBX_UI::form('quick_tenant_form', 'quick_setup.php', [
   BPPBX_UI::token_input(),
-  BPPBX_UI::row('col-12 col-md-3', [
+  (count($fields) > 0 
+  ? BPPBX_UI::card([], array_merge([
+    "<div class='alert alert-info'>Busy: ".$fieldStage."</div>"
+    ], $fields)) 
+  : ''),
+  BPPBX_UI::row('col-12 col-md-3 ' . (count($fields) > 0 ? 'd-none' : ''), [
     BPPBX_UI::card([
       '<h3>Domain</h3>',
     ], [

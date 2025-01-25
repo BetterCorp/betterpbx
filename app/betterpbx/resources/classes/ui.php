@@ -151,9 +151,12 @@ if (!class_exists('BPPBX_UI')) {
       $tokenObject = new token;
       return $tokenObject->create($_SERVER['PHP_SELF']);
     }
+    public static function hidden_input($name, $value) {
+      return "<input type='hidden' name='".$name."' value='".$value."'>";
+    }
     public static function token_input() {
       $token = self::token_create();
-      return "<input type='hidden' name='".$token['name']."' value='".$token['hash']."'>";
+      return self::hidden_input($token['name'], $token['hash']);
     }
     public static function token_validate() {
       $tokenObject = new token;
