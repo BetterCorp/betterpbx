@@ -172,7 +172,7 @@ function create_destination($database, $domain_uuid, $type, $destination_number,
   return $destination_uuid;
 }
 
-function create_extension($database, $domain_uuid, $extension_name, $extension_number, $extension_context, $extension_enabled, $extension_order, $extension_description)
+function create_extension($database, $domain_uuid, $extension_name, $extension_number, $extension_context, $extension_enabled, $extension_description)
 {
   //add the extension
   $extension_uuid = uuid();
@@ -368,26 +368,30 @@ function quick_setup($data){
   
   try {
     if ($data['stage'] == 'domain') {
-      $sql = "select COUNT(*) from v_domains where lower(domain_name) = :domain_name";
-      $existingDomains = $database->select($sql, ['domain_name' => $domain], 'column');
-      unset($sql);
-      if ($existingDomains > 0) {
-        $message = "The domain already exists.";
-        message::add($message, 'negative', 5000);
-        return false;
-      }
-      unset($existingDomains);
-
-      $domain_uuid = create_domain($database, $domain);
-      if (!$domain_uuid) {
-        throw new Exception("Failed to create the domain.");
-      }
-      message::add("Domain created successfully.", 'positive', 5000);
-      $database->db->commit();
       return [
         'stage' => 'extension',
-        'domain_uuid' => $domain_uuid,
+        'domain_uuid' => '7c35d5d2-af43-4df5-8a92-9f0830422ae7',
       ];
+      // $sql = "select COUNT(*) from v_domains where lower(domain_name) = :domain_name";
+      // $existingDomains = $database->select($sql, ['domain_name' => $domain], 'column');
+      // unset($sql);
+      // if ($existingDomains > 0) {
+      //   $message = "The domain already exists.";
+      //   message::add($message, 'negative', 5000);
+      //   return false;
+      // }
+      // unset($existingDomains);
+
+      // $domain_uuid = create_domain($database, $domain);
+      // if (!$domain_uuid) {
+      //   throw new Exception("Failed to create the domain.");
+      // }
+      // message::add("Domain created successfully.", 'positive', 5000);
+      // $database->db->commit();
+      // return [
+      //   'stage' => 'extension',
+      //   'domain_uuid' => $domain_uuid,
+      // ];
     }
 
     $domain_uuid = $data['domain_uuid'];
@@ -399,13 +403,14 @@ function quick_setup($data){
       for ($i = 0; $i < $data['extension_count']; $i++) {
         $extension_number = $data['extension_start'] + $i;
         $extensions[] = [
-          $extension_number => create_extension($database, $domain_uuid, $data['extension_name'], $extension_number, $data['extension_context'], 'true', '100', ''),
+          $extension_number => create_extension($database, $domain_uuid, $extension_number, $extension_number, $domain, 'true', ''),
         ];
+        message::add("Extension (".$extension_number.") created successfully.", 'positive', 5000);
       }
       message::add("Extensions created successfully.", 'positive', 5000);
       $database->db->commit();
       return [
-        'stage' => 'gateway',
+        'stage' => 'gatewayz',
         'domain_uuid' => $domain_uuid,
         'extensions' => json_encode($extensions),
       ];
