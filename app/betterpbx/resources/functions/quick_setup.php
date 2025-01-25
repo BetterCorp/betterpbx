@@ -368,9 +368,6 @@ function quick_setup($data){
   $database = database::new();
   
   try {
-    // Start transaction
-    $database->db->beginTransaction();
-
     if ($data['stage'] == 'domain') {
       $sql = "select COUNT(*) from v_domains where lower(domain_name) = :domain_name";
       $existingDomains = $database->select($sql, ['domain_name' => $domain], 'column');
@@ -478,7 +475,6 @@ function quick_setup($data){
         throw new Exception("Failed to create the local destination.");
       }
       message::add("Local destination created successfully.", 'positive', 5000);
-      $database->db->commit();
       return [
         'stage' => 'dialplan',
         'domain_uuid' => $domain_uuid,
@@ -489,18 +485,15 @@ function quick_setup($data){
         'destination_local_uuid' => $destinationLocal_uuid,
       ];
     }
-
-    // Commit transaction
-    $database->db->commit();
     
     unset($database);
     message::add("Successfully created the tenant.", 'positive', 5000);
     return true;
   } catch (Exception $e) {
     // Rollback transaction on error
-    if ($database->db && $database->db->inTransaction()) {
-      $database->db->rollBack();
-    }
+    // if ($database->db && $database->db->inTransaction()) {
+    //   $database->db->rollBack();
+    // }
     message::add($e->getMessage(), 'negative', 5000);
     return false;
   }
