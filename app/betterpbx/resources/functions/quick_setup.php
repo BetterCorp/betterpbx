@@ -55,9 +55,9 @@ function create_domain($database, $domain_name)
   $response = $cache->flush();
 
   //clear the domains session array to update it
-  unset($_SESSION["domains"]);
-  unset($_SESSION['domain']);
-  unset($_SESSION['switch']);
+  //unset($_SESSION["domains"]);
+  //unset($_SESSION['domain']);
+  //unset($_SESSION['switch']);
 
   return $domain_uuid; 
 }
@@ -343,9 +343,8 @@ function quick_setup($data){
   if (!isset($data['stage']) || empty($data['stage'])) {
     $data['stage'] = 'domain';
   }
-
+  $domain = $data['domain'];
   // if ($data['stage'] == 'domain') {
-  //   $domain = $data['domain'];
   //   $ip = gethostbyname($domain);
   //   $output = shell_exec('ip a');
   //   $lines = explode("\n", $output);
