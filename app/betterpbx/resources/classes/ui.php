@@ -88,8 +88,17 @@ if (!class_exists('BPPBX_UI')) {
         $output .= " <span class='text-danger'>*</span>";
       }
       $output .= "</label>";
-      if ($type == 'select') {
-        $output .= "	<select class='form-control' id='".$name."' name='".$name."'";
+      if ($type == 'checkbox') {
+        $output .= "	<input type='checkbox' class='form-check-input ml-4 ".$attrs['class']."' id='".$name."' name='".$name."' value='true'";
+        if (isset($value) && $value != '') {
+          $output .= " checked='checked'";
+        }
+        foreach ($attrs as $attr) {
+          $output .= " ".$attr;
+        }
+        $output .= "/>";
+      } else if ($type == 'select') {
+        $output .= "	<select class='form-control ".$attrs['class']."'' id='".$name."' name='".$name."'";
         foreach ($attrs as $attr) {
           $output .= " ".$attr;
         }
@@ -103,7 +112,7 @@ if (!class_exists('BPPBX_UI')) {
         }
         $output .= "</select>";
       } else {
-        $output .= "	<input type='".$type."' class='form-control' id='".$name."' name='".$name."' value='".escape($value)."' aria-describedby='".$name."-help'";
+        $output .= "	<input type='".$type."' class='form-control ".$attrs['class']."'' id='".$name."' name='".$name."' value='".escape($value)."' aria-describedby='".$name."-help'";
         foreach ($attrs as $attr) {
           $output .= " ".$attr;
         }

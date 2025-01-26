@@ -650,6 +650,70 @@ if (!class_exists('gateways')) {
 			}
 		}
 
+		public function add($domain_uuid, $gateway_name, $gateway_server, $gateway_username, $gateway_password, $gateway_protocol, $additional_params = []) {
+			// Generate a new UUID for the gateway
+			$gateway_uuid = uuid();
+
+			// Prepare the data array for the gateway
+			$array['gateways'][0] = [
+				'gateway_uuid' => $gateway_uuid,
+				'domain_uuid' => $domain_uuid,
+				'gateway' => $gateway_name,
+				'username' => $gateway_username,
+				'password' => $gateway_password,
+				'proxy' => $gateway_server,
+				'register' => $additional_params['register'] ?? 'true',
+				'retry_seconds' => $additional_params['retry_seconds'] ?? '30',
+				'expire_seconds' => $additional_params['expire_seconds'] ?? '800',
+				'channels' => $additional_params['channels'] ?? '',
+				'context' => $additional_params['context'] ?? 'public',
+				'profile' => $additional_params['profile'] ?? 'external',
+				'enabled' => $additional_params['enabled'] ?? 'true',
+				'description' => $additional_params['description'] ?? '',
+				'caller_id_in_from' => $additional_params['caller_id_in_from'] ?? '',
+				'contact_params' => $additional_params['contact_params'] ?? '',
+				'register_proxy' => $additional_params['register_proxy'] ?? '',
+				'register_transport' => $gateway_protocol,
+				'auth_username' => $additional_params['auth_username'] ?? '',
+				'realm' => $additional_params['realm'] ?? '',
+				'from_user' => $additional_params['from_user'] ?? '',
+				'from_domain' => $additional_params['from_domain'] ?? '',
+				'outbound_proxy' => $additional_params['outbound_proxy'] ?? '',
+				'ping' => $additional_params['ping'] ?? '',
+				'ping_min' => $additional_params['ping_min'] ?? '',
+				'ping_max' => $additional_params['ping_max'] ?? '',
+				'contact_in_ping' => $additional_params['contact_in_ping'] ?? '',
+				'supress_cng' => $additional_params['supress_cng'] ?? '',
+				'sip_cid_type' => $additional_params['sip_cid_type'] ?? '',
+				'codec_prefs' => $additional_params['codec_prefs'] ?? '',
+				'extension_in_contact' => $additional_params['extension_in_contact'] ?? '',
+				'hostname' => $additional_params['hostname'] ?? '',
+			];
+
+			// Save the gateway to the database
+			$database = new database;
+			$database->app_name = 'gateways';
+			$database->app_uuid = '297ab33e-2c2f-8196-552c-f3567d2caaf8';
+			$database->save($array);
+
+			// Synchronize configuration
+			save_gateway_xml();
+
+			// Clear the cache
+			$cache = new cache;
+			$cache->delete("configuration:sofia.conf");
+
+			// Rescan the gateway
+			$esl = event_socket::create();
+			if ($esl->is_connected()) {
+				$response = event_socket::api("sofia profile external rescan");
+				unset($response);
+			}
+			unset($esl);
+
+			return $gateway_uuid;
+		}
+
 	}
 }
 

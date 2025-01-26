@@ -1,5 +1,7 @@
 <?php
 
+require_once dirname(__DIR__, 4) . "/resources/require.php";
+
 function create_domain($database, $domain_name)
 {
   //add the domain name
@@ -59,198 +61,83 @@ function create_domain($database, $domain_name)
   //unset($_SESSION['domain']);
   //unset($_SESSION['switch']);
 
-  return $domain_uuid; 
+  return $domain_uuid;
 }
 
 function create_gateway($database, $domain_uuid, $gateway_name, $gateway_server, $gateway_username, $gateway_password, $gateway_protocol)
 {
-  //build the gateway array
-  $gateway_uuid = uuid();
-  $array['gateways'][0]['gateway_uuid'] = $gateway_uuid;
-  $array['gateways'][0]['domain_uuid'] = $domain_uuid;
-  $array['gateways'][0]['gateway'] = $gateway_name;
-  $array['gateways'][0]['username'] = $gateway_username;
-  $array['gateways'][0]['password'] = $gateway_password;
-  $array['gateways'][0]['proxy'] = $gateway_server;
-  $array['gateways'][0]['register'] = 'true';
-  $array['gateways'][0]['retry_seconds'] = '30';
-  $array['gateways'][0]['expire_seconds'] = '800';
-  $array['gateways'][0]['channels'] = '';
-  $array['gateways'][0]['context'] = 'public';
-  $array['gateways'][0]['profile'] = 'external';
-  $array['gateways'][0]['enabled'] = 'true';
-  $array['gateways'][0]['description'] = '';
-  $array['gateways'][0]['caller_id_in_from'] = '';
-  $array['gateways'][0]['contact_params'] = '';
-  $array['gateways'][0]['register_proxy'] = '';
-  $array['gateways'][0]['register_transport'] = $gateway_protocol;
+  // Create a new instance of the gateways class
+  $gateway = new gateways();
 
-  //save to the data
-  $database->app_name = 'gateways';
-  $database->app_uuid = '297ab33e-2c2f-8196-552c-f3567d2caaf8';
-  $database->save($array);
-
-  //synchronize configuration
-  save_gateway_xml();
-
-  //clear the cache
-  $cache = new cache;
-  $cache->delete("configuration:sofia.conf");
-
-  //rescan the gateway
-  $esl = event_socket::create();
-  if ($esl->is_connected()) {
-    $response = event_socket::api("sofia profile external rescan");
-    unset($response);
-  }
-  unset($esl);
-
-  return $gateway_uuid;
+  // Use the add method to create a new gateway
+  return $gateway->add($domain_uuid, $gateway_name, $gateway_server, $gateway_username, $gateway_password, $gateway_protocol);
 }
 
-function create_destination($database, $domain_uuid, $type, $destination_number, $destination_uuid, $context, $destination_context, $order)
+function create_inbound_destination($domain_uuid, $number, $destination_number, $context, $order)
 {
-  $dialplan_uuid = uuid();
+  // Create a new instance of the destinations class
+  $destination = new destinations();
 
-  if (empty($destination_uuid) || !is_uuid($destination_uuid)) {
-    $destination_uuid = uuid();
-  }
+  // Prepare additional parameters
+  $additional_params = [
+    'destination_type' =>'inbound',
+    'destination_number_regex' =>'^('.$number.')$',
+    'destination_context' => 'public',
+    'destination_order' => $order,
+    'destination_enabled' => 'true',
+    'destination_description' => '',
+    'destination_type_voice' => "1",
+    'destination_app' => "transfer",
+    'destination_data' => "{$number} XML {$context}",
+    'destination_actions' => json_encode([
+      [
+        'destination_app' => 'transfer',
+        'destination_data' => "{$destination_number} XML {$context}"
+      ]
+    ]),
+  ];
 
-  //build the destination array
-  $array['destinations'][0]['destination_uuid'] = $destination_uuid;
-  $array['destinations'][0]['domain_uuid'] = $domain_uuid;
-  $array['destinations'][0]['dialplan_uuid'] = $dialplan_uuid;
-  $array['destinations'][0]['destination_type'] = $type;
-  $array['destinations'][0]['destination_number'] = $destination_number;
-  $array['destinations'][0]['destination_context'] = $context;
-  $array['destinations'][0]['destination_enabled'] = 'true';
-  $array['destinations'][0]['destination_description'] = '';
-  $array['destinations'][0]['destination_order'] = $order;
-
-  //build the dialplan array
-  $array['dialplans'][0]['app_uuid'] = 'c03b422e-13a8-bd1b-e42b-b6b9b4d27ce4';
-  $array['dialplans'][0]['dialplan_uuid'] = $dialplan_uuid;
-  $array['dialplans'][0]['domain_uuid'] = $domain_uuid;
-  $array['dialplans'][0]['dialplan_name'] = $destination_number;
-  $array['dialplans'][0]['dialplan_number'] = $destination_number;
-  $array['dialplans'][0]['dialplan_context'] = $destination_context;
-  $array['dialplans'][0]['dialplan_continue'] = 'false';
-  $array['dialplans'][0]['dialplan_order'] = $order;
-  $array['dialplans'][0]['dialplan_enabled'] = 'true';
-  $array['dialplans'][0]['dialplan_description'] = '';
-
-  //build the dialplan detail array
-  $array['dialplans'][0]['dialplan_details'][0]['domain_uuid'] = $domain_uuid;
-  $array['dialplans'][0]['dialplan_details'][0]['dialplan_uuid'] = $dialplan_uuid;
-  $array['dialplans'][0]['dialplan_details'][0]['dialplan_detail_tag'] = 'condition';
-  $array['dialplans'][0]['dialplan_details'][0]['dialplan_detail_type'] = 'destination_number';
-  $array['dialplans'][0]['dialplan_details'][0]['dialplan_detail_data'] = $destination_number;
-  $array['dialplans'][0]['dialplan_details'][0]['dialplan_detail_order'] = '010';
-
-  //add the dialplan permission
-  $p = permissions::new();
-  $p->add("dialplan_add", 'temp');
-  $p->add("dialplan_detail_add", 'temp');
-  $p->add("dialplan_edit", 'temp');
-  $p->add("dialplan_detail_edit", 'temp');
-
-  //save to the data
-  $database->app_name = 'destinations';
-  $database->app_uuid = '5ec89622-b19c-3559-64f0-afde802ab139';
-  $database->save($array);
-
-  //remove the temporary permission
-  $p->delete("dialplan_add", 'temp');
-  $p->delete("dialplan_detail_add", 'temp');
-  $p->delete("dialplan_edit", 'temp');
-  $p->delete("dialplan_detail_edit", 'temp');
-
-  //clear the cache
-  $cache = new cache;
-  $cache->delete("dialplan:".$context);
-
-  return $destination_uuid;
+  // Use the add method to create a new destination
+  return $destination->add($domain_uuid, $number, $context, $additional_params);
 }
 
-function create_extension($database, $domain_uuid, $extension_name, $extension_number, $extension_context, $extension_enabled, $extension_description)
+function create_extension($domain_uuid, $extension_name, $extension_number, $extension_context, $extension_enabled, $extension_description)
 {
   //add the extension
   $extension_uuid = uuid();
-  $voicemail_uuid = uuid();
 
-  //build the array
-  $array['extensions'][0]['domain_uuid'] = $domain_uuid;
-  $array['extensions'][0]['extension_uuid'] = $extension_uuid;
-  $array['extensions'][0]['extension'] = $extension_number;
-  $array['extensions'][0]['number_alias'] = '';
-  $array['extensions'][0]['password'] = generate_password();
-  $array['extensions'][0]['provisioning_list'] = '';
-  $array['extensions'][0]['vm_password'] = generate_password(6, 1);
-  $array['extensions'][0]['accountcode'] = '';
-  $array['extensions'][0]['effective_caller_id_name'] = $extension_name;
-  $array['extensions'][0]['effective_caller_id_number'] = $extension_number;
-  $array['extensions'][0]['outbound_caller_id_name'] = '';
-  $array['extensions'][0]['outbound_caller_id_number'] = '';
-  $array['extensions'][0]['emergency_caller_id_name'] = '';
-  $array['extensions'][0]['emergency_caller_id_number'] = '';
-  $array['extensions'][0]['directory_first_name'] = '';
-  $array['extensions'][0]['directory_last_name'] = '';
-  $array['extensions'][0]['directory_visible'] = 'true';
-  $array['extensions'][0]['directory_exten_visible'] = 'true';
-  $array['extensions'][0]['limit_max'] = '';
-  $array['extensions'][0]['limit_destination'] = '';
-  $array['extensions'][0]['voicemail_enabled'] = 'true';
-  $array['extensions'][0]['voicemail_uuid'] = $voicemail_uuid;
-  $array['extensions'][0]['voicemail_mail_to'] = '';
-  $array['extensions'][0]['voicemail_file'] = 'attach';
-  $array['extensions'][0]['voicemail_local_after_email'] = 'true';
-  $array['extensions'][0]['missed_call_app'] = '';
-  $array['extensions'][0]['missed_call_data'] = '';
-  $array['extensions'][0]['user_context'] = $extension_context;
-  $array['extensions'][0]['toll_allow'] = '';
-  $array['extensions'][0]['call_timeout'] = '30';
-  $array['extensions'][0]['call_group'] = '';
-  $array['extensions'][0]['call_screen_enabled'] = 'false';
-  $array['extensions'][0]['user_record'] = '';
-  $array['extensions'][0]['auth_acl'] = '';
-  $array['extensions'][0]['sip_force_contact'] = '';
-  $array['extensions'][0]['sip_force_expires'] = '';
-  $array['extensions'][0]['mwi_account'] = '';
-  $array['extensions'][0]['sip_bypass_media'] = '';
-  $array['extensions'][0]['absolute_codec_string'] = '';
-  $array['extensions'][0]['force_ping'] = '';
-  $array['extensions'][0]['dial_string'] = '';
-  $array['extensions'][0]['enabled'] = $extension_enabled;
-  $array['extensions'][0]['description'] = $extension_description;
+  //ensure extension number is properly formatted
+  $extension_number = (string)$extension_number;
+  if (empty($extension_number)) {
+    throw new Exception("Extension number cannot be empty");
+  }
+
+  //get the password length and strength
+  $password_length = $_SESSION["extension"]["password_length"]["numeric"] ?? 10;
+  $password_strength = $_SESSION["extension"]["password_strength"]["numeric"] ?? 4;
+  $password = generate_password($password_length, $password_strength);
+
+  //create extension using the extension class
+  $ext = new extension;
+  $ext->domain_uuid = $domain_uuid;
+  $ext->extension_uuid = $extension_uuid;
+  $ext->extension = $extension_number;
+  $ext->number_alias = '';
+  $ext->password = $password;
+  $ext->effective_caller_id_name = $extension_name;
+  $ext->effective_caller_id_number = $extension_number;
+  $ext->user_context = $extension_context;
+  $ext->enabled = $extension_enabled;
+  $ext->description = $extension_description;
 
   //add voicemail
-  $array['voicemails'][0]['domain_uuid'] = $domain_uuid;
-  $array['voicemails'][0]['voicemail_uuid'] = $voicemail_uuid;
-  $array['voicemails'][0]['voicemail_id'] = $extension_number;
-  $array['voicemails'][0]['voicemail_password'] = $array['extensions'][0]['vm_password'];
-  $array['voicemails'][0]['voicemail_mail_to'] = '';
-  $array['voicemails'][0]['voicemail_file'] = 'attach';
-  $array['voicemails'][0]['voicemail_local_after_email'] = 'true';
-  $array['voicemails'][0]['voicemail_enabled'] = 'true';
-  $array['voicemails'][0]['voicemail_description'] = '';
+  $ext->voicemail_password = generate_password($password_length, $password_strength);
+  $ext->voicemail_enabled = 'true';
 
-  //grant temporary permissions
-  $p = permissions::new();
-  $p->add('extension_add', 'temp');
-  $p->add('voicemail_add', 'temp');
-
-  //save to the data
-  $database->app_name = 'extensions';
-  $database->app_uuid = 'e68d9689-2769-e013-28fa-6214bf47fca3';
-  $database->save($array);
-
-  //remove the temporary permission
-  $p->delete('extension_add', 'temp');
-  $p->delete('voicemail_add', 'temp');
-
-  //clear the cache
-  $cache = new cache;
-  $cache->delete("directory:".$extension_number."@".$extension_context);
+  //save the extension
+  $ext->add();
+  $ext->voicemail();
+  $ext->xml();
 
   return $extension_uuid;
 }
@@ -298,10 +185,10 @@ function create_ring_group($database, $domain_uuid, $ring_group_name, $ring_grou
   }
 
   //build the dialplan array
-  $dialplan_xml = "<extension name=\"".xml::sanitize($ring_group_name)."\" continue=\"\" uuid=\"".xml::sanitize($dialplan_uuid)."\">\n";
-  $dialplan_xml .= "  <condition field=\"destination_number\" expression=\"^".xml::sanitize($ring_group_number)."$\">\n";
+  $dialplan_xml = "<extension name=\"" . xml::sanitize($ring_group_name) . "\" continue=\"\" uuid=\"" . xml::sanitize($dialplan_uuid) . "\">\n";
+  $dialplan_xml .= "  <condition field=\"destination_number\" expression=\"^" . xml::sanitize($ring_group_number) . "$\">\n";
   $dialplan_xml .= "    <action application=\"ring_ready\" data=\"\"/>\n";
-  $dialplan_xml .= "    <action application=\"set\" data=\"ring_group_uuid=".xml::sanitize($ring_group_uuid)."\"/>\n";
+  $dialplan_xml .= "    <action application=\"set\" data=\"ring_group_uuid=" . xml::sanitize($ring_group_uuid) . "\"/>\n";
   $dialplan_xml .= "    <action application=\"lua\" data=\"app.lua ring_groups\"/>\n";
   $dialplan_xml .= "  </condition>\n";
   $dialplan_xml .= "</extension>\n";
@@ -339,59 +226,306 @@ function create_ring_group($database, $domain_uuid, $ring_group_name, $ring_grou
   return $ring_group_uuid;
 }
 
-function quick_setup($data){
+function create_outbound_dialplan($domain_uuid, $domain_name, $gateway_uuid, $dialplan_expression)
+{
+  $dialplan1_uuid = uuid();
+  $dialplan2_uuid = uuid();
+  $app_uuid = '8c914ec3-9fc0-8ab5-4cda-6c9288bdc9a3';
+
+  $x = 0;
+  $array['dialplans'][$x]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_uuid'] = $dialplan1_uuid;
+  $array['dialplans'][$x]['app_uuid'] = $app_uuid;
+  $array['dialplans'][$x]['dialplan_name'] = 'call_direction-outbound-ZA-Default';
+  $array['dialplans'][$x]['dialplan_order'] = '22';
+  $array['dialplans'][$x]['dialplan_continue'] = 'true';
+  $array['dialplans'][$x]['dialplan_context'] = $domain_name;
+  $array['dialplans'][$x]['dialplan_enabled'] = 'true';
+  $array['dialplans'][$x]['dialplan_description'] = '';
+  $y = 1;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan1_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'condition';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = '${user_exists}';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'false';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan1_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'condition';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = '${call_direction}';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = '^$';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan1_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'condition';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'destination_number';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = $dialplan_expression;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan1_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'action';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'export';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'call_direction=outbound';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_inline'] = 'true';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+  $y++;
+  $x++;
+
+  $array['dialplans'][$x]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['app_uuid'] = $app_uuid;
+  $array['dialplans'][$x]['dialplan_name'] = 'Outbound-ZA-Default';
+  $array['dialplans'][$x]['dialplan_order'] = '100';
+  $array['dialplans'][$x]['dialplan_continue'] = 'false';
+  $array['dialplans'][$x]['dialplan_context'] = $domain_name;
+  $array['dialplans'][$x]['dialplan_enabled'] = 'true';
+  $array['dialplans'][$x]['dialplan_description'] = '';
+  $y = 1;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'condition';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = '${user_exists}';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'false';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+  $y++;
+
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'condition';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'destination_number';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = $dialplan_expression;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'action';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'set';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'sip_h_accountcode=${accountcode}';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'false';
+
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'action';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'export';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'call_direction=outbound';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_inline'] = 'true';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'action';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'unset';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'call_timeout';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'action';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'set';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'hangup_after_bridge=true';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'action';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'set';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'effective_caller_id_name=${outbound_caller_id_name}';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'action';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'set';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'effective_caller_id_number=${outbound_caller_id_number}';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'action';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'set';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'inherit_codec=true';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'action';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'set';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'ignore_display_updates=true';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'action';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'set';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'callee_id_number=27$2';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'action';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'set';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'continue_on_fail=1,2,3,6,18,21,27,28,31,34,38,41,42,44,58,88,111,403,501,602,607,809';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan2_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'action';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'bridge';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = 'sofia/gateway/' . $gateway_uuid . '/27$2';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = $y * 10;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+
+  // Save the dialplan to the database
+  $p = permissions::new();
+  $p->add("dialplan_add", "temp");
+  $p->add("dialplan_detail_add", "temp");
+
+  //save to the data
+  $database = new database;
+  $database->app_name = 'outbound_routes';
+  $database->app_uuid = $app_uuid;
+  $database->save($array);
+  $message = $database->message;
+  unset($array);
+
+  //update the dialplan xml
+  $dialplans = new dialplan;
+  $dialplans->source = "details";
+  $dialplans->destination = "database";
+  $dialplans->uuid = $dialplan1_uuid;
+  $dialplans->xml();
+  unset($dialplans);
+
+  $dialplans = new dialplan;
+  $dialplans->source = "details";
+  $dialplans->destination = "database";
+  $dialplans->uuid = $dialplan2_uuid;
+  $dialplans->xml();
+  unset($dialplans);
+
+  // Clear the cache
+  $cache = new cache;
+  $cache->delete("dialplan:public");
+  $cache->delete("dialplan:".$domain_name);
+
+  $p->delete("dialplan_add", "temp");
+  $p->delete("dialplan_detail_add", "temp");
+
+  return [$dialplan1_uuid, $dialplan2_uuid];
+}
+
+function quick_setup($data)
+{
   if (!isset($data['stage']) || empty($data['stage'])) {
     $data['stage'] = 'domain';
   }
   $domain = $data['domain'];
-  // if ($data['stage'] == 'domain') {
-  //   $ip = gethostbyname($domain);
-  //   $output = shell_exec('ip a');
-  //   $lines = explode("\n", $output);
-  //   $ipsOnServer = [];
+  if ($data['stage'] == 'domain') {
+    $ip = gethostbyname($domain);
+    $output = shell_exec('ip a');
+    $lines = explode("\n", $output);
+    $ipsOnServer = [];
 
-  //   foreach ($lines as $line) {
-  //     if (preg_match('/inet\s+([0-9.]+)/', $line, $matches)) {
-  //       $ipsOnServer[] = $matches[1];
-  //     }
-  //   }
+    foreach ($lines as $line) {
+      if (preg_match('/inet\s+([0-9.]+)/', $line, $matches)) {
+        $ipsOnServer[] = $matches[1];
+      }
+    }
 
-  //   if (!in_array($ip, $ipsOnServer)) {
-  //     $message = "The domain does not point to the server (current points to " . $ip . "). \nCheck the domain is pointing to one of the following IPs: \n" . implode("\n", $ipsOnServer);
-  //     message::add($message, 'negative', 5000);
-  //     return false;
-  //   }
-  //   unset($ipsOnServer);
-  // }
+    if (!in_array($ip, $ipsOnServer)) {
+      $message = "The domain does not point to the server (current points to " . $ip . "). \nCheck the domain is pointing to one of the following IPs: \n" . implode("\n", $ipsOnServer);
+      message::add($message, 'negative', 5000);
+      return false;
+    }
+    unset($ipsOnServer);
+  }
 
-  $database = database::new();
-  
   try {
+    $qcdatabase = new database;
+
     if ($data['stage'] == 'domain') {
+      $sql = "select COUNT(*) from v_domains where lower(domain_name) = :domain_name";
+      $existingDomains = $qcdatabase->select($sql, ['domain_name' => $domain], 'column');
+      unset($sql);
+      if ($existingDomains > 0) {
+        $message = "The domain already exists.";
+        message::add($message, 'negative', 5000);
+        return false;
+      }
+      unset($existingDomains);
+
+      $domain_uuid = create_domain($qcdatabase, $domain);
+      if (!$domain_uuid) {
+        throw new Exception("Failed to create the domain.");
+      }
+      message::add("Domain created successfully.", 'positive', 5000);
       return [
         'stage' => 'extension',
-        'domain_uuid' => '7c35d5d2-af43-4df5-8a92-9f0830422ae7',
+        'domain_uuid' => $domain_uuid,
       ];
-      // $sql = "select COUNT(*) from v_domains where lower(domain_name) = :domain_name";
-      // $existingDomains = $database->select($sql, ['domain_name' => $domain], 'column');
-      // unset($sql);
-      // if ($existingDomains > 0) {
-      //   $message = "The domain already exists.";
-      //   message::add($message, 'negative', 5000);
-      //   return false;
-      // }
-      // unset($existingDomains);
-
-      // $domain_uuid = create_domain($database, $domain);
-      // if (!$domain_uuid) {
-      //   throw new Exception("Failed to create the domain.");
-      // }
-      // message::add("Domain created successfully.", 'positive', 5000);
-      // $database->db->commit();
-      // return [
-      //   'stage' => 'extension',
-      //   'domain_uuid' => $domain_uuid,
-      // ];
     }
 
     $domain_uuid = $data['domain_uuid'];
@@ -402,15 +536,12 @@ function quick_setup($data){
       $data['extension_count'] = intval($data['extension_count']);
       for ($i = 0; $i < $data['extension_count']; $i++) {
         $extension_number = $data['extension_start'] + $i;
-        $extensions[] = [
-          $extension_number => create_extension($database, $domain_uuid, $extension_number, $extension_number, $domain, 'true', ''),
-        ];
-        message::add("Extension (".$extension_number.") created successfully.", 'positive', 5000);
+        $extensions[$extension_number] = create_extension($domain_uuid, $extension_number, $extension_number, $domain, 'true', '');
+        message::add("Extension (" . $extension_number . ") created successfully.", 'positive', 5000);
       }
-      message::add("Extensions created successfully.", 'positive', 5000);
-      $database->db->commit();
+      message::add("Created (" . $data['extension_count'] . ") extensions successfully.", 'positive', 5000);
       return [
-        'stage' => 'gatewayz',
+        'stage' => 'gateway',
         'domain_uuid' => $domain_uuid,
         'extensions' => json_encode($extensions),
       ];
@@ -419,14 +550,15 @@ function quick_setup($data){
     $extensions = json_decode($data['extensions'], true);
 
     if ($data['stage'] == 'gateway') {
-      $gateway_uuid = create_gateway($database, $domain_uuid, $data['phone_number'], $data['server'], $data['username'], $data['password'], $data['protocol']);
+      $gateway_uuid = create_gateway($qcdatabase, $domain_uuid, $data['phone_number'], $data['server'], $data['username'], $data['password'], $data['protocol']);
       if (!$gateway_uuid) {
         throw new Exception("Failed to create the gateway.");
       }
       message::add("Gateway created successfully.", 'positive', 5000);
-      $database->db->commit();
       return [
-        'stage' => 'ring_group',
+        'stage' => (isset($data['ring_group_enabled']) && $data['ring_group_enabled'] == 'true')
+          ? 'ring_group'
+          : 'destination_intl',
         'domain_uuid' => $domain_uuid,
         'extensions' => json_encode($extensions),
         'gateway_uuid' => $gateway_uuid,
@@ -437,12 +569,15 @@ function quick_setup($data){
 
     if ($data['stage'] == 'ring_group') {
       $data['ring_group_number'] = intval($data['ring_group_number']);
-      $ring_group_uuid = create_ring_group($database, $domain_uuid, $data['ring_group_name'], $data['ring_group_number'], $extensions);
+      $extensionNumbers = [];
+      foreach ($extensions as $extension_number => $extension_uuid) {
+        $extensionNumbers[] = $extension_number;
+      }
+      $ring_group_uuid = create_ring_group($qcdatabase, $domain_uuid, $data['ring_group_name'], $data['ring_group_number'], $extensionNumbers);
       if (!$ring_group_uuid) {
         throw new Exception("Failed to create the ring group.");
       }
       message::add("Ring group created successfully.", 'positive', 5000);
-      $database->db->commit();
       return [
         'stage' => 'destination_intl',
         'domain_uuid' => $domain_uuid,
@@ -455,14 +590,20 @@ function quick_setup($data){
     $ring_group_uuid = $data['ring_group_uuid'];
 
     if ($data['stage'] == 'destination_intl') {
-      $destinationIntl_uuid = create_destination($database, $domain_uuid, 'inbound', $data['phone_number'], $ring_group_uuid, 'public', $data['domain'], '100');
-      if (!$destinationIntl_uuid) {
-        throw new Exception("Failed to create the international destination.");
+      if (isset($data['phone_number']) && !empty($data['phone_number'])) {
+        $destinationIntl_uuid = create_inbound_destination($domain_uuid, $data['phone_number'], $data['ring_group_number'], $domain, '100');
+        if (!$destinationIntl_uuid) {
+          throw new Exception("Failed to create the international destination.");
+        }
+        message::add("International destination created successfully.", 'positive', 5000);
+      } else {
+        $destinationIntl_uuid = '-';
+        message::add("No international destination created.", 'warning', 5000);
       }
-      message::add("International destination created successfully.", 'positive', 5000);
-      $database->db->commit();
       return [
-        'stage' => 'destination_local',
+        'stage' => (isset($data['phone_number_local']) && !empty($data['phone_number_local']))
+          ? 'destination_local'
+          : 'outbound_routes',
         'domain_uuid' => $domain_uuid,
         'extensions' => json_encode($extensions),
         'gateway_uuid' => $gateway_uuid,
@@ -474,13 +615,18 @@ function quick_setup($data){
     $destinationIntl_uuid = $data['destination_intl_uuid'];
 
     if ($data['stage'] == 'destination_local') {
-      $destinationLocal_uuid = create_destination($database, $domain_uuid, 'inbound', $data['phone_number_local'], $ring_group_uuid, 'public', $data['domain'], '100');
-      if (!$destinationLocal_uuid) {
-        throw new Exception("Failed to create the local destination.");
+      if (isset($data['phone_number_local']) && !empty($data['phone_number_local'])) {
+        $destinationLocal_uuid = create_inbound_destination($domain_uuid, $data['phone_number_local'], $data['ring_group_number'], $domain, '100');
+        if (!$destinationLocal_uuid) {
+          throw new Exception("Failed to create the local destination.");
+        }
+        message::add("Local destination created successfully.", 'positive', 5000);
+      } else {
+        $destinationLocal_uuid = '-';
+        message::add("No local destination created.", 'warning', 5000);
       }
-      message::add("Local destination created successfully.", 'positive', 5000);
       return [
-        'stage' => 'dialplan',
+        'stage' => 'outbound_routes',
         'domain_uuid' => $domain_uuid,
         'extensions' => json_encode($extensions),
         'gateway_uuid' => $gateway_uuid,
@@ -489,7 +635,54 @@ function quick_setup($data){
         'destination_local_uuid' => $destinationLocal_uuid,
       ];
     }
-    
+
+    $destinationLocal_uuid = $data['destination_local_uuid'];
+
+    if ($data['stage'] == 'outbound_routes') {
+      $outbound_routes_uuid = create_outbound_dialplan($domain_uuid, $domain, $gateway_uuid, '^(\+27|0027|27|0)([0-9]{9,12})$');
+      if (!$outbound_routes_uuid) {
+        throw new Exception("Failed to create the outbound dialplan.");
+      }
+      message::add("Outbound dialplan created successfully.", 'positive', 5000);
+      return [
+        'stage' => 'start_gateways',
+        'domain_uuid' => $domain_uuid,
+        'extensions' => json_encode($extensions),
+        'gateway_uuid' => $gateway_uuid,
+        'ring_group_uuid' => $ring_group_uuid,
+        'destination_intl_uuid' => $destinationIntl_uuid,
+        'destination_local_uuid' => $destinationLocal_uuid,
+        'outbound_routes_uuid' => $outbound_routes_uuid,
+      ];
+    }
+
+    $outbound_routes_uuid = $data['outbound_routes_uuid'];
+
+    if ($data['stage'] == 'start_gateways') {
+      $gateway = new gateways();
+      $gateway->rescan([[
+        'checked' => 'true',
+        'uuid' => $gateway_uuid,
+      ]]);
+      $gateway->start([[
+        'checked' => 'true',
+        'uuid' => $gateway_uuid,
+      ]]);
+      message::add("Gateways started successfully.", 'positive', 5000);
+      return [
+        'stage' => 'done',
+        'domain_uuid' => $domain_uuid,
+        'extensions' => json_encode($extensions),
+        'gateway_uuid' => $gateway_uuid,
+        'ring_group_uuid' => $ring_group_uuid,
+        'destination_intl_uuid' => $destinationIntl_uuid,
+        'destination_local_uuid' => $destinationLocal_uuid,
+        'outbound_routes_uuid' => $outbound_routes_uuid,
+      ];
+    }
+
+    $outbound_routes_uuid = $data['outbound_routes_uuid'];
+
     unset($database);
     message::add("Successfully created the tenant.", 'positive', 5000);
     return true;

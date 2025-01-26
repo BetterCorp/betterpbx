@@ -64,6 +64,7 @@ function reset_data()
     'extension_count' => '1',
     'ring_group_name' => 'DEFAULT RG 5000',
     'ring_group_number' => '5000',
+    'ring_group_enabled' => 'true',
   ];
 }
 $data = reset_data();
@@ -72,33 +73,43 @@ $fields = [];
 $fieldStage = '';
 
 if (isset($_POST['action']) && $_POST['action'] == 'save') {
-	if (!BPPBX_UI::token_validate()) {
-		message::add($text['message-invalid_token'],'negative');
-		exit;
-	}
+  if (!BPPBX_UI::token_validate()) {
+    message::add($text['message-invalid_token'], 'negative');
+    exit;
+  }
   $data = $_POST;
+  //$data['phone_number_local'] = $data['phone_number'];
+  if (isset($data['phone_number']) && strpos($data['phone_number'], '27') === 0) {
+    $data['phone_number_local'] = '0' . substr($data['phone_number'], 2);
+  } else {
+    $data['phone_number_local'] = $data['phone_number'];
+  }
   $result = quick_setup($data);
-  if ($result == true) {
-    $data = reset_data();
+  if ($result === true) {
+    //$data = reset_data();
+    header('Location: /app/sip_status/cmd.php?action=reflush_all');
+    exit;
   } else if ($result !== false) {
     $fieldStage = $result['stage'];
     foreach ($result as $field => $value) {
-      $fields[] = [ BPPBX_UI::hidden_input($field, $value) ];
+      $fields[] = BPPBX_UI::hidden_input($field, $value);
     }
-    $fields[] = [ '<script>setTimeout(() => { document.getElementById("quick_tenant_form").submit(); }, 0);</script>' ];
+    $fields[] = '<script>setTimeout(() => { document.getElementById("quick_tenant_form").submit(); }, 0);</script>';
   } else {
     message::add("Failed to create tenant.", 'negative', 5000);
   }
+  //$fieldStage .= ': ' . json_encode($result);
 }
 
 
 echo BPPBX_UI::form('quick_tenant_form', 'quick_setup.php', [
   BPPBX_UI::token_input(),
-  (count($fields) > 0 
-  ? BPPBX_UI::card([], array_merge([
-    "<div class='alert alert-info'>Busy: ".$fieldStage."</div>"
-    ], $fields)) 
-  : ''),
+  (count($fields) > 0
+    ?
+    BPPBX_UI::card([], array_merge([
+      "<div class='alert alert-info'>Busy: " . $fieldStage . "</div>"
+    ], $fields))
+    : ''),
   BPPBX_UI::row('col-12 col-md-3 ' . (count($fields) > 0 ? 'd-none' : ''), [
     BPPBX_UI::card([
       '<h3>Domain</h3>',
@@ -117,22 +128,29 @@ echo BPPBX_UI::form('quick_tenant_form', 'quick_setup.php', [
         ['value' => 'tls', 'label' => 'TLS'],
       ], ['required' => 'required']),
       BPPBX_UI::field('text', 'phone_number', 'Phone Number', $data['phone_number'], 'Phone Number (Intl Format)', [], ['required' => 'required']),
-      BPPBX_UI::field('text', 'phone_number_local', 'Phone Number Local', $data['phone_number_local'], 'Phone Number (Local Format)', [], ['required' => 'required']),
+      //BPPBX_UI::field('text', 'phone_number_local', 'Phone Number Local', $data['phone_number_local'], 'Phone Number (Local Format)', [], ['required' => 'required']),
     ]),
-    BPPBX_UI::card([
-      '<h3>Extensions</h3>',
-    ], [
-      BPPBX_UI::field('number', 'extension_count', 'Extension Count', $data['extension_count'], 'Extension Number', [], ['required' => 'required']),
-      BPPBX_UI::field('number', 'extension_start', 'Extension Start', $data['extension_start'], 'Extension Start Number', [], ['required' => 'required']),
-    ]),
-    BPPBX_UI::card([
-      '<h3>Ring Group</h3>',
-    ], [
-      BPPBX_UI::field('text', 'ring_group_name', 'Ring Group Name', $data['ring_group_name'], 'Ring Group Name', [], ['required' => 'required']),
-      BPPBX_UI::field('number', 'ring_group_number', 'Ring Group Number', $data['ring_group_number'], 'Ring Group Number', [], ['required' => 'required']),
-    ]),
+    BPPBX_UI::row('col-12', [
+      BPPBX_UI::card([
+        '<h3>Extensions</h3>',
+      ], [
+        BPPBX_UI::field('number', 'extension_count', 'Extension Count', $data['extension_count'], 'Extension Number', [], ['required' => 'required', 'min' => '0', 'max' => '1000']),
+        BPPBX_UI::field('number', 'extension_start', 'Extension Start', $data['extension_start'], 'Extension Start Number', [], ['required' => 'required']),
+      ]),
+      BPPBX_UI::card([
+        '<h3>Ring Group</h3>',
+      ], [
+        BPPBX_UI::field('checkbox', 'ring_group_enabled', 'Ring Group Enabled', $data['ring_group_enabled'], '', [], ['required' => 'required']),
+        BPPBX_UI::field('text', 'ring_group_name', 'Ring Group Name', $data['ring_group_name'], 'Ring Group Name', [], ['required' => 'required']),
+        BPPBX_UI::field('number', 'ring_group_number', 'Ring Group Number', $data['ring_group_number'], 'Ring Group Number', [], ['required' => 'required']),
+      ]),
+    ])
   ]),
-  BPPBX_UI::button('submit', 'Create Tenant', '', 'btn_save', '', '')
+  (count($fields) > 0
+    ? ''
+    :
+    BPPBX_UI::button('submit', 'Create Tenant', '', 'btn_save', '', '')
+  )
 ]);
 
 //include the footer

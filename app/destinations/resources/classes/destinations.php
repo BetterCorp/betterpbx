@@ -645,16 +645,20 @@ if (!class_exists('destinations')) {
 				$this->destinations[$x]['type'] = 'array';
 				$this->destinations[$x]['label'] = 'other';
 				$this->destinations[$x]['name'] = 'dialplans';
+				$this->destinations[$x]['field']['label'] = "label";
 				$this->destinations[$x]['field']['name'] = "name";
+				$this->destinations[$x]['field']['extension'] = "extension";
 				$this->destinations[$x]['field']['destination'] = "destination";
 				$this->destinations[$x]['select_value']['dialplan'] = "transfer:\${destination}";
 				$this->destinations[$x]['select_value']['ivr'] = "menu-exec-app:transfer \${destination}";
 				$this->destinations[$x]['select_label'] = "\${name}";
 				$y=0;
 				$this->destinations[$x]['result']['data'][$y]['name'] = 'check_voicemail';
+				$this->destinations[$x]['result']['data'][$y]['extension'] = '*98';
 				$this->destinations[$x]['result']['data'][$y]['destination'] = '*98 XML ${context}';
 				$y++;
 				$this->destinations[$x]['result']['data'][$y]['name'] = 'company_directory';
+				$this->destinations[$x]['result']['data'][$y]['extension'] = '*411';
 				$this->destinations[$x]['result']['data'][$y]['destination'] = '*411 XML ${context}';
 				$y++;
 				$this->destinations[$x]['result']['data'][$y]['name'] = 'hangup';
@@ -662,8 +666,10 @@ if (!class_exists('destinations')) {
 				$this->destinations[$x]['result']['data'][$y]['destination'] = '';
 				$y++;
 				$this->destinations[$x]['result']['data'][$y]['name'] = 'record';
+				$this->destinations[$x]['result']['data'][$y]['extension'] = '*732';
 				$this->destinations[$x]['result']['data'][$y]['destination'] = '*732 XML ${context}';
 				$y++;
+
 			}
 
 			//remove special characters from the name
@@ -708,7 +714,6 @@ if (!class_exists('destinations')) {
 												$select_label = str_replace("\${".$key."}", $data[$k], $select_label);
 											}
 											else {
-												$label = $data['label'];
 												$select_label = str_replace("\${".$key."}", $text2['option-'.$label], $select_label);
 											}
 										}
@@ -720,7 +725,6 @@ if (!class_exists('destinations')) {
 										$select_label = str_replace("\${".$key."}", $data[$key] ?? '', $select_label);
 									}
 									else {
-										$label = $data['label'];
 										$select_label = str_replace("\${".$key."}", $text2['option-'.$label], $select_label);
 									}
 								}
@@ -1306,6 +1310,36 @@ if (!class_exists('destinations')) {
 				return rtrim($word, "s");
 			}
 		} //method
+
+		/**
+		* add a new destination
+		*/
+		public function add($domain_uuid, $destination_number, $destination_context, $additional_params = []) {
+			// Generate a new UUID for the destination
+			$destination_uuid = uuid();
+
+			// Prepare the data array for the destination
+			$array['destinations'][0] = $additional_params ?? [];
+			$array['destinations'][0]['destination_uuid'] = $destination_uuid;
+			$array['destinations'][0]['domain_uuid'] = $domain_uuid;
+			$array['destinations'][0]['destination_number'] = $destination_number;
+			$array['destinations'][0]['destination_context'] = $destination_context;
+			$array['destinations'][0]['destination_type'] = $additional_params['destination_type'] ?? 'inbound';
+			$array['destinations'][0]['destination_enabled'] = $additional_params['destination_enabled'] ?? 'true';
+			$array['destinations'][0]['destination_order'] = $additional_params['destination_order'] ?? '100';
+
+			// Save the destination to the database
+			$database = new database;
+			$database->app_name = 'destinations';
+			$database->app_uuid = '5ec89622-b19c-3559-64f0-afde802ab139';
+			$database->save($array);
+
+			// Clear the cache
+			$cache = new cache;
+			$cache->delete("dialplan:" . $destination_context);
+
+			return $destination_uuid;
+		}
 
 	} //class
 }

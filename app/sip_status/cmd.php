@@ -95,7 +95,6 @@
 		case "flush_inbound_reg":
 			$command = "sofia profile '".$profile_name."' flush_inbound_reg";
 			break;
-		case "reflush_all4":
 		case "rescan":
 			$command = "sofia profile '".$profile_name."' rescan";
 			break;
@@ -147,9 +146,6 @@
 			header("Location: cmd.php?action=reflush_all3");
 			exit;
 		case "reflush_all3":
-			header("Location: cmd.php?action=reflush_all4");
-			exit;
-		case "reflush_all4":
 			message::add('Flushed and Reloaded', 'alert');
 			break;
 	}

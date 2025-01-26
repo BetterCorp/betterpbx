@@ -794,6 +794,63 @@ if (!class_exists('extension')) {
 			}
 		}
 
+		public function add() {
+			// Ensure required properties are set
+			if (empty($this->domain_uuid) || empty($this->extension)) {
+				throw new Exception("Domain UUID and Extension are required.");
+			}
+
+			// Generate UUIDs if not already set
+			$this->extension_uuid = $this->extension_uuid ?? uuid();
+			$this->voicemail_uuid = $this->voicemail_uuid ?? uuid();
+
+			// Generate passwords if not already set
+			$password_length = $_SESSION["extension"]["password_length"]["numeric"] ?? 10;
+			$password_strength = $_SESSION["extension"]["password_strength"]["numeric"] ?? 4;
+			$this->password = $this->password ?? generate_password($password_length, $password_strength);
+			$this->voicemail_password = $this->voicemail_password ?? generate_password($password_length, $password_strength);
+
+			// Prepare the data array
+			$array['extensions'][0] = [
+				'domain_uuid' => $this->domain_uuid,
+				'extension_uuid' => $this->extension_uuid,
+				'extension' => $this->extension,
+				'number_alias' => $this->number_alias,
+				'password' => $this->password,
+				'effective_caller_id_name' => $this->effective_caller_id_name,
+				'effective_caller_id_number' => $this->effective_caller_id_number,
+				'outbound_caller_id_name' => $this->outbound_caller_id_name,
+				'outbound_caller_id_number' => $this->outbound_caller_id_number,
+				'emergency_caller_id_name' => $this->emergency_caller_id_name,
+				'emergency_caller_id_number' => $this->emergency_caller_id_number,
+				'directory_visible' => $this->directory_visible,
+				'directory_exten_visible' => $this->directory_exten_visible,
+				'limit_max' => $this->limit_max,
+				'limit_destination' => $this->limit_destination,
+				'user_context' => $this->user_context,
+				'toll_allow' => $this->toll_allow,
+				'call_timeout' => $this->call_timeout,
+				'call_group' => $this->call_group,
+				'hold_music' => $this->hold_music,
+				'auth_acl' => $this->auth_acl,
+				'cidr' => $this->cidr,
+				'sip_force_contact' => $this->sip_force_contact,
+				'sip_force_expires' => $this->sip_force_expires,
+				'nibble_account' => $this->nibble_account,
+				'mwi_account' => $this->mwi_account,
+				'sip_bypass_media' => $this->sip_bypass_media,
+				'absolute_codec_string' => $this->absolute_codec_string,
+				'dial_string' => $this->dial_string,
+				'enabled' => $this->enabled,
+				'description' => $this->description,
+			];
+
+			// Save the extension to the database
+			$database = new database;
+			$database->app_name = 'extensions';
+			$database->app_uuid = 'e68d9689-2769-e013-28fa-6214bf47fca3';
+			$database->save($array);
+		}
 	}
 }
 
