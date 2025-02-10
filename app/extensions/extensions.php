@@ -229,6 +229,9 @@
 	if (permission_exists('extension_export')) {
 		echo button::create(['type'=>'button','label'=>$text['button-export'],'icon'=>$_SESSION['theme']['button_icon_export'],'link'=>'extension_download.php']);
 	}
+	if (permission_exists('extension_export') && permission_exists('extension_all') && permission_exists('extension_edit') && permission_exists('extension_password')) {
+		echo button::create(['type'=>'button','label'=>$text['button-export-ymcs'],'icon'=>$_SESSION['theme']['button_icon_export'],'link'=>'extension_download.php?mode=ymcs']);
+	}
 	$margin_left = permission_exists('extension_import') || permission_exists('extension_export') ? "margin-left: 15px;" : null;
 	if (permission_exists('extension_add') && (!isset($_SESSION['limit']['extensions']['numeric']) || $total_extensions < $_SESSION['limit']['extensions']['numeric'])) {
 		echo button::create(['type'=>'button','label'=>$text['button-add'],'icon'=>$_SESSION['theme']['button_icon_add'],'id'=>'btn_add','style'=>($margin_left ?? ''),'link'=>'extension_edit.php']);

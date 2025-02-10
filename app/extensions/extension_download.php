@@ -130,6 +130,56 @@
 		header("Content-Transfer-Encoding: binary");
 	}
 
+	if (isset($_GET['mode']) && $_GET['mode'] == 'ymcs') {
+		// Prepare CSV headers
+		$csv_headers = [
+			"Note:\n\n1. The column marked with '*' must to be filled in.\n\n2. If Server Address is filled, the corresponding port is required.\n\n3. In 'Enable Outbound Proxy', 0-Disable, 1-Enable. After selecting 1, Outbound proxy server 1 and Outbound proxy server port 1 are required.\n\n4. The data must be in text format.\n\n5. Site name should be filled in as: First level site name/Second level site name/…/'New site name'. The adjacent site should be separated by ".", you need to fill in the site name from the first level site. The max length of the site is 128 characters.",
+			"Site,*Register Name,*User Name,*Password,Label,Display Name,*Server Address 1,*Port 1,Server Address 2,Port 2,Enable Outbound Proxy,Outbound Proxy Server 1,Outbound Proxy Server Port 1,Outbound Proxy Server 2,Outbound Proxy Server Port 2,Describe"
+		];
+
+		// Fetch all extensions
+		$sql = "SELECT extension, password, description, directory_first_name, directory_last_name, user_context, enabled, domain_uuid FROM v_extensions WHERE domain_uuid = :domain_uuid AND enabled = 1";
+		$parameters['domain_uuid'] = $domain_uuid;
+		$extensions = $database->select($sql, $parameters, 'all');
+		unset($sql, $parameters);
+
+		// Prepare CSV data
+		$csv_data = [];
+		foreach ($extensions as $extension) {
+			$csv_data[] = [
+				"{SITE}", 
+				$extension['extension'], 
+				$extension['extension'], 
+				$extension['password'], 
+				$extension['description'],
+				$extension['directory_first_name'] . " " . $extension['directory_last_name'], 
+				$extension['user_context'], //domain name
+				"5060", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				"", 
+				$extension['description'] . ' - ' . $extension['user_context']
+			];
+		}
+
+		// Send headers for CSV download
+		download_send_headers("ymcs_extension_export_".date("Y-m-d")."_" . $domain_uuid . ".csv");
+
+		// Output CSV headers
+		echo implode("\n", $csv_headers) . "\n";
+
+		// Output CSV data
+		foreach ($csv_data as $row) {
+			echo implode(",", $row) . "\n";
+		}
+
+		exit;
+	}
+
 //get the extensions from the database and send them as output
 	if (!empty($_REQUEST["column_group"]) && is_array($_REQUEST["column_group"]) && @sizeof($_REQUEST["column_group"]) != 0) {
 
