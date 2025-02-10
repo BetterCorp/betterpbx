@@ -138,7 +138,7 @@
 		];
 
 		// Fetch all extensions
-		$sql = "SELECT extension, password, description, directory_first_name, directory_last_name, user_context, enabled, domain_uuid FROM v_extensions WHERE domain_uuid = :domain_uuid";// AND enabled = true";
+		$sql = "SELECT extension, password, description, directory_first_name, directory_last_name, user_context, enabled, domain_uuid FROM v_extensions WHERE domain_uuid = :domain_uuid AND enabled = 'true'";
 		$parameters['domain_uuid'] = $domain_uuid;
 		$extensions = $database->select($sql, $parameters, 'all');
 		unset($sql, $parameters);
@@ -147,24 +147,21 @@
 		$csv_data = [];
 		foreach ($extensions as $extension) {
 			$ext_name = trim($extension['directory_first_name'] . " " . $extension['directory_last_name']);
-			if (strlen($ext_name) > 128) {
-				$ext_name = substr($ext_name, 0, 128);
-			}
 			if (strlen($ext_name) < 2) {
 				$ext_name = trim($extension['description']);
-			}
-			if (strlen($ext_name) > 128) {
-				$ext_name = substr($ext_name, 0, 128);
 			}
 			if (strlen($ext_name) < 2) {
 				$ext_name = $extension['extension'];
 			}
-			$ext_description = trim($extension['description']);
-			if (strlen($ext_description) > 128) {
-				$ext_description = substr($ext_description, 0, 128);
+			if (strlen($ext_name) > 128) {
+				$ext_name = substr($ext_name, 0, 128);
 			}
+			$ext_description = trim($extension['description']);
 			if (strlen($ext_description) < 2) {
 				$ext_description = $ext_name;
+			}
+			if (strlen($ext_description) > 128) {
+				$ext_description = substr($ext_description, 0, 128);
 			}
 			$ext_ref = substr($ext_description, 0, 10);
 
