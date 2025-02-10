@@ -138,7 +138,7 @@
 		];
 
 		// Fetch all extensions
-		$sql = "SELECT extension, password, description, directory_first_name, directory_last_name, user_context, enabled, domain_uuid FROM v_extensions WHERE domain_uuid = :domain_uuid AND enabled = 1";
+		$sql = "SELECT extension, password, description, directory_first_name, directory_last_name, user_context, enabled, domain_uuid FROM v_extensions WHERE domain_uuid = :domain_uuid AND enabled = true";
 		$parameters['domain_uuid'] = $domain_uuid;
 		$extensions = $database->select($sql, $parameters, 'all');
 		unset($sql, $parameters);
@@ -174,7 +174,7 @@
 
 		// Output CSV data
 		foreach ($csv_data as $row) {
-			echo implode(",", $row) . "\n";
+			echo implode(",", array_map(function($value) { return '"' . $value . '"'; }, $row)) . "\n";
 		}
 
 		exit;
