@@ -36,15 +36,21 @@
 		updated timestamp with time zone DEFAULT now(),
 		UNIQUE(country_code, holiday_date, holiday_name)
 	);";
-	$db->exec(check_sql($sql));
+	if (isset($this->database)) {
+		$this->database->exec(check_sql($sql));
+	}
 	unset($sql);
 
 //create the index
 	$sql = "CREATE INDEX IF NOT EXISTS idx_public_holidays_country_code ON v_public_holidays(country_code);";
-	$db->exec(check_sql($sql));
+	if (isset($this->database)) {
+		$this->database->exec(check_sql($sql));
+	}
 	unset($sql);
 
 	$sql = "CREATE INDEX IF NOT EXISTS idx_public_holidays_holiday_date ON v_public_holidays(holiday_date);";
-	$db->exec(check_sql($sql));
+	if (isset($this->database)) {
+		$this->database->exec(check_sql($sql));
+	}
 	unset($sql);
 ?> 
