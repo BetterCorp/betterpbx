@@ -73,17 +73,24 @@ class holiday_api {
 
 		//insert new holidays (using ON CONFLICT DO NOTHING for immutability)
 		foreach ($holidays as $holiday) {
-			$sql = "INSERT INTO v_public_holidays ";
-			$sql .= "(country_code, holiday_name, holiday_date, holiday_type, description) ";
-			$sql .= "VALUES ";
-			$sql .= "(:country_code, :holiday_name, :holiday_date, :holiday_type, :description) ";
-			$sql .= "ON CONFLICT (country_code, holiday_date, holiday_name) DO NOTHING";
+			// Parse the date into components
+			$date = new DateTime($holiday['date']);
 			
+			$sql = "INSERT INTO v_public_holidays ";
+			$sql .= "(public_holiday_uuid, country_code, name, date_year, date_month, date_day, description, enabled, update_date) ";
+			$sql .= "VALUES ";
+			$sql .= "(:public_holiday_uuid, :country_code, :name, :date_year, :date_month, :date_day, :description, :enabled, :update_date) ";
+			$sql .= "ON CONFLICT (country_code, date_year, date_month, date_day, name) DO NOTHING";
+			
+			$parameters['public_holiday_uuid'] = uuid();
 			$parameters['country_code'] = $country_code;
-			$parameters['holiday_name'] = $holiday['name'];
-			$parameters['holiday_date'] = $holiday['date'];
-			$parameters['holiday_type'] = $holiday['type'];
+			$parameters['name'] = $holiday['name'];
+			$parameters['date_year'] = $date->format('Y');
+			$parameters['date_month'] = $date->format('m');
+			$parameters['date_day'] = $date->format('d');
 			$parameters['description'] = isset($holiday['description']) ? $holiday['description'] : null;
+			$parameters['enabled'] = 'true';
+			$parameters['update_date'] = date('Y-m-d H:i:s');
 			
 			$this->database->execute($sql, $parameters);
 			unset($parameters);

@@ -39,19 +39,30 @@
 
 --check if it's a holiday
 	local sql = [[
-		SELECT holiday_name, holiday_date, country_code
-		FROM v_holidays 
-		WHERE holiday_date = CURRENT_DATE
-		AND holiday_enabled = 'true'
+		SELECT name, date_year, date_month, date_day, country_code
+		FROM v_public_holidays 
+		WHERE date_year = :year
+		AND date_month = :month
+		AND date_day = :day
+		AND enabled = 'true'
 	]];
+	
+	local current_date = os.date("*t");
+	local parameters = {
+		year = current_date.year,
+		month = string.format("%02d", current_date.month),
+		day = string.format("%02d", current_date.day)
+	};
+	
 	if (debug["sql"]) then
 		freeswitch.consoleLog("notice", "[holidays] SQL: " .. sql .. "\n");
 	end
 	local holiday_found = false;
-	dbh:query(sql, {}, function(row)
+	dbh:query(sql, parameters, function(row)
 		holiday_found = true;
-		holiday_name = row.holiday_name;
-		holiday_date = row.holiday_date;
+		holiday_name = row.name;
+		holiday_date = row.date_year .. "-" .. row.date_month .. "-" .. row.date_day;
+		holiday_country = row.country_code;
 	end);
 
 --set the holiday variable

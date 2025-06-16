@@ -47,7 +47,7 @@
 //get the holidays for this country
 	$sql = "SELECT * FROM v_public_holidays ";
 	$sql .= "WHERE country_code = :country_code ";
-	$sql .= "ORDER BY holiday_date ";
+	$sql .= "ORDER BY date_year, date_month, date_day ";
 	$parameters['country_code'] = $country_code;
 	$database = new database;
 	$holidays = $database->select($sql, $parameters, 'all');
@@ -68,16 +68,17 @@
 	echo "<tr class='list-header'>\n";
 	echo "	<th>".$text['label-holiday_name']."</th>\n";
 	echo "	<th>".$text['label-holiday_date']."</th>\n";
-	echo "	<th>".$text['label-holiday_type']."</th>\n";
+	echo "	<th>".$text['label-enabled']."</th>\n";
 	echo "	<th class='hide-md-dn'>".$text['label-description']."</th>\n";
 	echo "</tr>\n";
 
 	if (is_array($holidays) && @sizeof($holidays) != 0) {
 		foreach($holidays as $row) {
+			$holiday_date = $row['date_year'].'-'.$row['date_month'].'-'.$row['date_day'];
 			echo "<tr class='list-row'>\n";
-			echo "	<td>".$row['holiday_name']."</td>\n";
-			echo "	<td>".$row['holiday_date']."</td>\n";
-			echo "	<td>".$row['holiday_type']."</td>\n";
+			echo "	<td>".$row['name']."</td>\n";
+			echo "	<td>".$holiday_date."</td>\n";
+			echo "	<td>".$row['enabled']."</td>\n";
 			echo "	<td class='hide-md-dn'>".$row['description']."</td>\n";
 			echo "</tr>\n";
 		}

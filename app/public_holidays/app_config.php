@@ -1,56 +1,101 @@
 <?php
-/*
-	FusionPBX
-	Version: MPL 1.1
 
-	The contents of this file are subject to the Mozilla Public License Version
-	1.1 (the "License"); you may not use this file except in compliance with
-	the License. You may obtain a copy of the License at
-	http://www.mozilla.org/MPL/
+	//application details
+		$apps[$x]['name'] = "Public Holidays";
+		$apps[$x]['uuid'] = "c2c0c0c0-c0c0-c0c0-c0c0-c0c0c0c0c0c0";
+		$apps[$x]['category'] = "Switch";
+		$apps[$x]['subcategory'] = "";
+		$apps[$x]['version'] = "1.1";
+		$apps[$x]['license'] = "Mozilla Public License 1.1";
+		$apps[$x]['url'] = "http://www.fusionpbx.com";
+		$apps[$x]['description']['en-us'] = "Used to define public holidays.";
+		$apps[$x]['description']['en-gb'] = "Used to define public holidays.";
+		$apps[$x]['description']['ar-eg'] = "";
+		$apps[$x]['description']['de-at'] = "Wird verwendet um Feiertage zu definieren.";
+		$apps[$x]['description']['de-ch'] = "";
+		$apps[$x]['description']['de-de'] = "Wird verwendet um Feiertage zu definieren.";
+		$apps[$x]['description']['es-cl'] = "Utilizado para definir días festivos.";
+		$apps[$x]['description']['es-mx'] = "Utilizado para definir días festivos.";
+		$apps[$x]['description']['fr-ca'] = "Utilisé pour définir les jours fériés.";
+		$apps[$x]['description']['fr-fr'] = "Défini les jours fériés.";
+		$apps[$x]['description']['he-il'] = "";
+		$apps[$x]['description']['it-it'] = "";
+		$apps[$x]['description']['nl-nl'] = "Gebruikt om feestdagen vast te leggen.";
+		$apps[$x]['description']['pl-pl'] = "";
+		$apps[$x]['description']['pt-br'] = "Usado para gerenciar feriados.";
+		$apps[$x]['description']['pt-pt'] = "Utilizado para definir os feriados.";
+		$apps[$x]['description']['ro-ro'] = "";
+		$apps[$x]['description']['ru-ru'] = "";
+		$apps[$x]['description']['sv-se'] = "";
+		$apps[$x]['description']['uk-ua'] = "";
 
-	Software distributed under the License is distributed on an "AS IS" basis,
-	WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
-	for the specific language governing rights and limitations under the
-	License.
+	//permission details
+		$y=0;
+		$apps[$x]['permissions'][$y]['name'] = "public_holiday_view";
+		$apps[$x]['permissions'][$y]['groups'][] = "superadmin";
+		$apps[$x]['permissions'][$y]['groups'][] = "admin";
+		$y++;
+		$apps[$x]['permissions'][$y]['name'] = "public_holiday_add";
+		$apps[$x]['permissions'][$y]['groups'][] = "superadmin";
+		$y++;
+		$apps[$x]['permissions'][$y]['name'] = "public_holiday_edit";
+		$apps[$x]['permissions'][$y]['groups'][] = "superadmin";
+		$apps[$x]['permissions'][$y]['groups'][] = "admin";
+		$y++;
+		$apps[$x]['permissions'][$y]['name'] = "public_holiday_delete";
+		$apps[$x]['permissions'][$y]['groups'][] = "superadmin";
+		$apps[$x]['permissions'][$y]['groups'][] = "admin";
 
-	Copyright (c) 2016-2025 BetterCorp (ninja@bettercorp.dev)
-	All Rights Reserved.
+	//schema details
+		$y=0;
+		$apps[$x]['db'][$y]['table']['name'] = "v_public_holidays";
+		$apps[$x]['db'][$y]['table']['parent'] = "";
+		$z=0;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "public_holiday_uuid";
+		$apps[$x]['db'][$y]['fields'][$z]['type']['pgsql'] = "uuid";
+		$apps[$x]['db'][$y]['fields'][$z]['type']['sqlite'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['type']['mysql'] = "char(36)";
+		$apps[$x]['db'][$y]['fields'][$z]['key']['type'] = "primary";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "country_code";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "Enter the country code.";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "name";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['search'] = 'true';
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "Enter the holiday name.";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "date_year";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "Enter the holiday date year.";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "date_month";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "Enter the holiday date month.";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "date_day";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "Enter the holiday date day.";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "description";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "Enter the holiday description.";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "enabled";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "Set the holiday status.";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "update_date";
+		$apps[$x]['db'][$y]['fields'][$z]['type']['pgsql'] = 'timestamptz';
+		$apps[$x]['db'][$y]['fields'][$z]['type']['sqlite'] = 'date';
+		$apps[$x]['db'][$y]['fields'][$z]['type']['mysql'] = 'date';
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "update_user";
+		$apps[$x]['db'][$y]['fields'][$z]['type']['pgsql'] = "uuid";
+		$apps[$x]['db'][$y]['fields'][$z]['type']['sqlite'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['type']['mysql'] = "char(36)";
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";
 
-	Contributor(s):
-	BetterCorp <ninja@bettercorp.dev>
-*/
-
-//set the include path
-	$conf['search']['public_holidays'] = true;
-	$conf['menu']['public_holidays'] = true;
-
-//create the database table
-	$sql = "CREATE TABLE IF NOT EXISTS v_public_holidays (
-		public_holiday_uuid uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-		country_code varchar(2) NOT NULL,
-		holiday_name varchar(255) NOT NULL,
-		holiday_date date NOT NULL,
-		holiday_type varchar(50),
-		description text,
-		created timestamp with time zone DEFAULT now(),
-		updated timestamp with time zone DEFAULT now(),
-		UNIQUE(country_code, holiday_date, holiday_name)
-	);";
-	if (isset($this->database)) {
-		$this->database->query(check_sql($sql));
-	}
-	unset($sql);
-
-//create the index
-	$sql = "CREATE INDEX IF NOT EXISTS idx_public_holidays_country_code ON v_public_holidays(country_code);";
-	if (isset($this->database)) {
-		$this->database->query(check_sql($sql));
-	}
-	unset($sql);
-
-	$sql = "CREATE INDEX IF NOT EXISTS idx_public_holidays_holiday_date ON v_public_holidays(holiday_date);";
-	if (isset($this->database)) {
-		$this->database->query(check_sql($sql));
-	}
-	unset($sql);
 ?> 
