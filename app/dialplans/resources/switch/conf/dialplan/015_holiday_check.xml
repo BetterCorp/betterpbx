@@ -1,0 +1,5 @@
+<extension name="holiday-check" number="" context="global" continue="true" app_uuid="9f356fe7-8cf8-4c14-8fe2-6daf89304458" order="15">
+	<condition>
+		<action application="lua" data="holidays/index.lua"/>
+	</condition>
+</extension> 
