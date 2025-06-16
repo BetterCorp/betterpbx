@@ -102,6 +102,10 @@
 		case "cache-flush":
 			$cache = new cache;
 			$response = $cache->flush();
+			//trigger clear cache for any classes that require it
+			foreach ($autoload->get_interface_list('clear_cache') as $class) {
+				$class::clear_cache();
+			}
 			message::add($response, 'alert');
 			break;
 		case "reflush_all2":

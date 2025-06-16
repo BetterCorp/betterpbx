@@ -25,7 +25,6 @@
 */
 
 //define the gateways class
-if (!class_exists('gateways')) {
 	class gateways {
 
 		/**
@@ -715,6 +714,3 @@ if (!class_exists('gateways')) {
 		}
 
 	}
-}
-
-?>

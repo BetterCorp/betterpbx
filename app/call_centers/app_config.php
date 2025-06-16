@@ -216,7 +216,7 @@
 		$apps[$x]['default_settings'][$y]['default_setting_category'] = "call_center";
 		$apps[$x]['default_settings'][$y]['default_setting_subcategory'] = "record_name";
 		$apps[$x]['default_settings'][$y]['default_setting_name'] = "text";
-		$apps[$x]['default_settings'][$y]['default_setting_value'] = "\${sip_from_user}-\${sip_to_user}-\${strftime(%Y)}\${strftime(%b)}\${strftime(%d)}.\${record_ext}";
+		$apps[$x]['default_settings'][$y]['default_setting_value'] = "\${sip_from_user}-\${sip_to_user}-\${strftime(%Y)}\${strftime(%b)}\${strftime(%d)}-\${uuid}.\${record_ext}";
 		$apps[$x]['default_settings'][$y]['default_setting_enabled'] = "false";
 		$apps[$x]['default_settings'][$y]['default_setting_description'] = "Custom name for call recording. Options: \${record_ext}, \${sip_from_user}, \${sip_to_user}, \${caller_id_number}, \${uuid}";
 		$y++;
@@ -418,6 +418,18 @@
 		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";
 		$z++;
 		$apps[$x]['db'][$y]['fields'][$z]['name'] = "queue_record_template";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "queue_language";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "queue_dialect";
+		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
+		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";
+		$z++;
+		$apps[$x]['db'][$y]['fields'][$z]['name'] = "queue_voice";
 		$apps[$x]['db'][$y]['fields'][$z]['type'] = "text";
 		$apps[$x]['db'][$y]['fields'][$z]['description']['en-us'] = "";
 		$z++;

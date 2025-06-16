@@ -47,6 +47,7 @@
 	$permission['xml_cdr_domain'] = permission_exists('xml_cdr_domain');
 	$permission['xml_cdr_search_call_center_queues'] = permission_exists('xml_cdr_search_call_center_queues');
 	$permission['xml_cdr_search_ring_groups'] = permission_exists('xml_cdr_search_ring_groups');
+	$permission['xml_cdr_search_ivr_menus'] = permission_exists('xml_cdr_search_ivr_menus');
 	$permission['xml_cdr_statistics'] = permission_exists('xml_cdr_statistics');
 	$permission['xml_cdr_archive'] = permission_exists('xml_cdr_archive');
 	$permission['xml_cdr_all'] = permission_exists('xml_cdr_all');
@@ -142,6 +143,7 @@
 		$cc_side = $_REQUEST["cc_side"] ?? '';
 		$call_center_queue_uuid = $_REQUEST["call_center_queue_uuid"] ?? '';
 		$ring_group_uuid = $_REQUEST["ring_group_uuid"] ?? '';
+		$ivr_menu_uuid = $_REQUEST["ivr_menu_uuid"] ?? '';
 		if (isset($_SESSION['cdr']['field']) && is_array($_SESSION['cdr']['field'])) {
 			foreach ($_SESSION['cdr']['field'] as $field) {
 				$array = explode(",", $field);
@@ -285,7 +287,7 @@
 	//$rows_per_page = $_SESSION['domain']['paging']['numeric'];
 
 //prepare to page the results
-	//$rows_per_page = ($_SESSION['domain']['paging']['numeric'] != '') ? $_SESSION['domain']['paging']['numeric'] : 50; //set on the page that includes this page
+	//$rows_per_page = $settings->get('domain', 'paging', 50); //set on the page that includes this page
 	if (empty($_GET['page']) || (!empty($_GET['page']) && !is_numeric($_GET['page']))) {
 		$_GET['page'] = 0;
 	}
@@ -617,6 +619,11 @@
 		$sql .= "and ring_group_uuid = :ring_group_uuid \n";
 		$parameters['ring_group_uuid'] = $ring_group_uuid;
 	}
+	//show specific ivr menus
+	if (!empty($ivr_menu_uuid)) {
+		$sql .= "and ivr_menu_uuid = :ivr_menu_uuid \n";
+		$parameters['ivr_menu_uuid'] = $ivr_menu_uuid;
+	}
 	//end where
 	if (!empty($order_by)) {
 		$sql .= order_by($order_by, $order);
@@ -633,7 +640,7 @@
 		}
 	}
 	$sql = str_replace("  ", " ", $sql);
-	if ($archive_request && $_SESSION['cdr']['archive_database']['boolean'] == 'true') {
+	if ($archive_request && filter_var($_SESSION['cdr']['archive_database']['boolean'] ?? false, FILTER_VALIDATE_BOOL)) {
 		$database->driver = $_SESSION['cdr']['archive_database_driver']['text'];
 		$database->host = $_SESSION['cdr']['archive_database_host']['text'];
 		$database->type = $_SESSION['cdr']['archive_database_type']['text'];

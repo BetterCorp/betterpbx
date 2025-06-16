@@ -25,7 +25,6 @@
 */
 
 //define the directory class
-if (!class_exists('extension')) {
 	class extension {
 
 		/**
@@ -852,6 +851,3 @@ if (!class_exists('extension')) {
 			$database->save($array);
 		}
 	}
-}
-
-?>
