@@ -78,11 +78,13 @@ function create_inbound_destination($domain_uuid, $number, $destination_number, 
   // Create a new instance of the destinations class
   $destination = new destinations();
 
+  $dialplan_uuid = uuid();
+
   // Prepare additional parameters
   $additional_params = [
-    'destination_type' =>'inbound',
-    'destination_number_regex' =>'^('.$number.')$',
-    'destination_context' => 'public',
+    'destination_type' => 'inbound',
+    'dialplan_uuid' => $dialplan_uuid,
+    'destination_number_regex' => '^(' . $number . ')$',
     'destination_order' => $order,
     'destination_enabled' => 'true',
     'destination_description' => '',
@@ -97,8 +99,71 @@ function create_inbound_destination($domain_uuid, $number, $destination_number, 
     ]),
   ];
 
+  $app_uuid = 'c03b422e-13a8-bd1b-e42b-b6b9b4d27ce4';
+
+  $x = 0;
+  $array['dialplans'][$x]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_uuid'] = $dialplan_uuid;
+  $array['dialplans'][$x]['app_uuid'] = $app_uuid;
+  $array['dialplans'][$x]['dialplan_name'] = $number;
+  $array['dialplans'][$x]['dialplan_number'] = $number;
+  $array['dialplans'][$x]['dialplan_order'] = '100';
+  $array['dialplans'][$x]['dialplan_continue'] = 'false';
+  $array['dialplans'][$x]['dialplan_destination'] = 'false';
+  $array['dialplans'][$x]['dialplan_context'] = 'public';
+  $array['dialplans'][$x]['dialplan_enabled'] = 'true';
+  $array['dialplans'][$x]['dialplan_description'] = 'Inbound';
+  $y = 0;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'condition';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = '${sip_to_user}';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = '^(' . $number . ')$';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = '20';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+  $y++;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_uuid'] = uuid();
+  $array['dialplans'][$x]['dialplan_details'][$y]['domain_uuid'] = $domain_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_uuid'] = $dialplan_uuid;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_tag'] = 'action';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_type'] = 'transfer';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_data'] = $destination_number . ' XML ' . $context;
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_order'] = '40';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_group'] = '0';
+  $array['dialplans'][$x]['dialplan_details'][$y]['dialplan_detail_enabled'] = 'true';
+
   // Use the add method to create a new destination
-  return $destination->add($domain_uuid, $number, $context, $additional_params);
+  $destinationUUID = $destination->add($domain_uuid, $number, 'public', $additional_params);
+
+
+  // Save the dialplan to the database
+  $p = permissions::new();
+  $p->add("dialplan_add", "temp");
+  $p->add("dialplan_detail_add", "temp");
+
+  //save to the data
+  $database = new database;
+  $database->app_name = 'outbound_routes';
+  $database->app_uuid = $app_uuid;
+  $database->save($array);
+  $message = $database->message;
+  unset($array);
+
+  //update the dialplan xml
+  $dialplans = new dialplan;
+  $dialplans->source = "details";
+  $dialplans->destination = "database";
+  $dialplans->uuid = $dialplan_uuid;
+  $dialplans->xml();
+  unset($dialplans);
+
+  $p->delete("dialplan_add", "temp");
+  $p->delete("dialplan_detail_add", "temp");
+
+
+  return $destinationUUID;
 }
 
 function create_extension($domain_uuid, $extension_name, $extension_number, $extension_context, $extension_enabled, $extension_description)
@@ -469,7 +534,7 @@ function create_outbound_dialplan($domain_uuid, $domain_name, $gateway_uuid, $di
   // Clear the cache
   $cache = new cache;
   $cache->delete("dialplan:public");
-  $cache->delete("dialplan:".$domain_name);
+  $cache->delete("dialplan:" . $domain_name);
 
   $p->delete("dialplan_add", "temp");
   $p->delete("dialplan_detail_add", "temp");
@@ -484,6 +549,10 @@ function quick_setup($data)
   }
   $domain = $data['domain'];
   if ($data['stage'] == 'domain') {
+    return [
+      'stage' => 'extension',
+      'domain_uuid' => $domain_uuid,
+    ];
     $ip = gethostbyname($domain);
     $output = shell_exec('ip a');
     $lines = explode("\n", $output);
