@@ -51,8 +51,9 @@
 	$menu_item_link = '';
 	$menu_item_category = '';
 	$menu_item_icon = '';
+	$menu_item_icon_color = '';
 	$menu_item_description = '';
-	$menu_item_protected = '';
+	//$menu_item_protected = '';
 	$menu_item_parent_uuid = null;
 	$menu_item_order = null;
 
@@ -102,8 +103,9 @@
 		$menu_item_link = $_POST["menu_item_link"] ?? '';
 		$menu_item_category = $_POST["menu_item_category"] ?? '';
 		$menu_item_icon = $_POST["menu_item_icon"] ?? '';
+		$menu_item_icon_color = $_POST["menu_item_icon_color"] ?? '';
 		$menu_item_description = $_POST["menu_item_description"] ?? '';
-		$menu_item_protected = $_POST["menu_item_protected"] ?? '';
+		//$menu_item_protected = $_POST["menu_item_protected"] ?? '';
 		$menu_item_parent_uuid = $_POST["menu_item_parent_uuid"] ?? null;
 		$menu_item_order = $_POST["menu_item_order"] ?? '';
 	}
@@ -173,8 +175,9 @@
 					$array['menu_items'][0]['menu_item_link'] = $menu_item_link;
 					$array['menu_items'][0]['menu_item_category'] = $menu_item_category;
 					$array['menu_items'][0]['menu_item_icon'] = $menu_item_icon;
+					$array['menu_items'][0]['menu_item_icon_color'] = $menu_item_icon_color;
 					$array['menu_items'][0]['menu_item_description'] = $menu_item_description;
-					$array['menu_items'][0]['menu_item_protected'] = $menu_item_protected;
+					//$array['menu_items'][0]['menu_item_protected'] = $menu_item_protected;
 					$array['menu_items'][0]['menu_item_uuid'] = $menu_item_uuid;
 					if (!is_uuid($menu_item_parent_uuid)) {
 						$array['menu_items'][0]['menu_item_parent_uuid'] = null;
@@ -198,8 +201,9 @@
 					$array['menu_items'][0]['menu_item_link'] = $menu_item_link;
 					$array['menu_items'][0]['menu_item_category'] = $menu_item_category;
 					$array['menu_items'][0]['menu_item_icon'] = $menu_item_icon;
+					$array['menu_items'][0]['menu_item_icon_color'] = $menu_item_icon_color;
 					$array['menu_items'][0]['menu_item_description'] = $menu_item_description;
-					$array['menu_items'][0]['menu_item_protected'] = $menu_item_protected;
+					//$array['menu_items'][0]['menu_item_protected'] = $menu_item_protected;
 					$array['menu_items'][0]['menu_item_uuid'] = $menu_item_uuid;
 					if (!is_uuid($menu_item_parent_uuid)) {
 						$array['menu_items'][0]['menu_item_parent_uuid'] = null;
@@ -217,13 +221,13 @@
 				}
 
 			//update child menu items to protected true or false
-				$sql = "update v_menu_items ";
-				$sql .= "set menu_item_protected = :menu_item_protected ";
-				$sql .= "where menu_item_parent_uuid = :menu_item_parent_uuid ";
-				$parameters['menu_item_parent_uuid'] = $menu_item_uuid;
-				$parameters['menu_item_protected'] = $menu_item_protected;
-				$database->execute($sql, $parameters);
-				unset($parameters);
+				//$sql = "update v_menu_items ";
+				//$sql .= "set menu_item_protected = :menu_item_protected ";
+				//$sql .= "where menu_item_parent_uuid = :menu_item_parent_uuid ";
+				//$parameters['menu_item_parent_uuid'] = $menu_item_uuid;
+				//$parameters['menu_item_protected'] = $menu_item_protected;
+				//$database->execute($sql, $parameters);
+				//unset($parameters);
 
 			//add a group to the menu
 				if (!empty($group_uuid_name) && permission_exists('menu_add')) {
@@ -313,8 +317,9 @@
 			$menu_item_link = $row["menu_item_link"];
 			$menu_item_category = $row["menu_item_category"];
 			$menu_item_icon = $row["menu_item_icon"];
+			$menu_item_icon_color = $row["menu_item_icon_color"];
 			$menu_item_description = $row["menu_item_description"];
-			$menu_item_protected = $row["menu_item_protected"];
+			//$menu_item_protected = $row["menu_item_protected"];
 			$menu_item_parent_uuid = $row["menu_item_parent_uuid"];
 			$menu_item_order = $row["menu_item_order"];
 			$menu_item_add_user = $row["menu_item_add_user"];
@@ -390,8 +395,8 @@
 	echo "<div class='action_bar' id='action_bar'>\n";
 	echo "	<div class='heading'><b>".$text['header-menu_item']."</b></div>\n";
 	echo "	<div class='actions'>\n";
-	echo button::create(['type'=>'button','label'=>$text['button-back'],'icon'=>$_SESSION['theme']['button_icon_back'],'id'=>'btn_back','style'=>'margin-right: 15px;','link'=>'menu_edit.php?id='.urlencode($menu_uuid)]);
-	echo button::create(['type'=>'submit','label'=>$text['button-save'],'icon'=>$_SESSION['theme']['button_icon_save'],'id'=>'btn_save']);
+	echo button::create(['type'=>'button','label'=>$text['button-back'],'icon'=>$settings->get('theme', 'button_icon_back'),'id'=>'btn_back','style'=>'margin-right: 15px;','link'=>'menu_edit.php?id='.urlencode($menu_uuid)]);
+	echo button::create(['type'=>'submit','label'=>$text['button-save'],'icon'=>$settings->get('theme', 'button_icon_save'),'id'=>'btn_save']);
 	echo "	</div>\n";
 	echo "	<div style='clear: both;'></div>\n";
 	echo "</div>\n";
@@ -430,7 +435,7 @@
 		echo "<table cellpadding='0' cellspacing='0' border='0'>\n";
 		echo "	<tr>\n";
 		echo "		<td>\n";
-		echo "			<select class='formfld' name='menu_item_icon' id='selected_icon' onchange=\"$('#icons').slideUp(200); $('#icon_search').fadeOut(200, function() { $('#grid_icon').fadeIn(); });\">\n";
+		echo "			<select class='formfld' name='menu_item_icon' id='selected_icon' onchange=\"if ($(this).val()) { $('#icons').slideUp(200); $('#icon_search').fadeOut(200, function() { $('#grid_icon').fadeIn(); }); $('#icon_color').show(); } else { $('#icon_color').hide(); }\">\n";
 		echo "				<option value=''></option>\n";
 		foreach ($font_awesome_icons as $icon) {
 			$selected = $menu_item_icon == implode(' ', $icon['classes']) ? "selected" : null;
@@ -468,6 +473,11 @@
 		echo "		<input type='text' class='formfld' name='menu_item_icon' value='".escape($menu_item_icon)."'>";
 	}
 	echo "		</td>";
+	echo "	</tr>";
+
+	echo "	<tr id='icon_color' ".(empty($menu_item_icon) ? "style='display: none;'" : null).">";
+	echo "		<td class='vncell'>".$text['label-icon_color']."</td>";
+	echo "		<td class='vtable'><input type='text' class='formfld colorpicker' name='menu_item_icon_color' value=\"".escape($menu_item_icon_color)."\"></td>";
 	echo "	</tr>";
 
 	echo "	<tr>";
@@ -520,34 +530,34 @@
 			}
 		}
 		echo "</select>";
-		echo button::create(['type'=>'submit','label'=>$text['button-add'],'icon'=>$_SESSION['theme']['button_icon_add'],'collapse'=>'never']);
+		echo button::create(['type'=>'submit','label'=>$text['button-add'],'icon'=>$settings->get('theme', 'button_icon_add'),'collapse'=>'never']);
 	}
 	echo "		</td>";
 	echo "	</tr>";
 
-	echo "<tr>\n";
-	echo "<td class='vncell' valign='top' align='left' nowrap>\n";
-	echo "    ".$text['label-protected']."\n";
-	echo "</td>\n";
-	echo "<td class='vtable' align='left'>\n";
-	echo "    <select class='formfld' name='menu_item_protected'>\n";
-	if ($menu_item_protected == "false") {
-		echo "    <option value='false' selected='selected' >".$text['label-false']."</option>\n";
-	}
-	else {
-		echo "    <option value='false'>".$text['label-false']."</option>\n";
-	}
-	if ($menu_item_protected == "true") {
-		echo "    <option value='true' selected='selected' >".$text['label-true']."</option>\n";
-	}
-	else {
-		echo "    <option value='true'>".$text['label-true']."</option>\n";
-	}
-	echo "    </select><br />\n";
-	echo $text['description-protected']."<br />\n";
-	echo "\n";
-	echo "</td>\n";
-	echo "</tr>\n";
+	//echo "<tr>\n";
+	//echo "<td class='vncell' valign='top' align='left' nowrap>\n";
+	//echo "    ".$text['label-protected']."\n";
+	//echo "</td>\n";
+	//echo "<td class='vtable' align='left'>\n";
+	//echo "    <select class='formfld' name='menu_item_protected'>\n";
+	//if ($menu_item_protected == "false") {
+	//	echo "    <option value='false' selected='selected' >".$text['label-false']."</option>\n";
+	//}
+	//else {
+	//	echo "    <option value='false'>".$text['label-false']."</option>\n";
+	//}
+	//if ($menu_item_protected == "true") {
+	//	echo "    <option value='true' selected='selected' >".$text['label-true']."</option>\n";
+	//}
+	//else {
+	//	echo "    <option value='true'>".$text['label-true']."</option>\n";
+	//}
+	//echo "    </select><br />\n";
+	//echo $text['description-protected']."<br />\n";
+	//echo "\n";
+	//echo "</td>\n";
+	//echo "</tr>\n";
 
 	if (!empty($action) && $action == "update") {
 		if (empty($menu_item_parent_uuid)) {
